@@ -1,29 +1,30 @@
 # AquaGrid
 
-**An AI that forecasts an island's water demand, schedules desalination against the solar forecast, and catches leaks before anyone notices.**
+**An AI that forecasts an island's water demand, schedules desalination against the solar forecast, harvests the rain, and catches failures nobody would notice until they were expensive.**
 
 DreamHacks 2026 · Track 2 — AI, Automation & Logic
+Repo: [github.com/sbongula/aquagrid](https://github.com/sbongula/aquagrid) · Site: [sbongula.github.io/aquagrid](https://sbongula.github.io/aquagrid)
 
 ---
 
 ## The problem
 
-On a small isolated island, the desalination plant is the single largest electrical load, and it is almost always run on a wall timer set to overnight hours — a habit inherited from mainland off-peak grid pricing. On a solar island that is exactly backwards: 01:00–05:00 has no sun, so every one of those litres is made on diesel that arrived by barge.
+On a small isolated island the desalination plant is the single largest electrical load, and it is almost always run on a wall timer set to overnight hours — a habit inherited from mainland off-peak grid pricing. On a solar island that is exactly backwards: 01:00–05:00 has no sun, so every one of those litres is made on diesel that arrived by barge.
 
 The water tank is a battery nobody schedules. AquaGrid schedules it.
 
-## What it does
+And on Funafuti specifically, desalination is not even the primary source — the island runs on rainwater, with desal as backup. Any system that ignores the rain forecast is planning against the wrong problem.
 
-Four things make this an AI system rather than a dashboard:
+## What it does
 
 | | | |
 |---|---|---|
 | **Predict** | A `RandomForestRegressor` forecasts water demand 48 hours ahead from hour, day of week, weekend, temperature and tourist season. | `ml/train_model.py` |
-| **Decide** | A five-rule scheduler with a 12-hour lookahead picks pump hours to minimise diesel while never breaching the reserve floor. | `app/src/logic/scheduler.js` |
-| **Explain** | Every decision carries a plain-language reason, and an LLM writes the shift briefing and answers the operator's questions. | `app/src/lib/ai.js` |
-| **Detect** | Residual analysis against the forecast flags leaks from the pattern of the loss, not from a level threshold. | `app/src/logic/leak.js` |
+| **Decide** | An eight-rule scheduler with a 12-hour lookahead dispatches the pump across solar, battery, rainfall and diesel. | `app/src/logic/scheduler.js` |
+| **Explain** | Every decision carries a plain-language reason; an LLM writes the operator briefing, answers questions, and drafts the public notice. | `app/src/lib/ai.js` |
+| **Detect** | Residual analysis flags a burst pipe in hours, dirty panels in a day, and fouling membranes six weeks out. | `leak.js`, `assets.js` |
 
-Point it at **any island on Earth** — see [Any location](#any-location) below.
+Point it at **any island on Earth** — see [Any location](#any-location).
 
 ## Architecture — and why there is no backend
 
@@ -34,41 +35,17 @@ Point it at **any island on Earth** — see [Any location](#any-location) below.
 │  synthetic history  │         │  forecast.json (bundled)     │
 │         ↓           │         │         ↓                    │
 │  RandomForest ──────┼────────▶│  scheduler.js  (decisions)   │
-│         ↓           │ writes  │  leak.js       (anomalies)   │
-│  Open-Meteo solar   │ JSON    │  charts        (SVG)         │
-│         ↓           │         │         ↓                    │
-│  forecast.json      │         │  Groq LLM (optional briefing)│
+│         ↓           │ writes  │  leak.js       (burst pipe)  │
+│  Open-Meteo         │ JSON    │  assets.js     (slow decay)  │
+│  solar/rain/wind    │         │  fuel.js       (barge risk)  │
+│         ↓           │         │  advisory.js   (the village) │
+│  forecast.json      │         │  Groq LLM (optional)         │
 └─────────────────────┘         └──────────────────────────────┘
 ```
 
-The model is trained and evaluated in Python; its predictions are exported to a single JSON file that the app bundles as a static asset. All scheduling, leak detection and charting run in JavaScript on-device.
+The model is trained and evaluated in Python; its predictions are exported to a single JSON file the app bundles as a static asset. All scheduling, harvesting, battery dispatch, detection and charting run in JavaScript on-device.
 
-This is deliberate. **The app works with zero connectivity** — which is precisely the situation on an isolated island, and the only honest design for an operator whose uplink is a satellite dish. "Trained offline, inference on-device" is also how most production mobile ML actually ships.
-
-## Any location
-
-The app is not hardcoded to one island. Search any place by name and it will fetch that location's real solar and temperature forecast, predict its water demand, size a plant for its population, and re-run the whole schedule.
-
-That works because **we ship the model, not only its predictions.** Every feature the forecaster uses is categorical — hour, day of week, weekend, tourist season — except temperature, which is a single continuous variable. So `train_model.py` evaluates the trained forest exhaustively over its entire input grid and exports the result as a **15,120-cell lookup table** (2 seasons × 7 days × 24 hours × 45 temperature buckets, ~300 KB).
-
-This is the model, not an approximation of it. The only loss is temperature discretised to 0.5 °C, which costs a **mean 5.5 L/h** — 12% of the model's own 45.3 L/h error, and 0.6% of typical demand. `node src/logic/test.js` asserts that gap stays below a quarter of the model MAE.
-
-The result is a real forecaster running on the phone with no ML runtime, no server, and no inference API.
-
-| | |
-|---|---|
-| Location search | Open-Meteo geocoding — free, no key |
-| Weather | Open-Meteo forecast with `timezone=auto` |
-| Demand | Lookup table, scaled linearly by population |
-| Plant sizing | Tank, pump, output and panel area all scale with population off the reference plant |
-| Warm-up | The previous 24 h of real weather, replayed to derive the starting tank level |
-| Offline | Falls back to the island bundled at build time, which needs no network at all |
-
-Plant sizing scales everything together, which keeps the ratios that actually drive decisions constant — specific energy per m³, days of storage, and how many hours a day solar clears the pump draw. So the scheduler faces the same *shape* of decision on a village of 1,200 as on a city of 130,000, and **only the weather genuinely differs between locations.** That is an assumption, and it is why savings vary by island rather than by size.
-
-Malé, Maldives (pop. 103,693) resolves to a 5,184,650 L tank, a 4,320 kW pump and 27,651 m² of panels — an 86× scale-up computed at runtime on the phone. Every figure on screen moves with the choice: starting tank level, the pump timeline, diesel burned, and the savings against the baselines.
-
-Search is forgiving of how people actually type place names. The geocoder matches a settlement name alone, so `"Malé Maldives"` and `"Apia, Samoa"` both return nothing on a literal query; the app retries on the first token and prefers results whose country or region matches the rest of the string.
+This is deliberate. **The app works with zero connectivity** — precisely the situation on an isolated island, and the only honest design for an operator whose uplink is a satellite dish. "Trained offline, inference on-device" is also how most production mobile ML actually ships.
 
 ## Model performance
 
@@ -89,47 +66,99 @@ The synthetic history in `ml/generate_data.py` is readable in one screen — twi
 
 ## Results
 
-48-hour horizon, live Open-Meteo solar forecast for Funafuti, Tuvalu. All three strategies run over the **identical forecast with identical tank physics** — only the decision rule differs. These numbers are computed in the app at runtime, not hardcoded.
+48-hour horizon, live Open-Meteo forecast for Funafuti, Tuvalu. All three strategies run over the **identical forecast with identical physics** — same rain, same battery, same tank. Only the decision rule differs. Computed at runtime, not hardcoded.
 
 | Strategy | Diesel | Cost | CO₂ | Pump hours | Shortage |
 |---|---|---|---|---|---|
-| **AquaGrid** | **52.5 L** | **$84** | **141 kg** | 8 h (3 solar / 2 partial / 3 diesel) | 0 h |
-| Fixed timer 01:00–05:00 | 112.0 L | $179 | 300 kg | 8 h (all diesel) | 0 h |
-| Reactive, top up below 80% | 149.6 L | $239 | 401 kg | 13 h (0 solar / 4 partial / 9 diesel) | 0 h |
+| **AquaGrid** | **15.3 L** | **$25** | **41 kg** | 6 h (3 solar / 1 battery / 1 partial / 1 diesel) | 0 h |
+| Fixed timer 01:00–05:00 | 70.0 L | $112 | 188 kg | 8 h (all diesel) | 0 h |
+| Reactive, top up below 80% | 79.2 L | $127 | 212 kg | 11 h | 0 h |
 
-**53% less diesel than the fixed timer these plants run today**, and it delivers the same water in the same 8 pump hours — it just chooses *which* eight. The tank dips to 24.8%, brushing the 25% reserve floor and firing the emergency rule once, and never runs dry.
+**78% less diesel than the fixed timer these plants run today.** The tank starts at 32% — the level yesterday's weather actually left it at — and never drops below 27% against a 25% reserve floor.
 
-These figures move with the weather and the island. On a run of live forecasts the same code returned 80% on Apia, 70% on Malé, 64% on Santorini and 23% on Reykjavík — where there is barely any sun to schedule against, so there is far less for a scheduler to win.
+### The number that matters more than the percentage
 
-Assumptions stated openly: diesel at **$1.60/L** island-delivered, **2.68 kg CO₂ per litre** burned.
+The fuel tank holds 300 L with **12 days until the next barge**.
+
+| Strategy | Burn rate | Fuel lasts | Verdict |
+|---|---|---|---|
+| **AquaGrid** | 8 L/day | **39 days** | fine |
+| Fixed timer | 35 L/day | 8.6 days | **runs dry 3.4 days early — 121 L short** |
+| Reactive | 40 L/day | 7.6 days | **runs dry 4.4 days early — 176 L short** |
+
+Burning too much diesel and running out of diesel are different failures. The barge does not come early because you ran out.
+
+Assumptions stated openly: diesel at **$1.60/L** island-delivered, **2.68 kg CO₂/L** burned.
 
 ## The scheduler
 
-Five rules, evaluated in strict priority order, with a 12-hour lookahead that asks: *if I only ever pump on full solar, do I breach the reserve floor before the next sun?*
+Eight rules, evaluated in strict priority order, with a 12-hour lookahead that asks: *given the sun and rain I expect, do I breach the reserve floor before the next window?*
 
-1. **Emergency** — below the 25% floor, top up regardless of cost.
-2. **Free solar** — solar output clears the full 50 kW pump draw, so the water is free.
-3. **Pre-emptive hybrid** — a shortfall is forecast within 12 h and there is partial sun. Spend a little diesel *now* to avoid a full-diesel run tonight.
-4. **Reluctant diesel** — shortfall forecast, no usable sun, reserves thin.
-5. **Hold** — wait for the sun.
+| # | Rule | Fires when |
+|---|---|---|
+| 0 | **Storm preparation** | Cyclone-force wind within 24 h → fill to 100% regardless of cost |
+| 1 | **Emergency** | Below the 25% reserve floor |
+| 2 | **Rain hold** | More rain than demand forecast in the next 6 h → hold, the tank fills free |
+| 3 | **Free solar** | Solar clears the full 50 kW pump draw |
+| 4 | **Stored solar** | Shortfall ahead and the battery can cover the pump |
+| 5 | **Pre-emptive hybrid** | Shortfall ahead, partial sun — spend a little diesel now to avoid a lot tonight |
+| 6 | **Reluctant diesel** | Shortfall ahead, no sun, empty battery |
+| 7 | **Hold** | Wait for the sun |
 
-**The starting tank level is a result, not a constant.** Open-Meteo is asked for `past_days=1`, and the scheduler replays those 24 hours before the displayed horizon begins. So where the tank sits at hour zero is the consequence of yesterday's actual weather at that location — Funafuti opens at 28%, Reykjavík at 41%. Seeding every island at the same percentage would have made the largest number on screen look like a constant rather than a measurement.
+**The starting tank level is a result, not a constant.** Open-Meteo is asked for `past_days=1` and the scheduler replays those 24 hours before the displayed horizon begins, so hour zero is the consequence of yesterday's actual weather at that location. Seeding every island at the same percentage would make the largest number on screen a decoration.
 
-Rule 3 is where the forecast earns its keep: it is the only rule that acts on information the plant does not yet have.
+Rules 2, 4 and 5 are where the forecast earns its keep — they are the only ones that act on information the plant does not yet have.
 
-## Leak detection
+## Rainwater, battery and storms
 
-A level threshold cannot tell a leak from a busy evening. A forecast can.
+**Rain.** Tuvalu is in reality almost entirely rainwater-fed. Precipitation comes from the same Open-Meteo call, and `harvest = rain_mm × catchment_m² × runoff` flows into the tank balance. Over this horizon 15.7 mm across 900 m² of public roof delivered **11.3 m³ — 24% of all water supplied.** Catchment is sized so rain matters without dominating; raise it and the reserve floor stops binding.
 
-```
-expectedDrop = predicted demand − water pumped     (what should happen)
-actualDrop   = sensor[t−1] − sensor[t]             (what did happen)
-residual     = actualDrop − expectedDrop           (unexplained loss)
-```
+**Battery.** 150 kWh lets surplus midday solar run the pump into the 18:00–20:00 demand peak instead of being curtailed. Over the horizon: 180 kWh of solar went straight to the pump, 66 kWh came back out of the battery, and **304 kWh was curtailed** — sun that arrived with the battery full and the pump already running. That last figure is the honest ceiling on what a bigger battery could buy.
 
-σ is calibrated on the first 12 hours as a known-good baseline; an alert fires when the residual exceeds **3σ for three consecutive hours**. In testing, a 450 L/h burst injected at hour 14 is caught at hour 16 — with an estimated rate of 452 L/h against a true 450, and 99% confidence — long before the tank itself looks low.
+**Storms.** Sustained winds above 90 km/h flip the objective from *spend the least fuel* to *have the most water when the power goes out*. After landfall the array is down and the barge will not sail. Funafuti has no cyclone in the live forecast, so the app ships a **Simulate cyclone** control rather than leaving the rule as code that never runs.
 
-Tap **Simulate burst pipe** in the app to watch it fire.
+## Detection — one idea, four failures
+
+All four use the same move: compare what the plant *does* against what the forecast says it *should*. A threshold alarm sees none of them until they are expensive.
+
+| Failure | Signal | Result |
+|---|---|---|
+| **Burst pipe** | Tank falling faster than demand-minus-supply explains | 450 L/h leak injected at hour 14, **caught at hour 16** — estimated 452 L/h, 99% confidence |
+| **Dirty panels** | Metered array output vs irradiance | **13% below predicted across 20 daylight hours — 90 kWh not collected** |
+| **Fouling membranes** | RO specific energy trending up over 90 days | **+11.1% from design; clean-in-place threshold in 40 days** |
+| **Fuel exhaustion** | Burn rate vs barge lead time | AquaGrid fine; both baselines dry before resupply |
+
+Leak detection calibrates σ on the first 12 hours as a known-good baseline and alerts on **3σ for three consecutive hours**. The residual accounts for harvested rain — omit it and every shower reads as a negative leak.
+
+## Talking to the village, not just the plant
+
+The cheapest litre of diesel is the one nobody needed. `advisory.js` finds the hours when the pump is already running on sun or stored sun and turns them into a public notice:
+
+> Run laundry and irrigation between 12:00 and 15:00 — that is the free-solar window, when the pump is already running on 150 kWh of sun. Water used outside those hours comes out of the tank, and the tank is refilled on diesel.
+
+It also computes supply per person per day against the **WHO minimum of 15 L**. Currently 18.2 L — 1.2× the floor, so no rationing notice is warranted. When it falls below, the LLM drafts the notice instead.
+
+## Any location
+
+Search any place by name and the app fetches its real solar, temperature, rainfall and wind, predicts its demand, sizes a plant for its population, and re-runs everything.
+
+That works because **we ship the model, not only its predictions.** Every feature the forecaster uses is categorical except temperature, so `train_model.py` evaluates the trained forest exhaustively over its entire input grid and exports a **15,120-cell lookup table** (2 seasons × 7 days × 24 hours × 45 temperature buckets).
+
+This is the model, not an approximation. The only loss is temperature discretised to 0.5 °C, costing a **mean 5.5 L/h** — 12% of the model's own 45.3 L/h error. `node src/logic/test.js` asserts that gap stays below a quarter of the model MAE.
+
+A real forecaster running on the phone with no ML runtime, no server, and no inference API.
+
+| | |
+|---|---|
+| Location search | Open-Meteo geocoding — free, no key |
+| Weather | Open-Meteo forecast with `timezone=auto`, `past_days=1` |
+| Demand | Lookup table, scaled linearly by population |
+| Plant sizing | Tank, pump, output, panels, catchment, battery and fuel all scale with population |
+| Offline | Falls back to the island bundled at build time |
+
+Every figure moves with the choice. On live forecasts the same code returned **80% saved on Apia**, **70% on Malé**, **64% on Santorini** and **23% on Reykjavík** — where there is barely any sun to schedule against, so there is far less for a scheduler to win.
+
+Search is forgiving of how people type place names: the geocoder matches settlement names alone, so `"Malé Maldives"` returns nothing on a literal query. The app retries on the first token and prefers results whose country or region matches the rest.
 
 ## Setup
 
@@ -142,18 +171,18 @@ python -m venv ../.venv && ../.venv/bin/pip install -r requirements.txt
 ../.venv/bin/python train_model.py       # trains, evaluates, writes ../app/assets/forecast.json
 ```
 
-`train_model.py` fetches a live 48-hour solar and temperature forecast from Open-Meteo — no API key — and falls back to a modelled clear-sky curve if the network is unavailable, labelling which one it used in `weather_source`. The build never blocks on the network.
+Falls back to a modelled clear-sky curve if the network is unavailable, labelling which it used in `weather_source`. The build never blocks on the network.
 
 ### 2. Run the app
 
 ```bash
 cd app
 npm install
-cp src/config.example.js src/config.js   # optional: paste a Groq key for the LLM briefing
-npx expo start
+cp src/config.example.js src/config.js   # optional: paste a Groq key for the LLM
+npx expo start                            # add --ios for the simulator
 ```
 
-Install **Expo Go** on a physical phone and scan the QR code. If the phone connects but never loads, the wifi is blocking device-to-laptop traffic — use `npx expo start --tunnel`.
+Install **Expo Go** on a physical phone and scan the QR code. If the phone connects but never loads, the wifi is blocking device-to-laptop traffic — use `npx expo start --tunnel`. After changing the scheduler's shape, restart with `--clear`.
 
 ### 3. Verify the logic without a phone
 
@@ -161,39 +190,46 @@ Install **Expo Go** on a physical phone and scan the QR code. If the phone conne
 cd app && node src/logic/test.js
 ```
 
-Prints all three strategies, the savings percentage, and the leak-detection result. Exits non-zero if any definition-of-done check fails.
+Prints all three strategies, the savings, the leak result and the lookup-table fidelity. Exits non-zero if any check fails.
 
-## The LLM briefing
+## The LLM layer
 
-The operator briefing has two paths, and the app labels which one produced the text:
+Two paths, and the app labels which one produced the text:
 
-- **On-device template** — deterministic, instant, works in airplane mode. This is the primary path and it is always available.
-- **Groq (`openai/gpt-oss-120b`, open-weight)** — if a key is present, the live call is raced against a 6-second timeout and upgrades the briefing in place. Any error, timeout, or missing key falls silently back to the template.
+- **On-device template** — deterministic, instant, works in airplane mode. Primary path, always available.
+- **Groq (`openai/gpt-oss-120b`, open-weight)** — raced against a 6-second timeout, upgrades in place. Any error, timeout or missing key falls silently back.
 
-Groq was chosen because it serves **open-weight** models on a free tier with no credit card — no proprietary model is in the loop. `gpt-oss-120b` is a reasoning model, so the call caps `reasoning_effort` at `low`; without that it spends the entire token budget thinking and returns empty content. Measured round trip: **~620 ms**. A second model (`groq/compound-mini`) is tried before falling back to the template. The **Ask the operator** panel offers three preset questions so the scheduler can be interrogated in one tap.
+Groq serves **open-weight** models free with no credit card — no proprietary model is in the loop. `gpt-oss-120b` is a reasoning model, so the call caps `reasoning_effort` at `low`; without that it spends the whole token budget thinking and returns empty content. Measured round trip: **~620 ms**. `groq/compound-mini` is tried before falling back to the template.
 
-**The key lives client-side.** There is no backend to hide it behind, which is the deliberate trade for an app that works offline. `src/config.js` is gitignored and no key is committed. For anything beyond a demo this belongs behind a proxy.
+**The key lives client-side.** There is no backend to hide it behind — the deliberate trade for an app that works offline. `src/config.js` is gitignored and no key is committed. Beyond a demo this belongs behind a proxy.
 
 ## Limitations
 
-Stated plainly, because a system you cannot audit is not one you should trust with an island's water:
+Stated plainly, because a system you cannot audit is not one you should trust with an island's water.
 
-- **Demand history is synthetic.** Two years of it, generated by `ml/generate_data.py` with patterns drawn from published domestic-usage profiles rather than measured from a real plant. The model genuinely learns those patterns; the patterns themselves are our construction.
-- **The tank sensor is simulated.** `simulateSensor` models a float sensor with Gaussian noise. No hardware is connected.
-- **Single plant, single tank.** No distribution network, no pressure zones, no multi-tank routing.
-- **Diesel price is assumed** at $1.60/L delivered. Real island prices vary widely with barge schedules.
-- **The solar forecast is real but the array is modelled** — 320 m² at 19% efficiency, converted from Open-Meteo shortwave radiation. No inverter losses, soiling, or temperature derating.
+- **Demand history is synthetic.** Generated by `ml/generate_data.py` from published domestic-usage profiles, not measured at a real plant. The model genuinely learns those patterns; the patterns are our construction.
+- **All sensors are simulated** — tank float, array power meter, and the RO specific-energy log. No hardware is connected.
+- **Demand patterns are assumed universal.** New locations scale the reference village's profile by population. A real deployment would retrain on that island's meter data.
+- **Plant sizing scales linearly with population**, which keeps specific energy, days of storage and solar-hours-vs-pump-draw constant. That is why savings vary by weather rather than by size.
+- **Population comes from the geocoder** and is missing for many small settlements; 3,000 is assumed and labelled as an estimate.
+- **Single plant, single tank.** No distribution network, pressure zones or multi-tank routing.
+- **Diesel price assumed at $1.60/L.** Real island prices vary widely with barge schedules.
 - **48-hour horizon.** The lookahead cannot see past the end of the weather forecast.
-- **Demand patterns are assumed universal.** Picking a new location scales the reference village's usage profile by population. A real deployment would retrain on that island's own meter data; the morning and evening peaks are not the same everywhere.
-- **Population comes from the geocoder** and is missing for many small settlements, in which case 3,000 is assumed and the app labels the figure as an estimate.
 
 ## Repository
 
 ```
-ml/                    RandomForest pipeline — synthetic history, training, forecast export
-app/src/logic/         scheduler, baselines, leak detection, on-device demand model (pure JS, node-testable)
-app/src/lib/geo.js     location search + live weather for any island
-app/src/components/    9 UI components, charts hand-drawn in react-native-svg
-app/src/lib/ai.js      Groq briefing with on-device fallback
-app/assets/forecast.json   the single interface between Python and the app
+ml/                        RandomForest pipeline — history, training, forecast + lookup-table export
+app/src/logic/scheduler.js eight-rule dispatch across solar, battery, rain and diesel
+app/src/logic/baselines.js fixed-timer and reactive strategies, identical physics
+app/src/logic/leak.js      burst-pipe detection by residual analysis
+app/src/logic/assets.js    panel soiling and RO membrane fouling
+app/src/logic/fuel.js      diesel inventory against barge lead time
+app/src/logic/advisory.js  free-solar windows and WHO-minimum rationing
+app/src/logic/demand.js    the exported model, running on-device
+app/src/lib/geo.js         location search + live weather for any island
+app/src/lib/ai.js          Groq briefing and public notice, with on-device fallback
+docs/index.html            project website
 ```
+
+All of `app/src/logic/` is free of React imports and testable with plain `node`.

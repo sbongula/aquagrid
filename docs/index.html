@@ -1,0 +1,390 @@
+<title>AquaGrid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root {
+  --deep:#F2F6F8; --panel:#FFFFFF; --rule:#CBD9E1; --ink:#0B1E29; --dim:#5B7686;
+  --water:#0E7FA3; --solar:#B87503; --good:#1E8F62; --warn:#9A6B06; --bad:#C4453B;
+  --shadow:0 1px 2px rgba(11,30,41,.06),0 8px 24px rgba(11,30,41,.05);
+  --maxw:1100px; --col:660px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --deep:#07131B; --panel:#0D1F2A; --rule:#1C3542; --ink:#E2EDF2; --dim:#88A5B2;
+    --water:#4CC5E8; --solar:#F0A830; --good:#45C08A; --warn:#E8B54C; --bad:#E8685F;
+    --shadow:0 1px 0 rgba(255,255,255,.03),0 16px 40px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  --deep:#07131B; --panel:#0D1F2A; --rule:#1C3542; --ink:#E2EDF2; --dim:#88A5B2;
+  --water:#4CC5E8; --solar:#F0A830; --good:#45C08A; --warn:#E8B54C; --bad:#E8685F;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 16px 40px rgba(0,0,0,.35);
+}
+
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--deep); color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif; font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap { max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+.col { max-width:var(--col); }
+h1,h2,h3,.dsp { font-family:"Bricolage Grotesque",system-ui,sans-serif; text-wrap:balance; }
+code,.mono,td.n,th.n,.tk,.big,.sound b { font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+
+/* ---- hero: bathymetric contours ---- */
+.hero { position:relative; overflow:hidden; border-bottom:1px solid var(--rule); }
+.hero svg.contour { position:absolute; inset:0; width:100%; height:100%; opacity:.5; }
+.hero .wrap { position:relative; padding-top:96px; padding-bottom:64px; }
+.eyebrow {
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--water); margin:0 0 22px;
+}
+h1 { font-size:clamp(42px,7vw,78px); line-height:.96; margin:0; font-weight:800; letter-spacing:-.03em; }
+.thesis { font-size:clamp(19px,2.3vw,23px); line-height:1.5; color:var(--ink); max-width:640px; margin:26px 0 0; }
+.sub { color:var(--dim); max-width:620px; margin:16px 0 0; font-size:16px; }
+
+/* soundings row */
+.soundings { display:flex; flex-wrap:wrap; gap:0; margin:44px 0 0; border-top:1px solid var(--rule); }
+.sound { flex:1 1 150px; padding:18px 20px 16px 0; border-right:1px solid var(--rule); }
+.sound:last-child { border-right:0; }
+.sound b { display:block; font-size:31px; font-weight:600; letter-spacing:-.02em; line-height:1; }
+.sound span { display:block; font-size:12px; color:var(--dim); margin-top:8px; line-height:1.4;
+  font-family:"IBM Plex Mono",monospace; letter-spacing:.02em; }
+
+section { padding:64px 0; border-bottom:1px solid var(--rule); }
+h2 { font-size:clamp(26px,3.4vw,36px); margin:0 0 6px; font-weight:700; letter-spacing:-.02em; }
+.lede { color:var(--dim); font-size:15px; margin:0 0 30px; font-family:"IBM Plex Mono",monospace; letter-spacing:.02em; }
+p { margin:0 0 18px; }
+a { color:var(--water); text-decoration-thickness:1px; text-underline-offset:3px; }
+strong { font-weight:600; }
+
+/* panels */
+.panel {
+  background:var(--panel); border:1px solid var(--rule); border-radius:3px;
+  padding:26px; box-shadow:var(--shadow); margin:28px 0;
+}
+.panel-title {
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--dim); margin:0 0 18px;
+}
+.scroll { overflow-x:auto; }
+
+/* tide-table */
+table { width:100%; border-collapse:collapse; font-size:14px; min-width:520px; }
+th {
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--dim); text-align:left; padding:0 14px 9px 0; border-bottom:1px solid var(--rule); font-weight:500;
+}
+th.n, td.n { text-align:right; padding-right:0; }
+td { padding:11px 14px 11px 0; border-bottom:1px solid var(--rule); }
+tr:last-child td { border-bottom:0; }
+tbody tr.hi td { background:linear-gradient(90deg,color-mix(in srgb,var(--good) 10%,transparent),transparent 70%); }
+.tag { font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.08em; padding:3px 7px;
+  border-radius:2px; border:1px solid currentColor; }
+.ok { color:var(--good); } .no { color:var(--bad); } .mid { color:var(--warn); }
+
+/* numbered pipeline */
+.pipe { display:grid; gap:1px; background:var(--rule); border:1px solid var(--rule); margin:30px 0; }
+@media(min-width:820px) { .pipe { grid-template-columns:repeat(4,1fr); } }
+.stage { background:var(--panel); padding:22px; }
+.stage .no { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--water); letter-spacing:.1em; }
+.stage h3 { margin:8px 0 8px; font-size:19px; font-weight:700; }
+.stage p { margin:0; font-size:14.5px; color:var(--dim); line-height:1.55; }
+.stage code { font-size:11.5px; color:var(--dim); display:block; margin-top:12px; }
+
+/* charts */
+svg.chart { display:block; width:100%; height:auto; }
+.tk { font-size:10px; fill:var(--dim); font-family:"IBM Plex Mono",monospace; }
+.legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px;
+  font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--dim); }
+.legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; }
+.timeline { display:flex; gap:2px; }
+.tb { flex:1; height:42px; border-radius:2px; }
+
+/* rules list */
+ol.rules { list-style:none; counter-reset:r -1; padding:0; margin:24px 0 0; }
+ol.rules li { counter-increment:r; display:grid; grid-template-columns:34px 1fr; gap:14px;
+  padding:13px 0; border-bottom:1px solid var(--rule); align-items:baseline; }
+ol.rules li::before { content:counter(r); font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--water); }
+ol.rules b { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; }
+ol.rules span { color:var(--dim); font-size:15px; }
+
+.imp { display:grid; grid-template-columns:130px 1fr 56px; gap:12px; align-items:center; padding:5px 0; font-size:14px; }
+.impt { height:7px; background:color-mix(in srgb,var(--rule) 60%,transparent); border-radius:4px; overflow:hidden; }
+.impt i { display:block; height:100%; background:var(--water); }
+.imp b { font-size:12.5px; color:var(--dim); text-align:right; font-weight:400; }
+
+ul.plain { padding-left:20px; } ul.plain li { margin-bottom:9px; color:var(--dim); }
+ul.plain b { color:var(--ink); }
+pre { background:var(--panel); border:1px solid var(--rule); border-radius:3px; padding:18px;
+  overflow-x:auto; font-size:12.5px; line-height:1.55; margin:22px 0; }
+.cta { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.btn { display:inline-block; padding:12px 20px; border:1px solid var(--water); color:var(--water);
+  border-radius:3px; text-decoration:none; font-family:"IBM Plex Mono",monospace; font-size:13px; }
+.btn.solid { background:var(--water); color:var(--deep); border-color:var(--water); }
+footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
+:focus-visible { outline:2px solid var(--water); outline-offset:3px; }
+@media (prefers-reduced-motion:no-preference) {
+  .hero .wrap > * { animation:rise .7s cubic-bezier(.2,.7,.3,1) backwards; }
+  .hero .eyebrow { animation-delay:.02s } .hero h1 { animation-delay:.08s }
+  .hero .thesis { animation-delay:.16s } .hero .sub { animation-delay:.22s }
+  .hero .soundings { animation-delay:.3s }
+  @keyframes rise { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:none } }
+}
+</style>
+
+<header class="hero">
+  <svg class="contour" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="var(--water)" stroke-width="1" opacity=".22">
+      <path d="M-40 470 C 180 430 300 520 520 490 S 900 400 1240 452"/>
+      <path d="M-40 420 C 200 378 320 470 540 438 S 920 348 1240 400"/>
+      <path d="M-40 372 C 220 328 340 420 560 388 S 940 296 1240 350"/>
+      <path d="M-40 322 C 240 278 360 368 580 336 S 960 246 1240 298"/>
+      <path d="M-40 268 C 260 226 380 314 600 282 S 980 194 1240 246"/>
+      <path d="M-40 212 C 280 172 400 258 620 226 S 1000 140 1240 192"/>
+      <path d="M-40 152 C 300 114 420 198 640 166 S 1020 82 1240 134"/>
+      <path d="M-40 88 C 320 52 440 134 660 102 S 1040 20 1240 72"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <p class="eyebrow">Funafuti, Tuvalu &middot; 8&deg;31&prime;S 179&deg;12&prime;E</p>
+    <h1>AquaGrid</h1>
+    <p class="thesis">An AI that forecasts an island&rsquo;s water demand, schedules desalination against the solar forecast, harvests the rain, and catches failures nobody would notice until they were expensive.</p>
+    <p class="sub">Desalination is the largest electrical load on a small island, and it is usually run on a wall timer set to overnight hours &mdash; a habit inherited from mainland off-peak grid pricing. On a solar island that is exactly backwards. The water tank is a battery nobody schedules.</p>
+    <div class="soundings">
+      <div class="sound"><b style="color:var(--good)">78%</b><span>less diesel than<br>a fixed timer</span></div>
+      <div class="sound"><b>45.3</b><span>L/h forecast error<br>R&sup2; 0.987</span></div>
+      <div class="sound"><b style="color:var(--water)">24%</b><span>of water supplied<br>by rainfall</span></div>
+      <div class="sound"><b style="color:var(--bad)">2 h</b><span>to detect a<br>450 L/h burst</span></div>
+      <div class="sound"><b>0</b><span>servers, and it runs<br>with no signal</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section><div class="wrap"><div class="col">
+  <h2>Predict, decide, explain, detect</h2>
+  <p class="lede">Four stages. Each one feeds the next.</p>
+</div>
+  <div class="pipe">
+    <div class="stage"><span class="no">STAGE 1</span><h3>Predict</h3>
+      <p>A random forest forecasts water demand 48 hours ahead from hour, weekday, temperature and tourist season &mdash; trained on two years of history, tested on the 60 days that came after.</p>
+      <code>ml/train_model.py</code></div>
+    <div class="stage"><span class="no">STAGE 2</span><h3>Decide</h3>
+      <p>Eight rules and a 12-hour lookahead dispatch the pump across solar, battery, rainfall and diesel, holding the reserve floor without wasting fuel.</p>
+      <code>logic/scheduler.js</code></div>
+    <div class="stage"><span class="no">STAGE 3</span><h3>Explain</h3>
+      <p>Every hour carries a plain-language reason. An open-weight model writes the shift briefing, answers the operator&rsquo;s questions, and drafts the public notice.</p>
+      <code>lib/ai.js</code></div>
+    <div class="stage"><span class="no">STAGE 4</span><h3>Detect</h3>
+      <p>Residual analysis against the forecast finds a burst pipe in hours, dirty panels in a day, and fouling membranes six weeks before they cost anything.</p>
+      <code>logic/leak.js &middot; assets.js</code></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="col"><h2>One day, as the scheduler sees it</h2>
+  <p class="lede">Live Open-Meteo forecast &middot; next 24 hours</p></div>
+  <div class="panel">
+    <p class="panel-title">Solar output, predicted demand and rainfall</p>
+    <div class="scroll"><svg class="chart" viewBox="0 0 760 224" role="img" aria-label="Solar output against predicted water demand over 24 hours">
+      <rect x="-7.0" y="0" width="14" height="4.0" rx="2" fill="var(--water)" opacity=".38"/><rect x="26.0" y="0" width="14" height="22.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="59.1" y="0" width="14" height="9.3" rx="2" fill="var(--water)" opacity=".38"/><rect x="92.1" y="0" width="14" height="6.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="125.2" y="0" width="14" height="13.3" rx="2" fill="var(--water)" opacity=".38"/><rect x="158.2" y="0" width="14" height="2.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="191.3" y="0" width="14" height="2.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="224.3" y="0" width="14" height="1.3" rx="2" fill="var(--water)" opacity=".38"/><rect x="290.4" y="0" width="14" height="1.3" rx="2" fill="var(--water)" opacity=".38"/><rect x="323.4" y="0" width="14" height="24.0" rx="2" fill="var(--water)" opacity=".38"/><rect x="356.5" y="0" width="14" height="4.0" rx="2" fill="var(--water)" opacity=".38"/><rect x="389.5" y="0" width="14" height="44.0" rx="2" fill="var(--water)" opacity=".38"/><rect x="422.6" y="0" width="14" height="14.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="455.6" y="0" width="14" height="10.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="686.9" y="0" width="14" height="2.7" rx="2" fill="var(--water)" opacity=".38"/><rect x="720.0" y="0" width="14" height="4.0" rx="2" fill="var(--water)" opacity=".38"/><rect x="753.0" y="0" width="14" height="14.7" rx="2" fill="var(--water)" opacity=".38"/>
+      <path d="M 0,200 L 0.0,200.0 L 33.0,200.0 L 66.1,200.0 L 99.1,200.0 L 132.2,200.0 L 165.2,200.0 L 198.3,200.0 L 231.3,191.7 L 264.3,147.8 L 297.4,97.0 L 330.4,93.6 L 363.5,57.4 L 396.5,78.3 L 429.6,47.0 L 462.6,64.7 L 495.7,51.5 L 528.7,88.0 L 561.7,148.9 L 594.8,186.1 L 627.8,200.0 L 660.9,200.0 L 693.9,200.0 L 727.0,200.0 L 760.0,200.0 L 760,200 Z" fill="var(--solar)" fill-opacity=".2" stroke="var(--solar)" stroke-width="2"/>
+      <polyline points="0.0,172.7 33.0,180.0 66.1,183.8 99.1,184.2 132.2,179.8 165.2,148.3 198.3,73.0 231.3,45.9 264.3,67.3 297.4,100.9 330.4,110.1 363.5,111.5 396.5,106.9 429.6,108.3 462.6,118.8 495.7,118.6 528.7,103.7 561.7,83.0 594.8,30.5 627.8,21.4 660.9,66.5 693.9,110.8 727.0,142.9 760.0,165.9" fill="none" stroke="var(--water)" stroke-width="2"/>
+      <line x1="0" y1="26.1" x2="760" y2="26.1" stroke="var(--ink)" stroke-opacity=".45" stroke-dasharray="5 5"/>
+      <text x="756" y="41.1" class="tk" text-anchor="end">50 kW pump draw</text>
+      <text x="0.0" y="216" class="tk" text-anchor="middle">00</text><text x="132.2" y="216" class="tk" text-anchor="middle">04</text><text x="264.3" y="216" class="tk" text-anchor="middle">08</text><text x="396.5" y="216" class="tk" text-anchor="middle">12</text><text x="528.7" y="216" class="tk" text-anchor="middle">16</text><text x="660.9" y="216" class="tk" text-anchor="middle">20</text>
+    </svg></div>
+    <div class="legend">
+      <span><i style="background:var(--solar)"></i>Solar output</span>
+      <span><i style="background:var(--water)"></i>Predicted demand</span>
+      <span><i style="background:var(--water);opacity:.45"></i>Rainfall</span>
+    </div>
+    <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Solar above the dashed line runs the pump for free. Below it, every pump hour spends either the battery or diesel &mdash; which is the whole decision.</p>
+  </div>
+  <div class="panel">
+    <p class="panel-title">What the pump actually did</p>
+    <div class="timeline"><div class="tb" style="background:var(--bad)" title="00:00"></div><div class="tb" style="background:var(--rule)" title="01:00"></div><div class="tb" style="background:var(--rule)" title="02:00"></div><div class="tb" style="background:var(--rule)" title="03:00"></div><div class="tb" style="background:var(--rule)" title="04:00"></div><div class="tb" style="background:var(--rule)" title="05:00"></div><div class="tb" style="background:var(--rule)" title="06:00"></div><div class="tb" style="background:var(--rule)" title="07:00"></div><div class="tb" style="background:var(--rule)" title="08:00"></div><div class="tb" style="background:var(--warn)" title="09:00"></div><div class="tb" style="background:var(--rule)" title="10:00"></div><div class="tb" style="background:var(--rule)" title="11:00"></div><div class="tb" style="background:var(--rule)" title="12:00"></div><div class="tb" style="background:var(--rule)" title="13:00"></div><div class="tb" style="background:var(--rule)" title="14:00"></div><div class="tb" style="background:var(--rule)" title="15:00"></div><div class="tb" style="background:var(--rule)" title="16:00"></div><div class="tb" style="background:var(--rule)" title="17:00"></div><div class="tb" style="background:var(--rule)" title="18:00"></div><div class="tb" style="background:var(--rule)" title="19:00"></div><div class="tb" style="background:var(--water)" title="20:00"></div><div class="tb" style="background:var(--rule)" title="21:00"></div><div class="tb" style="background:var(--rule)" title="22:00"></div><div class="tb" style="background:var(--rule)" title="23:00"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>Solar</span>
+      <span><i style="background:var(--water)"></i>Stored solar</span>
+      <span><i style="background:var(--warn)"></i>Partial solar</span>
+      <span><i style="background:var(--bad)"></i>Diesel</span>
+      <span><i style="background:var(--rule)"></i>Held</span>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="col"><h2>The result</h2>
+  <p class="lede">48-hour horizon &middot; identical forecast, identical physics &middot; only the rule differs</p></div>
+  <div class="panel">
+    <p class="panel-title">Fuel, cost and carbon</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Strategy</th><th class="n">Diesel</th><th class="n">Cost</th><th class="n">CO&#8322;</th><th class="n">Pump hours</th><th class="n">Shortage</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td><strong>AquaGrid</strong></td><td class="n"><strong>15.3 L</strong></td><td class="n"><strong>$25</strong></td><td class="n"><strong>41 kg</strong></td><td class="n">6</td><td class="n">0 h</td></tr>
+        <tr><td>Fixed timer 01:00&ndash;05:00</td><td class="n">70.0 L</td><td class="n">$112</td><td class="n">188 kg</td><td class="n">8</td><td class="n">0 h</td></tr>
+        <tr><td>Reactive, top up below 80%</td><td class="n">79.2 L</td><td class="n">$127</td><td class="n">212 kg</td><td class="n">11</td><td class="n">0 h</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="col">
+  <p><strong>78% less diesel than the fixed timer these plants run today.</strong> The tank starts at 32% &mdash; the level yesterday&rsquo;s weather actually left it at, replayed through the scheduler &mdash; and never drops below 27% against a 25% reserve floor.</p>
+  </div>
+  <div class="panel">
+    <p class="panel-title">The number that matters more than the percentage</p>
+    <p style="margin-top:-6px">The fuel tank holds <strong>300 L</strong>. The next barge is <strong>12 days</strong> away.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Strategy</th><th class="n">Burn rate</th><th class="n">Fuel lasts</th><th class="n">Outcome</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td><strong>AquaGrid</strong></td><td class="n">8 L/day</td><td class="n"><strong>39 days</strong></td><td class="n"><span class="tag ok">HOLDS</span></td></tr>
+        <tr><td>Fixed timer</td><td class="n">35 L/day</td><td class="n">8.6 days</td><td class="n"><span class="tag no">DRY &minus;3.4 d</span></td></tr>
+        <tr><td>Reactive</td><td class="n">40 L/day</td><td class="n">7.6 days</td><td class="n"><span class="tag no">DRY &minus;4.4 d</span></td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Burning too much diesel and running out of diesel are different failures. The barge does not come early because you ran out.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap"><div class="col">
+  <h2>Eight rules, in strict order</h2>
+  <p class="lede">First match wins &middot; 12-hour lookahead over sun and rain</p>
+  <ol class="rules">
+    <li><b>Storm preparation</b><br><span>Cyclone-force wind within 24 h &rarr; fill to 100% regardless of cost. After landfall the array is down and the barge will not sail.</span></li>
+    <li><b>Emergency</b><br><span>Below the 25% reserve floor &rarr; top up whatever it takes.</span></li>
+    <li><b>Rain hold</b><br><span>More rain than demand forecast in the next six hours &rarr; hold the pump, the tank fills for free.</span></li>
+    <li><b>Free solar</b><br><span>Sun alone clears the full 50 kW pump draw.</span></li>
+    <li><b>Stored solar</b><br><span>Shortfall ahead and the battery can carry the pump &rarr; spend this morning&rsquo;s surplus.</span></li>
+    <li><b>Pre-emptive hybrid</b><br><span>Shortfall ahead with partial sun &rarr; spend a little diesel now to avoid a lot tonight.</span></li>
+    <li><b>Reluctant diesel</b><br><span>Shortfall ahead, no sun, empty battery.</span></li>
+    <li><b>Hold</b><br><span>Reserves healthy &rarr; wait for the sun.</span></li>
+  </ol>
+  <p style="margin-top:26px">Rules 2, 4 and 5 are where the forecast earns its keep &mdash; they are the only ones that act on information the plant does not yet have.</p>
+</div></div></section>
+
+<section><div class="wrap"><div class="col">
+  <h2>Rain is the point</h2>
+  <p class="lede">Tuvalu is rainwater-fed. Desalination is the backup.</p>
+  <p>Any system that ignores the rain forecast is planning against the wrong problem. Precipitation comes from the same Open-Meteo call as the solar forecast, and <code>rain_mm &times; catchment &times; runoff</code> flows straight into the tank balance.</p>
+  <p>Over this horizon, <strong>15.7 mm across 900 m&sup2; of public roof delivered 11.3 m&sup3; &mdash; 24% of all water supplied.</strong> Catchment is sized so rain matters without dominating; raise it and the reserve floor stops binding, and the scheduler has nothing left to decide.</p>
+  <p>A 150 kWh battery carries surplus midday sun into the evening demand peak. Over the horizon 180 kWh went straight from panel to pump, 66 kWh came back out of the battery, and <strong>304 kWh was curtailed</strong> &mdash; sun that arrived with the battery full and the pump already running. That last figure is the honest ceiling on what a bigger battery could buy.</p>
+</div></div></section>
+
+<section><div class="wrap">
+  <div class="col"><h2>One idea, four failures</h2>
+  <p class="lede">Compare what the plant does against what the forecast says it should</p>
+  <p>A threshold alarm sees none of these until they are expensive. A forecast sees all four, because it knows what normal looks like this hour.</p></div>
+  <div class="panel">
+    <div class="scroll"><table>
+      <thead><tr><th>Failure</th><th>Signal</th><th class="n">Caught</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Burst pipe</strong></td><td>Tank falling faster than demand minus supply explains</td><td class="n"><span class="tag no">2 h</span></td></tr>
+        <tr><td><strong>Dirty panels</strong></td><td>Metered array output against irradiance</td><td class="n"><span class="tag mid">13% &middot; 90 kWh</span></td></tr>
+        <tr><td><strong>Fouling membranes</strong></td><td>Specific energy trending up over 90 days</td><td class="n"><span class="tag mid">40 days out</span></td></tr>
+        <tr><td><strong>Fuel exhaustion</strong></td><td>Burn rate against barge lead time</td><td class="n"><span class="tag ok">39 d margin</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="panel">
+    <p class="panel-title">Reverse-osmosis specific energy &middot; 90 days</p>
+    <div class="scroll"><svg class="chart" viewBox="0 0 760 142" role="img" aria-label="RO specific energy trending toward the clean threshold">
+      <line x1="0" y1="1.8" x2="760" y2="1.8" stroke="var(--bad)" stroke-dasharray="5 5" stroke-width="1"/>
+      <line x1="0" y1="117.9" x2="760" y2="117.9" stroke="var(--dim)" stroke-dasharray="2 4" stroke-width="1"/>
+      <polyline points="0.0,117.7 8.5,110.7 17.1,110.4 25.6,117.5 34.2,115.7 42.7,115.9 51.2,109.9 59.8,111.9 68.3,107.3 76.9,118.5 85.4,101.7 93.9,108.5 102.5,104.1 111.0,106.9 119.6,107.1 128.1,102.4 136.6,99.8 145.2,103.7 153.7,102.6 162.2,97.7 170.8,104.1 179.3,106.2 187.9,96.4 196.4,100.5 204.9,105.4 213.5,99.4 222.0,96.9 230.6,99.4 239.1,99.9 247.6,91.9 256.2,87.0 264.7,91.3 273.3,92.8 281.8,86.7 290.3,84.3 298.9,88.1 307.4,83.2 316.0,80.1 324.5,85.0 333.0,87.0 341.6,80.6 350.1,80.2 358.7,75.4 367.2,85.6 375.7,81.8 384.3,81.7 392.8,85.0 401.3,75.4 409.9,72.7 418.4,77.7 427.0,66.9 435.5,68.7 444.0,68.7 452.6,68.8 461.1,65.3 469.7,75.1 478.2,65.1 486.7,64.3 495.3,74.4 503.8,63.7 512.4,65.6 520.9,59.9 529.4,64.7 538.0,61.9 546.5,59.3 555.1,64.1 563.6,56.3 572.1,58.7 580.7,55.0 589.2,58.9 597.8,50.5 606.3,51.8 614.8,54.6 623.4,49.9 631.9,46.2 640.4,42.7 649.0,57.5 657.5,45.3 666.1,46.3 674.6,47.9 683.1,51.3 691.7,40.0 700.2,50.7 708.8,41.4 717.3,37.1 725.8,49.6 734.4,42.7 742.9,46.5 751.5,38.4 760.0,31.6" fill="none" stroke="var(--dim)" stroke-width="1.4" stroke-opacity=".7"/>
+      <polyline points="0.0,118.3 8.5,117.4 17.1,116.5 25.6,115.6 34.2,114.7 42.7,113.8 51.2,112.9 59.8,112.0 68.3,111.1 76.9,110.2 85.4,109.3 93.9,108.4 102.5,107.5 111.0,106.6 119.6,105.7 128.1,104.8 136.6,103.9 145.2,103.0 153.7,102.1 162.2,101.2 170.8,100.3 179.3,99.4 187.9,98.5 196.4,97.6 204.9,96.7 213.5,95.8 222.0,94.9 230.6,94.0 239.1,93.1 247.6,92.2 256.2,91.3 264.7,90.4 273.3,89.5 281.8,88.6 290.3,87.7 298.9,86.8 307.4,85.9 316.0,85.0 324.5,84.1 333.0,83.2 341.6,82.3 350.1,81.4 358.7,80.5 367.2,79.6 375.7,78.7 384.3,77.8 392.8,76.9 401.3,76.0 409.9,75.1 418.4,74.2 427.0,73.3 435.5,72.4 444.0,71.5 452.6,70.6 461.1,69.7 469.7,68.8 478.2,67.9 486.7,67.0 495.3,66.1 503.8,65.2 512.4,64.2 520.9,63.3 529.4,62.4 538.0,61.5 546.5,60.6 555.1,59.7 563.6,58.8 572.1,57.9 580.7,57.0 589.2,56.1 597.8,55.2 606.3,54.3 614.8,53.4 623.4,52.5 631.9,51.6 640.4,50.7 649.0,49.8 657.5,48.9 666.1,48.0 674.6,47.1 683.1,46.2 691.7,45.3 700.2,44.4 708.8,43.5 717.3,42.6 725.8,41.7 734.4,40.8 742.9,39.9 751.5,39.0 760.0,38.1" fill="none" stroke="var(--warn)" stroke-width="2.4"/>
+      <text x="4" y="14.8" class="tk">clean-in-place threshold 9.58 kWh/m&sup3;</text>
+      <text x="4" y="111.9" class="tk">design 8.33</text>
+    </svg></div>
+    <p style="font-size:14px;color:var(--dim);margin:14px 0 0">The pump pushes harder for the same flow as membranes foul. Least-squares on 90 days of daily readings puts the clean-in-place date <strong>40 days out</strong> &mdash; schedule it now, not after it starts costing diesel.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="col"><h2>Any island on Earth</h2>
+  <p class="lede">Because we ship the model, not only its predictions</p>
+  <p>Every feature the forecaster uses is categorical except temperature. So the trained forest is evaluated exhaustively over its entire input grid and exported as a <strong>15,120-cell lookup table</strong> &mdash; 2 seasons &times; 7 days &times; 24 hours &times; 45 temperature buckets.</p>
+  <p>That is the model, not an approximation of it. The only loss is temperature discretised to 0.5&thinsp;&deg;C, costing a mean 5.5 L/h &mdash; 12% of the model&rsquo;s own error. A real forecaster running on the phone, with no ML runtime, no server and no inference API.</p></div>
+  <div class="panel">
+    <p class="panel-title">Same code, live forecasts, four islands</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Island</th><th class="n">Population</th><th class="n">Diesel saved</th><th class="n">Why</th></tr></thead>
+      <tbody>
+        <tr><td>Apia, Samoa</td><td class="n">40,407</td><td class="n" style="color:var(--good)">80%</td><td class="n">abundant sun</td></tr>
+        <tr><td>Mal&eacute;, Maldives</td><td class="n">103,693</td><td class="n" style="color:var(--good)">70%</td><td class="n">equatorial, steady</td></tr>
+        <tr><td>Santorini, Greece</td><td class="n">15,453</td><td class="n" style="color:var(--good)">64%</td><td class="n">strong but seasonal</td></tr>
+        <tr><td>Reykjav&iacute;k, Iceland</td><td class="n">118,918</td><td class="n" style="color:var(--warn)">23%</td><td class="n">barely any sun to schedule</td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Reykjav&iacute;k is the honest answer, not a bug. Where there is little sun there is little for a scheduler to win, and the app says so.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="col"><h2>The model</h2>
+  <p class="lede">Chronological split &mdash; tested on the future, never on shuffled rows</p></div>
+  <div class="panel">
+    <div class="scroll"><table style="min-width:380px">
+      <thead><tr><th>Metric</th><th class="n">Value</th></tr></thead>
+      <tbody>
+        <tr><td>Mean absolute error</td><td class="n"><strong>45.3 L/h</strong></td></tr>
+        <tr><td>Root mean squared error</td><td class="n">57.0 L/h</td></tr>
+        <tr><td>R&sup2;</td><td class="n"><strong>0.987</strong></td></tr>
+        <tr><td>Naive &ldquo;predict the mean&rdquo;</td><td class="n">409.7 L/h</td></tr>
+        <tr class="hi"><td>Improvement over naive</td><td class="n"><strong>89%</strong></td></tr>
+        <tr><td>Train / test rows</td><td class="n">16,080 / 1,440</td></tr>
+      </tbody>
+    </table></div>
+    <p class="panel-title" style="margin:26px 0 14px">Feature importance</p>
+    <div class="imp"><span>Hour of day</span><div class="impt"><i style="width:100.0%"></i></div><b>0.897</b></div>
+<div class="imp"><span>Tourist season</span><div class="impt"><i style="width:3.6%"></i></div><b>0.032</b></div>
+<div class="imp"><span>Weekend</span><div class="impt"><i style="width:3.4%"></i></div><b>0.031</b></div>
+<div class="imp"><span>Day of week</span><div class="impt"><i style="width:3.1%"></i></div><b>0.028</b></div>
+<div class="imp"><span>Temperature</span><div class="impt"><i style="width:1.3%"></i></div><b>0.012</b></div>
+    <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Hour of day dominates, which is exactly what a village water profile should look like: a morning wash peak and an evening cooking peak, every day.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap"><div class="col">
+  <h2>No backend, on purpose</h2>
+  <p class="lede">The app works with zero connectivity</p>
+  <p>Python trains and evaluates the model on a laptop and exports everything the app needs to one JSON file, bundled as a static asset. Scheduling, harvesting, battery dispatch, detection and charting all run on the phone.</p>
+  <p>A laptop-hosted API reached from a phone means LAN addresses, tunnels, CORS and cold starts. Removing the server removes all four &mdash; and leaves an app that keeps working on an island whose uplink is a satellite dish, which is the actual requirement.</p>
+</div>
+<pre>&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;         &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474;  Python (laptop)    &#9474;         &#9474;  Expo app (phone)            &#9474;
+&#9474;  synthetic history  &#9474;         &#9474;  forecast.json (bundled)     &#9474;
+&#9474;         &#8595;           &#9474;         &#9474;         &#8595;                    &#9474;
+&#9474;  RandomForest &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9532;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9658;&#9474;  scheduler.js  (decisions)   &#9474;
+&#9474;         &#8595;           &#9474; writes  &#9474;  leak.js       (burst pipe)  &#9474;
+&#9474;  Open-Meteo         &#9474; JSON    &#9474;  assets.js     (slow decay)  &#9474;
+&#9474;  solar/rain/wind    &#9474;         &#9474;  fuel.js       (barge risk)  &#9474;
+&#9474;         &#8595;           &#9474;         &#9474;  advisory.js   (the village) &#9474;
+&#9474;  forecast.json      &#9474;         &#9474;  Groq LLM (optional)         &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;         &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+</div></section>
+
+<section><div class="wrap"><div class="col">
+  <h2>What we are assuming</h2>
+  <p class="lede">A system you cannot audit is not one to trust with an island&rsquo;s water</p>
+  <ul class="plain">
+    <li><b>Demand history is synthetic.</b> Generated from published domestic-usage profiles, not measured at a real plant. The model genuinely learns those patterns; the patterns are our construction.</li>
+    <li><b>All sensors are simulated</b> &mdash; tank float, array power meter, and the specific-energy log. No hardware is connected.</li>
+    <li><b>Demand patterns are assumed universal.</b> New locations scale the reference village&rsquo;s profile by population. A real deployment would retrain on that island&rsquo;s meter data.</li>
+    <li><b>Plant sizing scales linearly with population</b>, holding specific energy, days of storage and solar-hours-versus-pump-draw constant. That is why savings vary by weather rather than by size.</li>
+    <li><b>Diesel is assumed at $1.60/L</b> delivered. Real island prices move with barge schedules.</li>
+    <li><b>48-hour horizon.</b> The lookahead cannot see past the end of the weather forecast.</li>
+  </ul>
+  <div class="cta">
+    <a class="btn solid" href="https://github.com/sbongula/aquagrid">Source on GitHub</a>
+    <a class="btn" href="https://github.com/sbongula/aquagrid#setup">Run it yourself</a>
+  </div>
+</div></div></section>
+</main>
+
+<footer><div class="wrap"><div class="col">
+  <p>AquaGrid &middot; DreamHacks 2026 &middot; Track 2 &mdash; AI, Automation &amp; Logic.<br>
+  Demand forecast by a random forest trained offline. Scheduling, rainwater harvesting, battery dispatch, leak and asset-health detection all computed on-device. Weather from Open-Meteo. Briefings by an open-weight model on Groq, with a deterministic on-device fallback.</p>
+</div></div></footer>
