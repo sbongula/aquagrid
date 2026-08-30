@@ -11,7 +11,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 | **Srihan** | The architecture | 8–10 | 60 s |
 | **Ednit** | The features | 11–13 | 60 s |
 | **All** | Demo | 14–16 | 60 s |
-| **Gowtham** | The code and the site | 17–19 | 60 s |
+| **Gowtham** | The code and the site | 17–21 | 60 s |
 
 ## Rishik — The problem
 *Slides 2–4 · 60 seconds*
@@ -105,7 +105,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 **Then say:** “Gowtham can show you it's real underneath.”
 
 ## Gowtham — The code and the site
-*Slides 17–19 · 60 seconds*
+*Slides 17–21 · 60 seconds*
 
 - All the decisions come from 755 lines of code, and we can test the whole thing with one command — no phone needed.
 
@@ -113,7 +113,11 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 
 - The weather data is completely free and needs no sign-up.
 
-- Everything's written down — a website and a 35-page handbook explaining every file. The charts on the site are built from the real data, not screenshots, so they can't go out of date.
+- And it's all public — here's the repository. Every line of code, every number we've quoted.
+
+- Here's the website too. The charts on it are built from the real data, not screenshots, so they can't go out of date.
+
+- There's also a 35-page handbook explaining every file.
 
 - And we didn't just claim it saves fuel. We ran three different ways of doing it — ours, the night timer, and fill-when-low — on the same weather, and compared them.
 

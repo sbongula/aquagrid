@@ -117,6 +117,18 @@ table.t tr.hi td{background:rgba(69,192,138,.10);font-weight:700;color:var(--ink
   letter-spacing:.22em;color:var(--water);opacity:.85;margin-bottom:1cqw}
 .repoBox b{display:block;font-family:"IBM Plex Mono",monospace;font-size:3.4cqw;
   color:#8BE3FF;font-weight:600;letter-spacing:-.01em;line-height:1}
+.shotRow{display:grid;grid-template-columns:1.6fr 1fr;gap:1.5cqw;margin:.6cqw 0 0;
+  height:27cqw;align-items:stretch}
+.shotSide{display:grid;grid-template-rows:1fr 1fr;gap:1.5cqw;min-height:0}
+.shot{width:100%;height:100%;min-height:0;display:block;border-radius:5px;
+  border:1px solid var(--rule);box-shadow:0 8px 26px rgba(0,0,0,.45);
+  object-fit:cover;object-position:top left}
+.shotNote{background:var(--panel);border:1px solid var(--rule);border-radius:5px;
+  padding:1.4cqw 1.6cqw;display:flex;flex-direction:column;justify-content:center}
+.shotNote b{display:block;font-size:1.8cqw;margin-bottom:.5cqw}
+.shotNote span{font-size:1.45cqw;color:var(--dim);line-height:1.45}
+.repoBox.tight{margin-top:1.6cqw;padding:1.1cqw 2cqw}
+.repoBox.tight b{font-size:2.7cqw}
 #bar{position:fixed;left:0;bottom:0;height:3px;background:var(--water);transition:width .25s;z-index:9}
 #hint{position:fixed;left:16px;bottom:12px;font-family:"IBM Plex Mono",monospace;
   font-size:11px;color:#3D5866;z-index:9}
@@ -139,13 +151,13 @@ table.t tr.hi td{background:rgba(69,192,138,.10);font-weight:700;color:var(--ink
   &mdash; so the island wastes less fuel and never runs dry.</p>
   <p class="names">Rishik &middot; Neekin &middot; Srihan &middot; Ednit &middot; Gowtham</p>
   <p class="foot2">DreamHacks 2026 &middot; Track 2 &mdash; AI, Automation &amp; Logic</p>
-</div></div><div class="num">1 / 20</div></section>
+</div></div><div class="num">1 / 22</div></section>
 <section class="slide divider" data-i="1"><div class="body"><div class="center div">
   <p class="dnum">01</p>
   <h1 class="dtitle">The problem</h1>
   <p class="dline">Why an island can&rsquo;t just turn on a tap</p>
   <p class="dwho">Rishik</p>
-</div></div><div class="num">2 / 20</div></section>
+</div></div><div class="num">2 / 22</div></section>
 <section class="slide" data-i="2"><div class="badge"><span class="who">Rishik</span><span class="part">The problem</span></div><div class="body"><h2>Small islands have to <em>make</em> their water</h2>
 <div class="two">
   <div><p>Rain fills the tanks. When the rain stops, a machine turns seawater into drinking water.</p>
@@ -159,7 +171,7 @@ table.t tr.hi td{background:rgba(69,192,138,.10);font-weight:700;color:var(--ink
   </div>
 </div>
 <p class="big">The tank is basically a <b>battery for water</b>. You can fill it whenever you like
-&mdash; so you should fill it when power is free.</p></div><div class="num">3 / 20</div></section>
+&mdash; so you should fill it when power is free.</p></div><div class="num">3 / 22</div></section>
 <section class="slide" data-i="3"><div class="badge"><span class="who">Rishik</span><span class="part">The problem</span></div><div class="body"><h2>But nobody chooses. A timer does.</h2>
 <p class="big">Most islands run the machine on a <b>timer set to the middle of the night</b>, because
 that&rsquo;s when electricity is cheap on the mainland.</p>
@@ -168,13 +180,13 @@ exactly when there is <b>no sun</b>.</p>
 <div class="rule"></div>
 <p class="big">This is a real problem. In <b>2011 Tuvalu ran down to a few days of drinking water</b>
 and had to declare a state of emergency.</p>
-<p>Their machine wasn&rsquo;t too small. The problem was that <b>nobody could see what was coming</b>.</p></div><div class="num">4 / 20</div></section>
+<p>Their machine wasn&rsquo;t too small. The problem was that <b>nobody could see what was coming</b>.</p></div><div class="num">4 / 22</div></section>
 <section class="slide divider" data-i="4"><div class="body"><div class="center div">
   <p class="dnum">02</p>
   <h1 class="dtitle">The solution</h1>
   <p class="dline">Teaching it to see what&rsquo;s coming</p>
   <p class="dwho">Neekin</p>
-</div></div><div class="num">5 / 20</div></section>
+</div></div><div class="num">5 / 22</div></section>
 <section class="slide" data-i="5"><div class="badge"><span class="who">Neekin</span><span class="part">The solution</span></div><div class="body"><h2>So we taught it to see what&rsquo;s coming</h2>
 <div class="pipe4">
   <div><span>01</span><b>Predict</b><p>How much water the island will use, 2 days ahead</p></div>
@@ -188,7 +200,7 @@ and had to declare a state of emergency.</p>
   <div class="stat"><b>45<small> litres</small></b><span>how far off it is, per hour &mdash; out of about 940</span></div>
   <div class="stat"><b>0.987</b><span>accuracy score, where 1.0 is perfect</span></div>
   <div class="stat good"><b>89%</b><span>better than just guessing the average</span></div>
-</div></div><div class="num">6 / 20</div></section>
+</div></div><div class="num">6 / 22</div></section>
 <section class="slide" data-i="6"><div class="badge"><span class="who">Neekin</span><span class="part">The solution</span></div><div class="body"><h2>It uses <em>a fifth</em> of the fuel</h2>
 <table class="t">
 <tr><th>How it&rsquo;s run</th><th class="n">Diesel used</th><th class="n">Cost</th><th class="n">Fuel lasts</th><th class="n">Result</th></tr>
@@ -198,13 +210,13 @@ and had to declare a state of emergency.</p>
 </table>
 <p class="big">Here&rsquo;s the part that really matters. The island has <b>300 litres of diesel</b>
 and the boat is <b>12 days away</b>.</p>
-<p class="big">The other two ways <b>run out of fuel before the boat arrives</b>. Ours doesn&rsquo;t.</p></div><div class="num">7 / 20</div></section>
+<p class="big">The other two ways <b>run out of fuel before the boat arrives</b>. Ours doesn&rsquo;t.</p></div><div class="num">7 / 22</div></section>
 <section class="slide divider" data-i="7"><div class="body"><div class="center div">
   <p class="dnum">03</p>
   <h1 class="dtitle">The architecture</h1>
   <p class="dline">All of it, running on a phone</p>
   <p class="dwho">Srihan</p>
-</div></div><div class="num">8 / 20</div></section>
+</div></div><div class="num">8 / 22</div></section>
 <section class="slide" data-i="8"><div class="badge"><span class="who">Srihan</span><span class="part">The architecture</span></div><div class="body"><h2>The whole thing runs on the phone</h2>
 <div class="layers">
   <div><span>THE APP</span><b>React Native</b><p>what you see and tap &mdash; we drew every chart ourselves</p></div>
@@ -214,7 +226,7 @@ and the boat is <b>12 days away</b>.</p>
 </div>
 <p class="big">There is <b>no server anywhere</b>. An app that needs the internet to decide when to
 make water would stop working <b>exactly when an island gets cut off</b> &mdash; which is when you
-need it most.</p></div><div class="num">9 / 20</div></section>
+need it most.</p></div><div class="num">9 / 22</div></section>
 <section class="slide" data-i="9"><div class="badge"><span class="who">Srihan</span><span class="part">The architecture</span></div><div class="body"><h2>We put the whole AI <em>inside</em> the app</h2>
 <p class="mid">Normally an AI lives on a big computer and your phone asks it questions over the
 internet. We did the maths <b>ahead of time</b> for every situation the AI could ever face, and
@@ -227,13 +239,13 @@ packed all the answers into the app.</p>
 <div class="two">
   <div class="box"><b>The RandomForest</b><p>We trained this. It makes <b>every</b> decision.</p></div>
   <div class="box dim"><b>The language model</b><p>Only writes the words. Delete it and <b>every number stays the same</b>.</p></div>
-</div></div><div class="num">10 / 20</div></section>
+</div></div><div class="num">10 / 22</div></section>
 <section class="slide divider" data-i="10"><div class="body"><div class="center div">
   <p class="dnum">04</p>
   <h1 class="dtitle">The features</h1>
   <p class="dline">One real day, and the problems it catches</p>
   <p class="dwho">Ednit</p>
-</div></div><div class="num">11 / 20</div></section>
+</div></div><div class="num">11 / 22</div></section>
 <section class="slide" data-i="11"><div class="badge"><span class="who">Ednit</span><span class="part">The features</span></div><div class="body"><h2>One real day</h2>
 <svg viewBox="0 0 1000 280" class="chart">
   <rect x="-9.0" y="0" width="18" height="4.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="34.5" y="0" width="18" height="23.7" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="78.0" y="0" width="18" height="9.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="121.4" y="0" width="18" height="7.0" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="164.9" y="0" width="18" height="13.9" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="208.4" y="0" width="18" height="2.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="251.9" y="0" width="18" height="2.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="295.3" y="0" width="18" height="1.4" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="382.3" y="0" width="18" height="1.4" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="425.8" y="0" width="18" height="25.1" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="469.3" y="0" width="18" height="4.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="512.7" y="0" width="18" height="46.0" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="556.2" y="0" width="18" height="15.3" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="599.7" y="0" width="18" height="11.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="904.0" y="0" width="18" height="2.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="947.5" y="0" width="18" height="4.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="991.0" y="0" width="18" height="15.3" rx="2" fill="#4CC5E8" opacity=".4"/>
@@ -246,7 +258,7 @@ packed all the answers into the app.</p>
 <div class="tl"><i style="flex:1;height:54px;border-radius:3px;background:#E8685F"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#E8B54C"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#4CC5E8"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i></div>
 <div class="key"><i style="background:#F0A830"></i>Sunshine<i style="background:#4CC5E8"></i>Water being used<i style="background:#45C08A"></i>Ran on sun<i style="background:#E8B54C"></i>Part sun<i style="background:#E8685F"></i>Ran on diesel<i style="background:#1C3542"></i>Waited</div>
 <p class="mid">Orange above the dotted line means the sun alone can run the machine. The strip
-underneath is what it actually chose to do, hour by hour.</p></div><div class="num">12 / 20</div></section>
+underneath is what it actually chose to do, hour by hour.</p></div><div class="num">12 / 22</div></section>
 <section class="slide" data-i="12"><div class="badge"><span class="who">Ednit</span><span class="part">The features</span></div><div class="body"><h2>It also catches problems early</h2>
 <p class="mid">It knows how fast the tank <em>should</em> empty. So when the real tank drops faster
 than that, something is wrong &mdash; and it says so.</p>
@@ -262,13 +274,13 @@ than that, something is wrong &mdash; and it says so.</p>
   so if rain is coming, it waits instead of wasting fuel.</p></div>
   <div><p><b>And it stores sunshine.</b> A battery carries midday sun into the evening, when everyone
   gets home and uses the most water.</p></div>
-</div></div><div class="num">13 / 20</div></section>
+</div></div><div class="num">13 / 22</div></section>
 <section class="slide divider" data-i="13"><div class="body"><div class="center div">
   <p class="dnum">05</p>
   <h1 class="dtitle">The demo</h1>
   <p class="dline">Let&rsquo;s actually show you</p>
   <p class="dwho">Everyone</p>
-</div></div><div class="num">14 / 20</div></section>
+</div></div><div class="num">14 / 22</div></section>
 <section class="slide" data-i="14"><div class="badge"><span class="who">All</span><span class="part">Demo</span></div><div class="body"><h2 class="demo">Let&rsquo;s show you</h2>
 <div class="beats">
   <div><span>1</span>What it&rsquo;s doing right now &mdash; and <b>why</b>, in a full sentence</div>
@@ -276,7 +288,7 @@ than that, something is wrong &mdash; and it says so.</p>
   <div><span>3</span>How much fuel it saves</div>
   <div><span>4</span><b>Press &ldquo;burst pipe&rdquo;</b> &mdash; watch the alarm appear</div>
 </div>
-<p class="big">Nobody would have spotted that leak for hours. The app found it in two.</p></div><div class="num">15 / 20</div></section>
+<p class="big">Nobody would have spotted that leak for hours. The app found it in two.</p></div><div class="num">15 / 22</div></section>
 <section class="slide" data-i="15"><div class="badge"><span class="who">All</span><span class="part">Demo</span></div><div class="body"><h2 class="demo">And then</h2>
 <div class="beats">
   <div><span>5</span><b>Press &ldquo;cyclone&rdquo;</b> &mdash; it stops saving fuel and fills the tank</div>
@@ -284,13 +296,13 @@ than that, something is wrong &mdash; and it says so.</p>
   <div><span>7</span>Ask it a question. Then ask &ldquo;why?&rdquo;</div>
   <div><span>8</span><b>Turn on aeroplane mode</b> &mdash; everything still works</div>
 </div>
-<p class="big">Because on a real island, the internet is the first thing to go.</p></div><div class="num">16 / 20</div></section>
+<p class="big">Because on a real island, the internet is the first thing to go.</p></div><div class="num">16 / 22</div></section>
 <section class="slide divider" data-i="16"><div class="body"><div class="center div">
   <p class="dnum">06</p>
   <h1 class="dtitle">Code &amp; website</h1>
   <p class="dline">How it&rsquo;s built, and how to check us</p>
   <p class="dwho">Gowtham</p>
-</div></div><div class="num">17 / 20</div></section>
+</div></div><div class="num">17 / 22</div></section>
 <section class="slide" data-i="17"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>How it&rsquo;s built</h2>
 <div class="cols3">
   <div class="stat"><b>755</b><span>lines of code make all the decisions</span></div>
@@ -303,7 +315,7 @@ than that, something is wrong &mdash; and it says so.</p>
   <div><span>lib/</span><b>Talks to the world</b><p>weather, location, the language model</p></div>
   <div><span>components/</span><b>Draws the screen</b><p>18 pieces, every chart hand-drawn</p></div>
 </div>
-<div class="repoBox"><span class="repoLabel">SEE EVERYTHING &mdash; CODE, DATA, WORKINGS</span><b>github.com/sbongula/aquagrid</b></div></div><div class="num">18 / 20</div></section>
+<div class="repoBox"><span class="repoLabel">SEE EVERYTHING &mdash; CODE, DATA, WORKINGS</span><b>github.com/sbongula/aquagrid</b></div></div><div class="num">18 / 22</div></section>
 <section class="slide" data-i="18"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>Everything is written down</h2>
 <div class="cols3">
   <div class="stat"><b>Website</b><span>the charts are made from real data, not screenshots</span></div>
@@ -312,8 +324,29 @@ than that, something is wrong &mdash; and it says so.</p>
 </div>
 <p class="big">We didn&rsquo;t just say it saves fuel. <b>We ran three different ways of doing it</b>
 &mdash; ours, the night timer, and fill-when-low &mdash; on the same weather, and compared them.</p>
-<div class="repoBox"><span class="repoLabel">CHECK OUR NUMBERS YOURSELF</span><b>github.com/sbongula/aquagrid</b></div></div><div class="num">19 / 20</div></section>
-<section class="slide" data-i="19"><div class="body"><div class="center">
+<div class="repoBox"><span class="repoLabel">CHECK OUR NUMBERS YOURSELF</span><b>github.com/sbongula/aquagrid</b></div></div><div class="num">19 / 22</div></section>
+<section class="slide" data-i="19"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>It&rsquo;s all public &mdash; go and check</h2>
+<div class="shotRow">
+  <img class="shot big" src="shots/repo-home.jpg" alt="The AquaGrid repository on GitHub">
+  <div class="shotSide">
+    <img class="shot" src="shots/repo-ml.jpg" alt="The ml folder">
+    <img class="shot" src="shots/repo-app.jpg" alt="The app folder">
+  </div>
+</div>
+<div class="repoBox tight"><span class="repoLabel">EVERY LINE, EVERY NUMBER</span>
+<b>github.com/sbongula/aquagrid</b></div></div><div class="num">20 / 22</div></section>
+<section class="slide" data-i="20"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>And a website that explains all of it</h2>
+<div class="shotRow">
+  <img class="shot big" src="shots/website.jpg" alt="The AquaGrid website">
+  <div class="shotSide">
+    <img class="shot" src="shots/repo-docs.jpg" alt="The docs folder">
+    <div class="shotNote"><b>Charts built from real data</b><span>not screenshots &mdash; so they
+    can&rsquo;t go out of date</span></div>
+  </div>
+</div>
+<div class="repoBox tight"><span class="repoLabel">READ IT YOURSELF</span>
+<b>sbongula.github.io/aquagrid</b></div></div><div class="num">21 / 22</div></section>
+<section class="slide" data-i="21"><div class="body"><div class="center">
   <img class="mark sm" src="../icon.png" alt="">
   <h2 class="thin">Every number here is one we measured.</h2>
   <p class="tag">We tested the AI on days it had never seen. We gave the leak detector a real leak
@@ -321,7 +354,7 @@ than that, something is wrong &mdash; and it says so.</p>
   &mdash; it only saved 23%. We left that in, because a smaller honest number is worth more than a
   big one we can&rsquo;t back up.</p>
   <p class="links">github.com/sbongula/aquagrid<br>sbongula.github.io/aquagrid</p>
-</div></div><div class="num">20 / 20</div></section>
+</div></div><div class="num">22 / 22</div></section>
 </div>
 <div id="bar"></div>
 <div id="hint">← → or space · F fullscreen</div>
