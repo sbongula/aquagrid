@@ -7,7 +7,9 @@
  * that never resolves.
  */
 
-import { GROQ_API_KEY, GROQ_MODEL } from '../config';
+import { GROQ_API_KEY, GROQ_MODEL, GROQ_MODEL_FALLBACK, GROQ_MODEL_LABEL } from '../config';
+
+export const MODEL_LABEL = GROQ_MODEL_LABEL;
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const TIMEOUT_MS = 6000;
@@ -71,20 +73,37 @@ export function templateBriefing(ctx, smart, index) {
   );
 }
 
-async function callGroq(messages) {
+async function callModel(model, messages) {
   const res = await fetch(GROQ_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${GROQ_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ model: GROQ_MODEL, messages, temperature: 0.3, max_tokens: 220 }),
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.3,
+      // gpt-oss is a reasoning model: without a low effort cap it spends the
+      // whole token budget thinking and returns empty content.
+      reasoning_effort: 'low',
+      max_tokens: 400,
+    }),
   });
   if (!res.ok) throw new Error(`Groq ${res.status}`);
   const json = await res.json();
   const text = json?.choices?.[0]?.message?.content?.trim();
   if (!text) throw new Error('Groq returned no content');
   return text;
+}
+
+/** Primary open-weight model, with a second model as backup before we give up. */
+async function callGroq(messages) {
+  try {
+    return await callModel(GROQ_MODEL, messages);
+  } catch {
+    return await callModel(GROQ_MODEL_FALLBACK, messages);
+  }
 }
 
 function withTimeout(promise, ms = TIMEOUT_MS) {

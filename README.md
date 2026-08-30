@@ -137,9 +137,9 @@ Prints all three strategies, the savings percentage, and the leak-detection resu
 The operator briefing has two paths, and the app labels which one produced the text:
 
 - **On-device template** — deterministic, instant, works in airplane mode. This is the primary path and it is always available.
-- **Groq (Llama 3.3 70B)** — if a key is present, the live call is raced against a 6-second timeout and upgrades the briefing in place. Any error, timeout, or missing key falls silently back to the template.
+- **Groq (`openai/gpt-oss-120b`, open-weight)** — if a key is present, the live call is raced against a 6-second timeout and upgrades the briefing in place. Any error, timeout, or missing key falls silently back to the template.
 
-Groq was chosen because it serves **open-weight** models on a free tier with no credit card. The **Ask the operator** panel offers three preset questions so the scheduler can be interrogated in one tap.
+Groq was chosen because it serves **open-weight** models on a free tier with no credit card — no proprietary model is in the loop. `gpt-oss-120b` is a reasoning model, so the call caps `reasoning_effort` at `low`; without that it spends the entire token budget thinking and returns empty content. Measured round trip: **~620 ms**. A second model (`groq/compound-mini`) is tried before falling back to the template. The **Ask the operator** panel offers three preset questions so the scheduler can be interrogated in one tap.
 
 **The key lives client-side.** There is no backend to hide it behind, which is the deliberate trade for an app that works offline. `src/config.js` is gitignored and no key is committed. For anything beyond a demo this belongs behind a proxy.
 

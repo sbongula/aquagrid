@@ -1,6 +1,7 @@
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import Card from './Card';
 import { theme } from '../theme';
+import { MODEL_LABEL } from '../lib/ai';
 
 export default function BriefingCard({ text, loading, live }) {
   return (
@@ -8,7 +9,7 @@ export default function BriefingCard({ text, loading, live }) {
       title="OPERATOR BRIEFING"
       right={
         <Text style={[styles.badge, { color: live ? theme.good : theme.textDim }]}>
-          {live ? 'AI · Llama 3.3 70B' : 'on-device'}
+          {live ? `AI · ${MODEL_LABEL}` : 'on-device'}
         </Text>
       }>
       {loading ? (

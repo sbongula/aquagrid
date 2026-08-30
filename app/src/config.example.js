@@ -2,4 +2,7 @@
 // config.js is gitignored. The key lives client-side by design - this is a
 // demo with no backend, and the README says so explicitly.
 export const GROQ_API_KEY = '';
-export const GROQ_MODEL = 'llama-3.3-70b-versatile';
+// Open-weight. Verified live on the free tier; llama-3.3-70b is decommissioned.
+export const GROQ_MODEL = 'openai/gpt-oss-120b';
+export const GROQ_MODEL_FALLBACK = 'groq/compound-mini';
+export const GROQ_MODEL_LABEL = 'GPT-OSS 120B';
