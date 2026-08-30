@@ -21,7 +21,7 @@ export default function AdvisoryCard({ text, live, windows, rationing }) {
       {windows.length > 0 && (
         <View style={styles.windows}>
           {windows.map((w) => (
-            <View key={w.from} style={styles.chip}>
+            <View key={`${w.startIdx}-${w.from}`} style={styles.chip}>
               <Text style={styles.chipTime}>{w.from}–{w.to}</Text>
               <Text style={styles.chipMeta}>{(w.litres / 1000).toFixed(0)} m³ free</Text>
             </View>

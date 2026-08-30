@@ -22,6 +22,8 @@ pre code{background:none;padding:0;font-size:inherit}
 
 /* cover */
 .cover{height:247mm;display:flex;flex-direction:column;justify-content:space-between;page-break-after:always}
+.brand{display:flex;align-items:center;gap:14mm}
+.brandmark{width:34mm;height:34mm;border-radius:22%;flex-shrink:0}
 .cover h1{font-size:52pt;line-height:.95;margin:0;font-weight:800;letter-spacing:-.03em}
 .cover .sub{font-size:14pt;line-height:1.4;margin:18px 0 0;max-width:130mm}
 .cover .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:8.5pt;letter-spacing:.18em;
@@ -77,7 +79,7 @@ tr.hi td{background:#EAF5F0}
 <div class="cover">
   <div class="top">
     <p class="eyebrow">Team Handbook &middot; v1</p>
-    <h1>AquaGrid</h1>
+    <div class="brand"><img class="brandmark" src="icon.png" alt=""><h1>AquaGrid</h1></div>
     <p class="sub">How every part of the system works, what each file is responsible for, and the things you must not &ldquo;fix&rdquo;.</p>
   </div>
   <div>
@@ -106,6 +108,7 @@ tr.hi td{background:#EAF5F0}
   <div><span class="n">02a</span><span class="t">Every feature, and what it does</span><span class="d">fourteen, with the code for each</span></div>
   <div><span class="n">02b</span><span class="t">The layered architecture</span><span class="d">where the cuts are and why</span></div>
   <div><span class="n">02c</span><span class="t">The two AI systems</span><span class="d">stack, versions, component inventory</span></div>
+  <div><span class="n">02d</span><span class="t">APIs and data sources</span><span class="d">every endpoint, and what needs a key</span></div>
   <div><span class="n">03</span><span class="t">Repository map</span><span class="d">every file, one line each</span></div>
   <div><span class="n">04</span><span class="t">The data contract &mdash; forecast.json</span><span class="d">the only interface between Python and the app</span></div>
   <div><span class="n">05</span><span class="t">The ML pipeline</span><span class="d">generate_data.py, train_model.py</span></div>
@@ -190,7 +193,7 @@ Do not run <code>npx expo prebuild</code> or <code>eas build</code>. Expo Go onl
 &#9474; forecast.json     &#9474;          &#9474; Groq LLM      optional    &#9474;
 &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;          &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</div>
 
-<p>Python trains and evaluates the model on a laptop and exports everything the app needs into one JSON file. The app bundles that file as a static asset. Scheduling, rainwater harvesting, battery dispatch, leak and asset detection, and all charting run in JavaScript on the device.</p>
+<p>The laptop trains; the phone does everything else.</p><p>Python runs once, to generate the history, train the forest and export it. After that the laptop is not in the loop: it is not needed at runtime, not needed to change island, and not needed for fresh weather. The phone fetches its own forecast, runs the model, schedules the pump, detects the failures and draws the charts.</p><p>What ships in `forecast.json` is therefore two different things: the model — a 15,120-cell lookup table that works anywhere — and a seed forecast for the bundled island, so the app has something to show before it ever reaches the network.</p><p>The app bundles the export as a static asset. Scheduling, rainwater harvesting, battery dispatch, leak and asset detection, and all charting run in JavaScript on the device.</p>
 
 <h3>Why this and not a server</h3>
 <p>A laptop-hosted API reached from a phone means LAN addresses, ngrok tunnels, CORS and cold starts. Those are the four most common ways a demo dies. Removing the server removes all four.</p>
@@ -384,6 +387,62 @@ No backend, database, auth, navigation library, charting library, state-manageme
 <tr><td><code>components/</code> &times; 18</td><td class="n">1,421</td><td>UI, SVG charts, all presentational</td></tr>
 </table>
 <p>About <strong>2,800 lines of JavaScript and 470 of Python.</strong> The decision layer &mdash; everything the project actually claims &mdash; is 755 lines with no dependencies beyond the language.</p>
+</section>
+
+<section>
+<h2><span class="num">02d</span>APIs and data sources</h2>
+<p class="lede">Three network APIs, two device APIs. Two of the three need no key at all.</p>
+<h3>Open-Meteo Forecast <span style="font-family:'IBM Plex Mono',monospace;font-size:8pt;color:var(--water);letter-spacing:.1em;font-weight:400">NETWORK</span></h3>
+<pre><code>https://api.open-meteo.com/v1/forecast</code></pre>
+<dl class="kv">
+<dt>auth</dt><dd>None — no API key, no account</dd>
+<dt>params</dt><dd><code style="font-size:8pt">latitude, longitude, hourly=shortwave_radiation,temperature_2m,cloud_cover,precipitation,wind_speed_10m, past_days=1, forecast_days=3, timezone=auto</code></dd>
+<dt>returns</dt><dd>Hourly arrays of shortwave radiation (W/m²), temperature (°C), cloud cover (%), precipitation (mm) and wind speed (km/h).</dd>
+<dt>feeds</dt><dd>Solar output (radiation × panel area × efficiency), the demand model&#x27;s temperature feature, rainwater harvest, and the cyclone check.</dd>
+<dt>code</dt><dd><code>ml/train_model.py at build time; app/src/lib/geo.js at runtime</code></dd>
+</dl>
+<div class="callout note"><span class="tag">Note</span>timezone=auto is load-bearing. Funafuti is UTC+12, so UTC timestamps would put peak solar at local midnight and invert every pump decision. past_days=1 supplies the warm-up window used to derive the starting tank level.</div>
+<h3>Open-Meteo Geocoding <span style="font-family:'IBM Plex Mono',monospace;font-size:8pt;color:var(--water);letter-spacing:.1em;font-weight:400">NETWORK</span></h3>
+<pre><code>https://geocoding-api.open-meteo.com/v1/search</code></pre>
+<dl class="kv">
+<dt>auth</dt><dd>None — no API key, no account</dd>
+<dt>params</dt><dd><code style="font-size:8pt">name, count=8, language=en, format=json</code></dd>
+<dt>returns</dt><dd>Candidate places with name, country, admin region, latitude, longitude, population and timezone.</dd>
+<dt>feeds</dt><dd>Turns a typed island name into coordinates for the forecast call, and a population for plant sizing.</dd>
+<dt>code</dt><dd><code>app/src/lib/geo.js — searchPlaces()</code></dd>
+</dl>
+<div class="callout note"><span class="tag">Note</span>Matches settlement names only, so &quot;Malé Maldives&quot; returns nothing on a literal query. We retry on the first token and prefer results whose country or region matches the rest. Population is missing for many small settlements; 3,000 is assumed and labelled as an estimate.</div>
+<h3>Groq Chat Completions <span style="font-family:'IBM Plex Mono',monospace;font-size:8pt;color:var(--water);letter-spacing:.1em;font-weight:400">NETWORK · OPTIONAL</span></h3>
+<pre><code>https://api.groq.com/openai/v1/chat/completions</code></pre>
+<dl class="kv">
+<dt>auth</dt><dd>Bearer token, free tier, no credit card</dd>
+<dt>params</dt><dd><code style="font-size:8pt">model=openai/gpt-oss-120b (fallback groq/compound-mini), reasoning_effort=low, max_tokens=400, temperature=0.3</code></dd>
+<dt>returns</dt><dd>The operator briefing, answers to the preset questions, and the public water notice.</dd>
+<dt>feeds</dt><dd>Narration only. It decides nothing — remove it and every number in the app is unchanged.</dd>
+<dt>code</dt><dd><code>app/src/lib/ai.js</code></dd>
+</dl>
+<div class="callout note"><span class="tag">Note</span>OpenAI-compatible shape. gpt-oss is a reasoning model: without reasoning_effort=low it spends the whole token budget thinking and returns empty content. Raced against a 6-second timeout; any failure falls back to a deterministic on-device template. Measured round trip ~500-620 ms.</div>
+<h3>expo-location <span style="font-family:'IBM Plex Mono',monospace;font-size:8pt;color:var(--water);letter-spacing:.1em;font-weight:400">DEVICE</span></h3>
+<pre><code>requestForegroundPermissionsAsync · getCurrentPositionAsync · reverseGeocodeAsync</code></pre>
+<dl class="kv">
+<dt>auth</dt><dd>Foreground permission prompt</dd>
+<dt>params</dt><dd><code style="font-size:8pt">accuracy=Balanced, 12-second timeout</code></dd>
+<dt>returns</dt><dd>Device latitude and longitude, and a nearby place name.</dd>
+<dt>feeds</dt><dd>The &#x27;Use my current location&#x27; button. The name is resolved back through geocoding so the plant is sized against a real population rather than bare coordinates.</dd>
+<dt>code</dt><dd><code>app/src/lib/geo.js — currentPlace()</code></dd>
+</dl>
+<div class="callout note"><span class="tag">Note</span>A refused permission is a normal outcome, not an error — the picker says so and search by name still works.</div>
+<h3>AsyncStorage <span style="font-family:'IBM Plex Mono',monospace;font-size:8pt;color:var(--water);letter-spacing:.1em;font-weight:400">DEVICE</span></h3>
+<pre><code>@react-native-async-storage/async-storage</code></pre>
+<dl class="kv">
+<dt>auth</dt><dd>None</dd>
+<dt>params</dt><dd><code style="font-size:8pt">Up to 8 cached locations, newest first</code></dd>
+<dt>returns</dt><dd>Previously fetched forecasts and the last island viewed.</dd>
+<dt>feeds</dt><dd>Restores the operator&#x27;s island on launch and keeps every island already visited working with no signal.</dd>
+<dt>code</dt><dd><code>app/src/lib/store.js</code></dd>
+</dl>
+<div class="callout note"><span class="tag">Note</span>A full or unavailable store never breaks the app — the bundled island always works and everything recomputes from it.</div>
+<p>Nothing else talks to the network. No weather key, no maps SDK, no analytics, no crash reporter, no backend of our own.</p>
 </section>
 
 <section>

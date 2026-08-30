@@ -1,4 +1,5 @@
 <title>AquaGrid</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -41,6 +42,9 @@ code,.mono,td.n,th.n,.tk,.big,.sound b { font-family:"IBM Plex Mono",ui-monospac
   font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.18em;
   text-transform:uppercase; color:var(--water); margin:0 0 22px;
 }
+.brand { display:flex; align-items:center; gap:18px; }
+.brandmark { width:clamp(48px,7vw,76px); height:auto; border-radius:22%;
+  box-shadow:0 2px 10px rgba(0,0,0,.18); flex-shrink:0; }
 h1 { font-size:clamp(42px,7vw,78px); line-height:.96; margin:0; font-weight:800; letter-spacing:-.03em; }
 .thesis { font-size:clamp(19px,2.3vw,23px); line-height:1.5; color:var(--ink); max-width:640px; margin:26px 0 0; }
 .sub { color:var(--dim); max-width:620px; margin:16px 0 0; font-size:16px; }
@@ -93,6 +97,22 @@ tbody tr.hi td { background:linear-gradient(90deg,color-mix(in srgb,var(--good) 
 .stage h3 { margin:8px 0 8px; font-size:19px; font-weight:700; }
 .stage p { margin:0; font-size:14.5px; color:var(--dim); line-height:1.55; }
 .stage code { font-size:11.5px; color:var(--dim); display:block; margin-top:12px; }
+
+/* apis */
+.apis{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:8px 0 0}
+@media(min-width:820px){.apis{grid-template-columns:repeat(2,1fr)}}
+.api{background:var(--panel);padding:20px}
+.api-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.api h4{font-family:"Bricolage Grotesque",sans-serif;font-size:16px;margin:0;font-weight:700}
+.api-kind{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.12em;color:var(--water);white-space:nowrap}
+.api-url{display:block;font-size:11.5px;color:var(--ink);background:var(--deep);border:1px solid var(--rule);
+  border-radius:3px;padding:8px 10px;margin:10px 0 8px;overflow-x:auto;white-space:nowrap}
+.api-auth{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--good);margin:0 0 10px}
+.api-line{font-size:13.5px;color:var(--dim);margin:0 0 7px;line-height:1.5}
+.api-line b{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--water);font-weight:500;margin-right:6px}
+.api-note{font-size:12.5px;margin:10px 0 0;padding-top:9px;border-top:1px solid var(--rule);
+  color:var(--dim);line-height:1.5;font-style:italic}
 
 /* prior art */
 .prior{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:8px 0 0}
@@ -173,7 +193,7 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
   </svg>
   <div class="wrap">
     <p class="eyebrow">Point it at any island on Earth</p>
-    <h1>AquaGrid</h1>
+    <div class="brand"><img class="brandmark" src="icon.png" alt="" width="72" height="72"><h1>AquaGrid</h1></div>
     <p class="thesis">An AI that forecasts an island&rsquo;s water demand, schedules desalination against the solar forecast, harvests the rain, and catches failures nobody would notice until they were expensive.</p>
     <p class="sub">Desalination is the largest electrical load on a small island, and it is usually run on a wall timer set to overnight hours &mdash; a habit inherited from mainland off-peak grid pricing. On a solar island that is exactly backwards. The water tank is a battery nobody schedules.</p>
     <p class="sub" style="margin-top:14px"><strong style="color:var(--ink)">The island is a parameter, not a constant.</strong> Search any place by name and AquaGrid fetches its real weather, forecasts its demand on-device, sizes a plant to its population and re-runs everything. The figures below are one worked example &mdash; <a href="#anywhere">Funafuti, Tuvalu</a> &mdash; and every one of them moves when you change the island.</p>
@@ -508,6 +528,81 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
 <div class="imp"><span>Temperature</span><div class="impt"><i style="width:1.3%"></i></div><b>0.012</b></div>
     <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Hour of day dominates, which is exactly what a village water profile should look like: a morning wash peak and an evening cooking peak, every day.</p>
   </div>
+</div></section>
+
+<section id="stack"><div class="wrap">
+  <div class="col"><h2>How it is built</h2>
+  <p class="lede">The laptop trains once &middot; the phone does everything else</p>
+  <p>The laptop trains; the phone does everything else.</p><p>Python runs once, to generate the history, train the forest and export it. After that the laptop is not in the loop: it is not needed at runtime, not needed to change island, and not needed for fresh weather. The phone fetches its own forecast, runs the model, schedules the pump, detects the failures and draws the charts.</p><p>What ships in `forecast.json` is therefore two different things: the model — a 15,120-cell lookup table that works anywhere — and a seed forecast for the bundled island, so the app has something to show before it ever reaches the network.</p></div>
+
+  <div class="col" style="margin-top:34px"><h2 style="font-size:clamp(22px,2.8vw,28px)">Technology stack</h2></div>
+  <div class="panel"><div class="scroll"><table>
+    <thead><tr><th>Layer</th><th>Technology</th><th class="n">Version</th><th>Why this one</th></tr></thead>
+    <tbody>
+<tr><td>ML</td><td><strong>scikit-learn</strong></td><td class="n">1.9.0</td><td>RandomForest is interpretable, gives feature importances, needs no GPU</td></tr>
+<tr><td></td><td><strong>pandas / numpy</strong></td><td class="n">3.0.5 / 2.5.2</td><td>Feature frames and the synthetic history</td></tr>
+<tr><td></td><td><strong>Python</strong></td><td class="n">3.14.4</td><td></td></tr>
+<tr><td>App</td><td><strong>Expo SDK</strong></td><td class="n">57.0.18</td><td>Runs on a real phone with no native build or signing</td></tr>
+<tr><td></td><td><strong>React Native</strong></td><td class="n">0.86.3</td><td></td></tr>
+<tr><td></td><td><strong>React</strong></td><td class="n">19.2.3</td><td></td></tr>
+<tr><td></td><td><strong>react-native-svg</strong></td><td class="n">15.15.4</td><td>The only native module for charts — all hand-drawn</td></tr>
+<tr><td></td><td><strong>expo-location</strong></td><td class="n">57.0.14</td><td>GPS for “use my current location”</td></tr>
+<tr><td></td><td><strong>AsyncStorage</strong></td><td class="n">2.2.0</td><td>Offline cache of visited islands</td></tr>
+<tr><td></td><td><strong>Node</strong></td><td class="n">25.6.1</td><td>Also runs the logic tests directly, via ESM auto-detection</td></tr>
+<tr><td>Services</td><td><strong>Open-Meteo Forecast</strong></td><td class="n">—</td><td>Solar, temperature, rain, wind. No key</td></tr>
+<tr><td></td><td><strong>Open-Meteo Geocoding</strong></td><td class="n">—</td><td>Name → coordinates + population. No key</td></tr>
+<tr><td></td><td><strong>Groq</strong></td><td class="n">—</td><td>Open-weight LLM, free tier, ~500 ms. Optional</td></tr>
+<tr><td>Hosting</td><td><strong>GitHub Pages</strong></td><td class="n">—</td><td>This site. The app itself has no host</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:13.5px;color:var(--dim);margin:16px 0 0;font-style:italic">Deliberately absent: no backend, database, auth, navigation library, charting library, state-management library or CSS framework. Each is a dependency that can break at hour four, and none earn their place.</p>
+  </div>
+
+  <div class="col" style="margin-top:34px"><h2 style="font-size:clamp(22px,2.8vw,28px)">APIs and data sources</h2>
+  <p class="lede" style="margin-bottom:20px">Three network APIs, two device APIs &middot; two of the three need no key at all</p></div>
+  <div class="apis">
+    <div class="api">
+      <div class="api-head"><h4>Open-Meteo Forecast</h4><span class="api-kind">NETWORK</span></div>
+      <code class="api-url">https://api.open-meteo.com/v1/forecast</code>
+      <p class="api-auth">None — no API key, no account</p>
+      <p class="api-line"><b>Returns</b> Hourly arrays of shortwave radiation (W/m²), temperature (°C), cloud cover (%), precipitation (mm) and wind speed (km/h).</p>
+      <p class="api-line"><b>Feeds</b> Solar output (radiation × panel area × efficiency), the demand model&#x27;s temperature feature, rainwater harvest, and the cyclone check.</p>
+      <p class="api-note">timezone=auto is load-bearing. Funafuti is UTC+12, so UTC timestamps would put peak solar at local midnight and invert every pump decision. past_days=1 supplies the warm-up window used to derive the starting tank level.</p>
+    </div>
+    <div class="api">
+      <div class="api-head"><h4>Open-Meteo Geocoding</h4><span class="api-kind">NETWORK</span></div>
+      <code class="api-url">https://geocoding-api.open-meteo.com/v1/search</code>
+      <p class="api-auth">None — no API key, no account</p>
+      <p class="api-line"><b>Returns</b> Candidate places with name, country, admin region, latitude, longitude, population and timezone.</p>
+      <p class="api-line"><b>Feeds</b> Turns a typed island name into coordinates for the forecast call, and a population for plant sizing.</p>
+      <p class="api-note">Matches settlement names only, so &quot;Malé Maldives&quot; returns nothing on a literal query. We retry on the first token and prefer results whose country or region matches the rest. Population is missing for many small settlements; 3,000 is assumed and labelled as an estimate.</p>
+    </div>
+    <div class="api">
+      <div class="api-head"><h4>Groq Chat Completions</h4><span class="api-kind">NETWORK · OPTIONAL</span></div>
+      <code class="api-url">https://api.groq.com/openai/v1/chat/completions</code>
+      <p class="api-auth">Bearer token, free tier, no credit card</p>
+      <p class="api-line"><b>Returns</b> The operator briefing, answers to the preset questions, and the public water notice.</p>
+      <p class="api-line"><b>Feeds</b> Narration only. It decides nothing — remove it and every number in the app is unchanged.</p>
+      <p class="api-note">OpenAI-compatible shape. gpt-oss is a reasoning model: without reasoning_effort=low it spends the whole token budget thinking and returns empty content. Raced against a 6-second timeout; any failure falls back to a deterministic on-device template. Measured round trip ~500-620 ms.</p>
+    </div>
+    <div class="api">
+      <div class="api-head"><h4>expo-location</h4><span class="api-kind">DEVICE</span></div>
+      <code class="api-url">requestForegroundPermissionsAsync · getCurrentPositionAsync · reverseGeocodeAsync</code>
+      <p class="api-auth">Foreground permission prompt</p>
+      <p class="api-line"><b>Returns</b> Device latitude and longitude, and a nearby place name.</p>
+      <p class="api-line"><b>Feeds</b> The &#x27;Use my current location&#x27; button. The name is resolved back through geocoding so the plant is sized against a real population rather than bare coordinates.</p>
+      <p class="api-note">A refused permission is a normal outcome, not an error — the picker says so and search by name still works.</p>
+    </div>
+    <div class="api">
+      <div class="api-head"><h4>AsyncStorage</h4><span class="api-kind">DEVICE</span></div>
+      <code class="api-url">@react-native-async-storage/async-storage</code>
+      <p class="api-auth">None</p>
+      <p class="api-line"><b>Returns</b> Previously fetched forecasts and the last island viewed.</p>
+      <p class="api-line"><b>Feeds</b> Restores the operator&#x27;s island on launch and keeps every island already visited working with no signal.</p>
+      <p class="api-note">A full or unavailable store never breaks the app — the bundled island always works and everything recomputes from it.</p>
+    </div>
+  </div>
+  <div class="col" style="margin-top:24px"><p>Nothing else talks to the network. No weather key, no maps SDK, no analytics, no crash reporter, and no backend of our own.</p></div>
 </div></section>
 
 <section><div class="wrap"><div class="col">

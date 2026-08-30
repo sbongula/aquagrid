@@ -11,6 +11,15 @@ import { GROQ_API_KEY, GROQ_MODEL, GROQ_MODEL_FALLBACK, GROQ_MODEL_LABEL } from 
 
 export const MODEL_LABEL = GROQ_MODEL_LABEL;
 
+/**
+ * Whether an API key is configured at all.
+ *
+ * Distinct from whether any given call succeeded: a briefing can fall back to
+ * the template because the network was slow, which says nothing about the key.
+ * Conflating the two made the Ask panel claim "no key" on a working install.
+ */
+export const HAS_KEY = Boolean(GROQ_API_KEY);
+
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const TIMEOUT_MS = 6000;
 

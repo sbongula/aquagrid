@@ -225,7 +225,13 @@ Fourteen features across five roles: **predict** the demand, **decide** the sche
 
 ## System architecture
 
-Four layers. Everything above the dotted line runs once on a laptop; everything below runs on the phone, every time you open the app.
+**The laptop trains; the phone does everything else.**
+
+Python runs **once**, to generate the history, train the forest and export it. After that the laptop is not in the loop: it is not needed at runtime, not needed to change island, and not needed for fresh weather. The phone fetches its own forecast, runs the model, schedules the pump, detects the failures and draws the charts.
+
+What ships in `forecast.json` is therefore two different things: the **model** — a 15,120-cell lookup table that works anywhere — and a **seed forecast** for the bundled island, so the app has something to show before it ever reaches the network.
+
+Four layers. Everything above the dotted line runs once, at build time; everything below runs on the phone, every time you open the app.
 
 ```
                     ┌──────────────────────────────────────────────┐
@@ -281,6 +287,92 @@ The model is trained and evaluated in Python; its predictions are exported to a 
 This is deliberate. A laptop-hosted API reached from a phone means LAN addresses, tunnels, CORS and cold starts — the four most common ways a demo dies. Removing the server removes all four.
 
 More importantly it is the *correct* design for the problem. **The app works with zero connectivity** — precisely the situation on an isolated island, and the only honest design for an operator whose uplink is a satellite dish. "Trained offline, inference on-device" is also how most production mobile ML actually ships.
+
+## APIs and data sources
+
+Three network APIs and two device APIs. **Two of the three network APIs need no key or account at all**, and the third is optional.
+
+### Open-Meteo Forecast
+*NETWORK · None — no API key, no account*
+
+```
+https://api.open-meteo.com/v1/forecast
+```
+**Parameters** `latitude, longitude, hourly=shortwave_radiation,temperature_2m,cloud_cover,precipitation,wind_speed_10m, past_days=1, forecast_days=3, timezone=auto`
+
+**Returns.** Hourly arrays of shortwave radiation (W/m²), temperature (°C), cloud cover (%), precipitation (mm) and wind speed (km/h).
+
+**Feeds.** Solar output (radiation × panel area × efficiency), the demand model's temperature feature, rainwater harvest, and the cyclone check.
+
+**Note.** timezone=auto is load-bearing. Funafuti is UTC+12, so UTC timestamps would put peak solar at local midnight and invert every pump decision. past_days=1 supplies the warm-up window used to derive the starting tank level.
+
+*Code:* `ml/train_model.py at build time; app/src/lib/geo.js at runtime`
+
+### Open-Meteo Geocoding
+*NETWORK · None — no API key, no account*
+
+```
+https://geocoding-api.open-meteo.com/v1/search
+```
+**Parameters** `name, count=8, language=en, format=json`
+
+**Returns.** Candidate places with name, country, admin region, latitude, longitude, population and timezone.
+
+**Feeds.** Turns a typed island name into coordinates for the forecast call, and a population for plant sizing.
+
+**Note.** Matches settlement names only, so "Malé Maldives" returns nothing on a literal query. We retry on the first token and prefer results whose country or region matches the rest. Population is missing for many small settlements; 3,000 is assumed and labelled as an estimate.
+
+*Code:* `app/src/lib/geo.js — searchPlaces()`
+
+### Groq Chat Completions
+*NETWORK · OPTIONAL · Bearer token, free tier, no credit card*
+
+```
+https://api.groq.com/openai/v1/chat/completions
+```
+**Parameters** `model=openai/gpt-oss-120b (fallback groq/compound-mini), reasoning_effort=low, max_tokens=400, temperature=0.3`
+
+**Returns.** The operator briefing, answers to the preset questions, and the public water notice.
+
+**Feeds.** Narration only. It decides nothing — remove it and every number in the app is unchanged.
+
+**Note.** OpenAI-compatible shape. gpt-oss is a reasoning model: without reasoning_effort=low it spends the whole token budget thinking and returns empty content. Raced against a 6-second timeout; any failure falls back to a deterministic on-device template. Measured round trip ~500-620 ms.
+
+*Code:* `app/src/lib/ai.js`
+
+### expo-location
+*DEVICE · Foreground permission prompt*
+
+```
+requestForegroundPermissionsAsync · getCurrentPositionAsync · reverseGeocodeAsync
+```
+**Parameters** `accuracy=Balanced, 12-second timeout`
+
+**Returns.** Device latitude and longitude, and a nearby place name.
+
+**Feeds.** The 'Use my current location' button. The name is resolved back through geocoding so the plant is sized against a real population rather than bare coordinates.
+
+**Note.** A refused permission is a normal outcome, not an error — the picker says so and search by name still works.
+
+*Code:* `app/src/lib/geo.js — currentPlace()`
+
+### AsyncStorage
+*DEVICE · None*
+
+```
+@react-native-async-storage/async-storage
+```
+**Parameters** `Up to 8 cached locations, newest first`
+
+**Returns.** Previously fetched forecasts and the last island viewed.
+
+**Feeds.** Restores the operator's island on launch and keeps every island already visited working with no signal.
+
+**Note.** A full or unavailable store never breaks the app — the bundled island always works and everything recomputes from it.
+
+*Code:* `app/src/lib/store.js`
+
+Nothing else talks to the network. No weather key, no maps SDK, no analytics, no crash reporter, no backend of our own.
 
 ## The two AI systems
 

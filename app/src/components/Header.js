@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useTheme, useStyles, useThemeMode } from '../theme';
 
 export default function Header({ island, weatherSource, generatedAt, live: isLive, freshness, describeAge }) {
@@ -23,7 +23,10 @@ export default function Header({ island, weatherSource, generatedAt, live: isLiv
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
-        <Text style={styles.brand}>AquaGrid</Text>
+        <View style={styles.brandRow}>
+          <Image source={require('../../assets/icon.png')} style={styles.mark} />
+          <Text style={styles.brand}>AquaGrid</Text>
+        </View>
         <View style={styles.headRight}>
           <View style={[styles.pill, { borderColor: pillColor }]}>
             <View style={[styles.dot, { backgroundColor: pillColor }]} />
@@ -55,6 +58,8 @@ export default function Header({ island, weatherSource, generatedAt, live: isLiv
 const makeStyles = (theme) => StyleSheet.create({
   wrap: { paddingHorizontal: theme.pad, paddingTop: 8, paddingBottom: 16 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  mark: { width: 34, height: 34, borderRadius: 8 },
   brand: { color: theme.text, fontSize: 30, fontWeight: '800', letterSpacing: -0.5 },
   headRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   themeBtn: {

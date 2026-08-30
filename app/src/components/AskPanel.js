@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import Card from './Card';
 import { useTheme, useStyles } from '../theme';
+import { HAS_KEY, MODEL_LABEL } from '../lib/ai';
 
 /**
  * Preset questions rather than a text input: a judge can interrogate the
@@ -13,7 +14,7 @@ const PRESETS = [
   { chip: 'Is the tank safe?', q: 'Is the water supply safe right now? How close are we to the reserve floor?' },
 ];
 
-export default function AskPanel({ ctx, ask, live }) {
+export default function AskPanel({ ctx, ask }) {
   const styles = useStyles(makeStyles);
   const theme = useTheme();
   const [busy, setBusy] = useState(false);
@@ -34,8 +35,8 @@ export default function AskPanel({ ctx, ask, live }) {
   return (
     <Card
       title="ASK THE OPERATOR"
-      right={<Text style={[styles.badge, { color: live ? theme.good : theme.textDim }]}>
-        {live ? 'live' : 'no key'}
+      right={<Text style={[styles.badge, { color: HAS_KEY ? theme.good : theme.textDim }]}>
+        {HAS_KEY ? MODEL_LABEL : 'no key'}
       </Text>}>
       <View style={styles.chips}>
         {PRESETS.map((p) => (

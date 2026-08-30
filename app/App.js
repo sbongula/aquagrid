@@ -213,7 +213,7 @@ function Dashboard() {
         <TankGauge step={step} plant={plant} hoursOfSupply={hoursOfSupply} />
         <DecisionCard step={step} />
         <BriefingCard text={briefing.text} live={briefing.live} loading={false} />
-        <AskPanel ctx={ctx} ask={askOperator} live={briefing.live} />
+        <AskPanel ctx={ctx} ask={askOperator} />
 
         <SolarDemandChart steps={smart.steps} plant={plant} />
         <PumpTimeline steps={smart.steps} />
