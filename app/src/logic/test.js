@@ -38,6 +38,21 @@ console.log(`\nNo-leak run  -> alert=${clean.alert}`);
 console.log(`Burst at h14 -> alert=${burst.alert} idx=${burst.startedAtIndex} rate=${burst.estimatedRateLph} L/h conf=${burst.confidence?.toFixed(2)}`);
 console.log(burst.message);
 
-const ok = smart.totals.shortageHours === 0 && !clean.alert && burst.alert && burst.startedAtIndex <= 17 && saved > 0;
+// The exported lookup table must reproduce the Python model it came from.
+const { predictDemandLph } = await import('./demand.js');
+const tableErr = hourly.map((h) => {
+  const d = new Date(h.time);
+  return Math.abs(
+    predictDemandLph(f.demand_model, {
+      hour: d.getHours(), dayOfWeek: (d.getDay() + 6) % 7,
+      month: d.getMonth() + 1, tempC: h.temp_c, population: 1200,
+    }) - h.predicted_demand_lph,
+  );
+});
+const meanTableErr = tableErr.reduce((a, b) => a + b, 0) / tableErr.length;
+console.log(`\nDemand table vs Python model: mean |err| ${meanTableErr.toFixed(2)} L/h ` +
+  `(model's own MAE is ${f.model.mae_lph} L/h)`);
+
+const ok = smart.totals.shortageHours === 0 && meanTableErr < f.model.mae_lph / 4 && !clean.alert && burst.alert && burst.startedAtIndex <= 17 && saved > 0;
 console.log(`\n${ok ? 'PASS' : 'FAIL'} — definition of done checks`);
 process.exit(ok ? 0 : 1);

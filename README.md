@@ -23,6 +23,8 @@ Four things make this an AI system rather than a dashboard:
 | **Explain** | Every decision carries a plain-language reason, and an LLM writes the shift briefing and answers the operator's questions. | `app/src/lib/ai.js` |
 | **Detect** | Residual analysis against the forecast flags leaks from the pattern of the loss, not from a level threshold. | `app/src/logic/leak.js` |
 
+Point it at **any island on Earth** — see [Any location](#any-location) below.
+
 ## Architecture — and why there is no backend
 
 ```
@@ -42,6 +44,28 @@ Four things make this an AI system rather than a dashboard:
 The model is trained and evaluated in Python; its predictions are exported to a single JSON file that the app bundles as a static asset. All scheduling, leak detection and charting run in JavaScript on-device.
 
 This is deliberate. **The app works with zero connectivity** — which is precisely the situation on an isolated island, and the only honest design for an operator whose uplink is a satellite dish. "Trained offline, inference on-device" is also how most production mobile ML actually ships.
+
+## Any location
+
+The app is not hardcoded to one island. Search any place by name and it will fetch that location's real solar and temperature forecast, predict its water demand, size a plant for its population, and re-run the whole schedule.
+
+That works because **we ship the model, not only its predictions.** Every feature the forecaster uses is categorical — hour, day of week, weekend, tourist season — except temperature, which is a single continuous variable. So `train_model.py` evaluates the trained forest exhaustively over its entire input grid and exports the result as a **15,120-cell lookup table** (2 seasons × 7 days × 24 hours × 45 temperature buckets, ~300 KB).
+
+This is the model, not an approximation of it. The only loss is temperature discretised to 0.5 °C, which costs a **mean 5.5 L/h** — 12% of the model's own 45.3 L/h error, and 0.6% of typical demand. `node src/logic/test.js` asserts that gap stays below a quarter of the model MAE.
+
+The result is a real forecaster running on the phone with no ML runtime, no server, and no inference API.
+
+| | |
+|---|---|
+| Location search | Open-Meteo geocoding — free, no key |
+| Weather | Open-Meteo forecast with `timezone=auto` |
+| Demand | Lookup table, scaled linearly by population |
+| Plant sizing | Tank, pump, output and panel area all scale with population off the reference plant |
+| Offline | Falls back to the island bundled at build time, which needs no network at all |
+
+Plant sizing scales everything together, which keeps the ratios that actually drive decisions constant — specific energy per m³, days of storage, and how many hours a day solar clears the pump draw. So the scheduler faces the same *shape* of decision on a village of 1,200 as on a city of 130,000, and **only the weather genuinely differs between locations.** That is an assumption, and it is why savings vary by island rather than by size.
+
+Malé, Maldives (pop. 103,693) resolves to a 5,184,650 L tank, a 4,320 kW pump and 27,651 m² of panels — an 86× scale-up computed at runtime on the phone.
 
 ## Model performance
 
@@ -153,12 +177,15 @@ Stated plainly, because a system you cannot audit is not one you should trust wi
 - **Diesel price is assumed** at $1.60/L delivered. Real island prices vary widely with barge schedules.
 - **The solar forecast is real but the array is modelled** — 320 m² at 19% efficiency, converted from Open-Meteo shortwave radiation. No inverter losses, soiling, or temperature derating.
 - **48-hour horizon.** The lookahead cannot see past the end of the weather forecast.
+- **Demand patterns are assumed universal.** Picking a new location scales the reference village's usage profile by population. A real deployment would retrain on that island's own meter data; the morning and evening peaks are not the same everywhere.
+- **Population comes from the geocoder** and is missing for many small settlements, in which case 3,000 is assumed and the app labels the figure as an estimate.
 
 ## Repository
 
 ```
 ml/                    RandomForest pipeline — synthetic history, training, forecast export
-app/src/logic/         scheduler, baselines, leak detection (pure JS, node-testable)
+app/src/logic/         scheduler, baselines, leak detection, on-device demand model (pure JS, node-testable)
+app/src/lib/geo.js     location search + live weather for any island
 app/src/components/    9 UI components, charts hand-drawn in react-native-svg
 app/src/lib/ai.js      Groq briefing with on-device fallback
 app/assets/forecast.json   the single interface between Python and the app
