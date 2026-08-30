@@ -44,19 +44,21 @@ Every number below is one the app computes. Saying the specific figure is what m
 **Hand off:** “The interesting part is that this runs on a phone. Srihan.”
 
 ## Srihan — The architecture
-*Slides 9–11 · 60 seconds*
+*Slides 6–7 · 60 seconds*
 
-- Four layers. Python trains — once. One JSON file is the contract. Pure JavaScript decides. React Native presents.
+- It all runs on the phone. The app is React Native — one screen, eighteen components, charts hand-drawn in SVG because a charting library is one more thing that can break.
 
-- After training the laptop is out of the loop: not needed at runtime, not to change island, not for fresh weather. The phone fetches its own forecast.
+- The brain is a RandomForest, trained offline in scikit-learn and **bundled inside the app**. There is no server call to make a prediction.
 
-- The key move: we ship the model, not just its predictions. Every feature is categorical except temperature, so we evaluate the forest over its entire input grid and export a 15,120-cell table. That's the model, not an approximation — the only loss is temperature rounded to half a degree, 5.5 litres against its own 45.
+- The phone fetches its own weather from Open-Meteo — solar, temperature, rain and wind — with no API key. And Groq serves an open-weight model, GPT-OSS 120B, that writes the briefing and answers questions. That one is optional.
 
-- 72 predictions in 0.011 milliseconds. Full recompute, 0.15.
+- The trick that makes it work on-device: every feature is categorical except temperature, so we evaluate the trained forest over its entire input grid and carry the whole thing as a 15,120-cell table. That is the model, not a sample of it — the only loss is temperature rounded to half a degree, 5.5 litres against its own 45.
 
-- And no backend, deliberately — an app that needs a server to run a pump fails exactly when an island is cut off.
+- 72 predictions in 0.011 milliseconds. So it forecasts for islands the laptop never saw, with no ML runtime and no signal.
 
-- Two AI systems: the forest makes every decision, the language model makes none. Remove it and no number changes.
+- And there is no backend, deliberately — an app that needs a server to decide whether to run a pump fails exactly when an island is cut off.
+
+- Two AI systems, and only one decides: the forest makes every call, the language model makes none. Remove it and no number changes.
 
 **Hand off:** “Ednit will show you what it actually does.”
 
