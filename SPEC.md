@@ -179,7 +179,7 @@ The single interface between Python and the app. Everything the app renders come
   "plant": {
     "tank_capacity_l": 60000,        // ~2.2 days of demand. Deliberately tight.
     "initial_tank_l": 36000,         // 60% full at t=0
-    "desal_pump_kw": 42.0,           // electrical draw when running
+    "desal_pump_kw": 50.0,           // electrical draw when running
     "desal_output_lph": 6000,        // litres produced per hour running
     "diesel_l_per_kwh": 0.28,        // generator fuel burn
     "reserve_floor_pct": 25,         // never plan to go below this
@@ -252,7 +252,7 @@ Returns:
 
 **Derived constants:**
 ```js
-const pumpKw   = plant.desal_pump_kw;                              // 42
+const pumpKw   = plant.desal_pump_kw;                              // 50
 const outLph   = plant.desal_output_lph;                           // 6000
 const cap      = plant.tank_capacity_l;                            // 60000
 const floorL   = cap * plant.reserve_floor_pct / 100;              // 15000
@@ -436,7 +436,7 @@ Component order down the screen:
 | 2 | `TankGauge` | Tank % as a large fill bar with tick marks at the 25% floor and 92% target. Litres, and "hours of supply remaining" from the forecast. |
 | 3 | `DecisionCard` | The current hour, large: **PUMPING — ON SOLAR** / **HOLDING**, colour-coded by `source`, with `step.reason` underneath. This is the single most important element on screen. |
 | 4 | `BriefingCard` | LLM operator briefing (Section D). |
-| 5 | `SolarDemandChart` | Next 24h: solar kW as a filled area, predicted demand as a line, a dashed horizontal rule at the 42 kW pump-draw threshold. That rule is what makes the whole strategy legible at a glance. |
+| 5 | `SolarDemandChart` | Next 24h: solar kW as a filled area, predicted demand as a line, a dashed horizontal rule at the 50 kW pump-draw threshold. That rule is what makes the whole strategy legible at a glance. |
 | 6 | `PumpTimeline` | 24 bars, one per hour, coloured `good`/`warn`/`bad`/`border` for solar/hybrid/diesel/off. Tap a bar → that hour's `reason`. |
 | 7 | `SavingsCard` | AquaGrid vs fixed timer: diesel litres, USD, kg CO₂, with the % saved as the hero number. |
 | 8 | `LeakPanel` | Green "No anomalies detected" or a red alert card with rate, start time, total lost, confidence. Below it: a **"Simulate burst pipe"** button. |

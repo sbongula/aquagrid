@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-30T15:18:56+00:00",
+  "generated_at": "2026-08-30T15:22:39+00:00",
   "island": {
     "name": "Funafuti, Tuvalu",
     "lat": -8.52,
@@ -10,7 +10,7 @@
   "plant": {
     "tank_capacity_l": 60000,
     "initial_tank_l": 36000,
-    "desal_pump_kw": 42.0,
+    "desal_pump_kw": 50.0,
     "desal_output_lph": 6000,
     "diesel_l_per_kwh": 0.28,
     "reserve_floor_pct": 25,

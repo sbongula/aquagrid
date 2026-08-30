@@ -188,9 +188,10 @@ def build_forecast(model, weather, metrics, curve, source):
         }])[FEATURES]
 
         # 320 m^2 of panels at 19% efficiency -> kW available to the plant.
-        # Sized deliberately so peak output (~55 kW) only clears the 42 kW pump
-        # draw for a few midday hours. If the array is oversized the scheduler
-        # has no decision to make and the demo is boring.
+        # Sized deliberately against the 50 kW pump draw so peak output (~52 kW)
+        # clears it for only 2-3 midday hours. If the array is oversized -- or the
+        # pump draw lowered -- every hour becomes a solar hour, the reserve floor
+        # never binds, and the lookahead rules have nothing to decide.
         solar_kw = round(w["radiation_wm2"] * 320 * 0.19 / 1000.0, 2)
 
         rows.append({
@@ -212,7 +213,7 @@ def build_forecast(model, weather, metrics, curve, source):
         "plant": {
             "tank_capacity_l": 60000,
             "initial_tank_l": 36000,
-            "desal_pump_kw": 42.0,
+            "desal_pump_kw": 50.0,
             "desal_output_lph": 6000,
             "diesel_l_per_kwh": 0.28,
             "reserve_floor_pct": 25,
