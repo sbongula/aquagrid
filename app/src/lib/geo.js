@@ -12,6 +12,7 @@
 
 import { predictDemandLph } from '../logic/demand.js';
 import { scalePlant } from '../logic/plant.js';
+import * as Location from 'expo-location';
 
 const GEO_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const WX_URL = 'https://api.open-meteo.com/v1/forecast';
@@ -85,6 +86,65 @@ export async function searchPlaces(query) {
   } catch {
     return [];
   }
+}
+
+/**
+ * Refresh the bundled island's weather without changing location.
+ *
+ * forecast.json ships with whatever the sun was doing when train_model.py last
+ * ran. Online, we replace that with the current forecast for the same
+ * coordinates; offline, the bundled data stands and the app is unchanged.
+ * Returns null on any failure - the caller keeps what it had.
+ */
+export async function refreshBundled(forecast) {
+  try {
+    const place = {
+      id: 'bundled',
+      name: forecast.island.name.split(',')[0],
+      country: (forecast.island.name.split(',')[1] || '').trim(),
+      lat: forecast.island.lat,
+      lon: forecast.island.lon,
+      population: forecast.island.population,
+    };
+    const fresh = await buildLocationForecast(place, forecast.plant, forecast.demand_model);
+    // Keep the island's own name and its hand-set plant, only take the weather.
+    return { ...fresh, island: forecast.island, plant: forecast.plant };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Where the phone actually is. Expo Go grants this after a permission prompt;
+ * a refusal is a normal outcome, not an error.
+ */
+export async function currentPlace() {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') throw new Error('permission denied');
+
+  const pos = await withTimeout(
+    Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
+    12000,
+  );
+  const { latitude: lat, longitude: lon } = pos.coords;
+
+  // Name it from the nearest known settlement, so the header does not just
+  // show coordinates. Population feeds the plant sizing.
+  let named = null;
+  try {
+    const [rev] = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lon });
+    if (rev?.city || rev?.subregion) {
+      const hits = await searchPlaces(rev.city || rev.subregion);
+      named = hits.find((h) => Math.abs(h.lat - lat) < 1 && Math.abs(h.lon - lon) < 1) || hits[0];
+    }
+  } catch {
+    // Reverse geocoding is a nicety; coordinates alone are enough to proceed.
+  }
+
+  return named
+    ? { ...named, lat, lon }
+    : { id: 'gps', name: 'Current position', country: '',
+        lat, lon, population: null, admin: '' };
 }
 
 /**

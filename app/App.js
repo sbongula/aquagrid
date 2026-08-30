@@ -12,7 +12,8 @@ import { freeSolarWindows, rationingOutlook, templateAdvisory } from './src/logi
 import {
   buildContext, getBriefing, templateBriefing, askOperator, getAdvisory,
 } from './src/lib/ai';
-import { searchPlaces, buildLocationForecast } from './src/lib/geo';
+import { searchPlaces, buildLocationForecast, refreshBundled, currentPlace } from './src/lib/geo';
+import { saveLocation, loadLastLocation, clearLocation, describeAge } from './src/lib/store';
 
 import Header from './src/components/Header';
 import LocationPicker from './src/components/LocationPicker';
@@ -46,6 +47,46 @@ export default function App() {
 
   // null = the island bundled at build time, which needs no network at all.
   const [custom, setCustom] = useState(null);
+  // Where the currently-shown weather came from, so the UI can be honest about
+  // its age rather than implying everything is live.
+  const [freshness, setFreshness] = useState({ kind: 'bundled', at: null });
+
+  // On launch: restore the island the operator was last looking at from the
+  // offline cache, then try to refresh its weather. Both steps are optional -
+  // failure at either leaves the bundled island showing, which always works.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const remembered = await loadLastLocation();
+      if (!cancelled && remembered) {
+        setCustom(remembered.forecast);
+        setFreshness({ kind: 'cached', at: remembered.cachedAt });
+      }
+
+      const target = remembered?.place ?? null;
+      const fresh = target
+        ? await buildLocationForecast(target, forecast.plant, forecast.demand_model).catch(() => null)
+        : await refreshBundled(forecast);
+
+      if (cancelled || !fresh) return;
+      if (target) {
+        setCustom(fresh);
+        saveLocation(target, fresh);
+      } else {
+        setCustom(fresh);
+      }
+      setFreshness({ kind: 'live', at: new Date().toISOString() });
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const selectPlace = async (place) => {
+    const fc = await buildLocationForecast(place, forecast.plant, demandModel);
+    setCustom(fc);
+    setFreshness({ kind: 'live', at: new Date().toISOString() });
+    saveLocation(place, fc);
+    return fc;
+  };
 
   const active = custom || forecast;
   const { hourly, island, weather_source: weatherSource } = active;
@@ -147,15 +188,19 @@ export default function App() {
         <Header
           island={island}
           weatherSource={weatherSource}
-          generatedAt={custom ? custom.fetched_at : forecast.generated_at}
-          live={custom !== null}
+          generatedAt={freshness.at || (custom ? custom.fetched_at : forecast.generated_at)}
+          live={freshness.kind === 'live'}
+          freshness={freshness}
+          describeAge={describeAge}
         />
         <LocationPicker
           island={island}
           isCustom={custom !== null}
           search={searchPlaces}
-          onReset={() => setCustom(null)}
-          onSelect={async (place) => setCustom(await buildLocationForecast(place, forecast.plant, demandModel))}
+          onReset={() => { setCustom(null); setFreshness({ kind: 'bundled', at: null }); clearLocation(); }}
+          onSelect={selectPlace}
+          onUseGps={async () => selectPlace(await currentPlace())}
+          freshness={freshness}
         />
 
         {step.stormComing && <StormBanner step={step} windKmh={SIMULATED_CYCLONE_KMH} />}

@@ -4,6 +4,7 @@ import {
   StyleSheet, Keyboard, TouchableWithoutFeedback,
 } from 'react-native';
 import { theme } from '../theme';
+import { listCached, describeAge } from '../lib/store';
 
 /**
  * Point the plant at any island on Earth.
@@ -13,13 +14,39 @@ import { theme } from '../theme';
  * on-device. If the network is unavailable the app stays on the island bundled
  * at build time and says so.
  */
-export default function LocationPicker({ island, onSelect, onReset, isCustom, search }) {
+export default function LocationPicker({ island, onSelect, onReset, isCustom, search, onUseGps, freshness }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
+  const [recents, setRecents] = useState([]);
+  const [gpsBusy, setGpsBusy] = useState(false);
+
+  // Islands already held offline. Shown when the search box is empty, so the
+  // picker is useful with no signal at all.
+  useEffect(() => {
+    if (open) listCached().then(setRecents);
+  }, [open]);
+
+  const useGps = async () => {
+    setGpsBusy(true);
+    setError(null);
+    try {
+      await onUseGps();
+      setOpen(false);
+      setQuery('');
+    } catch (e) {
+      setError(
+        String(e?.message).includes('permission')
+          ? 'Location permission denied. Search by name instead.'
+          : 'Could not get a GPS fix. Search by name instead.',
+      );
+    } finally {
+      setGpsBusy(false);
+    }
+  };
 
   useEffect(() => {
     if (!open || query.trim().length < 2) {
@@ -105,6 +132,15 @@ export default function LocationPicker({ island, onSelect, onReset, isCustom, se
               returnKeyType="search"
             />
 
+            <Pressable
+              onPress={useGps}
+              disabled={gpsBusy}
+              style={({ pressed }) => [styles.gps, { opacity: pressed || gpsBusy ? 0.6 : 1 }]}>
+              {gpsBusy
+                ? <ActivityIndicator color={theme.water} />
+                : <Text style={styles.gpsText}>◎  Use my current location</Text>}
+            </Pressable>
+
             {searching && (
               <View style={styles.row}>
                 <ActivityIndicator color={theme.water} />
@@ -114,6 +150,23 @@ export default function LocationPicker({ island, onSelect, onReset, isCustom, se
             {error && <Text style={styles.err}>{error}</Text>}
 
             <ScrollView style={styles.results} keyboardShouldPersistTaps="handled">
+              {!query.trim() && recents.length > 0 && (
+                <>
+                  <Text style={styles.groupLabel}>AVAILABLE OFFLINE</Text>
+                  {recents.map((r) => (
+                    <Pressable
+                      key={`c-${r.place.lat},${r.place.lon}`}
+                      onPress={() => pick(r.place)}
+                      style={({ pressed }) => [styles.result, { opacity: pressed ? 0.55 : 1 }]}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.rName}>{r.forecast.island.name}</Text>
+                        <Text style={styles.rMeta}>cached {describeAge(r.cachedAt)}</Text>
+                      </View>
+                      <Text style={styles.offlineDot}>●</Text>
+                    </Pressable>
+                  ))}
+                </>
+              )}
               {results.map((p) => (
                 <Pressable
                   key={p.id}
@@ -157,6 +210,16 @@ const styles = StyleSheet.create({
   label: { color: theme.textDim, fontSize: 10, fontWeight: '700', letterSpacing: 1.2 },
   name: { color: theme.text, fontSize: 17, fontWeight: '700', marginTop: 4 },
   meta: { color: theme.textDim, fontSize: 11, marginTop: 2 },
+  gps: {
+    borderWidth: 1, borderColor: theme.water, borderRadius: 10,
+    paddingVertical: 12, alignItems: 'center', marginTop: 12,
+  },
+  gpsText: { color: theme.water, fontSize: 14, fontWeight: '700' },
+  groupLabel: {
+    color: theme.textDim, fontSize: 9, fontWeight: '700', letterSpacing: 1.2,
+    marginTop: 14, marginBottom: 4,
+  },
+  offlineDot: { color: theme.good, fontSize: 10 },
   btn: {
     borderWidth: 1, borderColor: theme.water, borderRadius: 9,
     paddingHorizontal: 14, paddingVertical: 8,

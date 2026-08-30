@@ -7,11 +7,14 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "AquaGrid uses your location to point the desalination plant at the island you are standing on."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#07131B",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -22,8 +25,17 @@
     },
     "backgroundColor": "#0B1220",
     "splash": {
-      "backgroundColor": "#0B1220",
-      "resizeMode": "contain"
-    }
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#07131B"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "AquaGrid uses your location to point the desalination plant at the island you are standing on."
+        }
+      ]
+    ]
   }
 }
