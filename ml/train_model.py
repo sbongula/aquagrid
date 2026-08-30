@@ -39,6 +39,26 @@ HISTORY_CSV = "water_history.csv"
 OUT_PATH = os.path.join("..", "app", "assets", "forecast.json")
 HORIZON_HOURS = 48
 
+# Reference plant, sized for the reference island. Every other location scales
+# linearly off this, so the pump/array/tank ratios - and therefore the decisions
+# the scheduler has to make - stay comparable wherever you point the app.
+REFERENCE_POPULATION = 1200
+PLANT = {
+    "tank_capacity_l": 60000,
+    "initial_tank_l": 36000,
+    "desal_pump_kw": 50.0,
+    "desal_output_lph": 6000,
+    "diesel_l_per_kwh": 0.28,
+    "reserve_floor_pct": 25,
+    "tank_target_pct": 92,
+    "array_m2": 320,
+    "array_efficiency": 0.19,
+}
+
+# Temperature grid for the exported lookup table. Tropical islands sit well
+# inside this range; the app clamps to the ends.
+TEMP_MIN, TEMP_STEP, TEMP_BUCKETS = 18.0, 0.5, 45
+
 
 # --- 1. Data -----------------------------------------------------------------
 def load_history() -> pd.DataFrame:
@@ -120,6 +140,59 @@ def train(df: pd.DataFrame):
     return model, metrics, curve
 
 
+# --- 3b. Export the model itself, as a lookup table --------------------------
+def export_demand_table(model):
+    """
+    The app must predict demand for locations the laptop never saw, so ship the
+    model rather than only its predictions.
+
+    Every feature the model uses is either categorical (hour, day of week,
+    weekend, tourist season) or a single continuous variable (temperature). That
+    means the whole function can be evaluated exhaustively on a grid and shipped
+    as a table - no approximation beyond discretising temperature to 0.5 C, and
+    no ML runtime on the phone.
+
+    Shape: table[is_tourist_season][day_of_week][hour][temp_bucket], in litres
+    per hour for a village of REFERENCE_POPULATION people.
+    """
+    temps = [TEMP_MIN + i * TEMP_STEP for i in range(TEMP_BUCKETS)]
+    rows = []
+    index = []
+    for tourist in (0, 1):
+        for dow in range(7):
+            for hour in range(24):
+                for t in temps:
+                    rows.append({
+                        "hour": hour,
+                        "day_of_week": dow,
+                        "is_weekend": int(dow >= 5),
+                        "temp_c": t,
+                        "is_tourist_season": tourist,
+                    })
+                    index.append((tourist, dow, hour))
+
+    preds = model.predict(pd.DataFrame(rows)[FEATURES])
+
+    table = [[[[0.0] * TEMP_BUCKETS for _ in range(24)] for _ in range(7)] for _ in range(2)]
+    for k, (tourist, dow, hour) in enumerate(index):
+        bucket = k % TEMP_BUCKETS
+        table[tourist][dow][hour][bucket] = round(float(preds[k]), 1)
+
+    print(f"\nExported demand lookup table: "
+          f"{2 * 7 * 24 * TEMP_BUCKETS:,} cells covering every input the model accepts")
+
+    return {
+        "reference_population": REFERENCE_POPULATION,
+        "temp_min_c": TEMP_MIN,
+        "temp_step_c": TEMP_STEP,
+        "temp_buckets": TEMP_BUCKETS,
+        "note": ("Exhaustive evaluation of the trained RandomForest over its full "
+                 "input grid. Demand scales linearly with population from the "
+                 "reference village."),
+        "table": table,
+    }
+
+
 # --- 4. Live environmental data ---------------------------------------------
 def fetch_solar(hours: int = HORIZON_HOURS):
     """Open-Meteo needs no API key. Returns (records, source_label)."""
@@ -175,7 +248,7 @@ def synth_solar(hours: int):
 
 
 # --- 5 & 6. Predict forward and export --------------------------------------
-def build_forecast(model, weather, metrics, curve, source):
+def build_forecast(model, weather, metrics, curve, source, demand_table):
     rows = []
     for w in weather:
         ts = datetime.fromisoformat(w["time"])
@@ -187,12 +260,13 @@ def build_forecast(model, weather, metrics, curve, source):
             "is_tourist_season": int(ts.month in (6, 7, 8)),
         }])[FEATURES]
 
-        # 320 m^2 of panels at 19% efficiency -> kW available to the plant.
-        # Sized deliberately against the 50 kW pump draw so peak output (~52 kW)
-        # clears it for only 2-3 midday hours. If the array is oversized -- or the
-        # pump draw lowered -- every hour becomes a solar hour, the reserve floor
-        # never binds, and the lookahead rules have nothing to decide.
-        solar_kw = round(w["radiation_wm2"] * 320 * 0.19 / 1000.0, 2)
+        # Panels at 19% efficiency -> kW available to the plant. Sized deliberately
+        # against the 50 kW pump draw so peak output (~52 kW) clears it for only
+        # 2-3 midday hours. If the array is oversized -- or the pump draw lowered --
+        # every hour becomes a solar hour, the reserve floor never binds, and the
+        # lookahead rules have nothing to decide.
+        solar_kw = round(
+            w["radiation_wm2"] * PLANT["array_m2"] * PLANT["array_efficiency"] / 1000.0, 2)
 
         rows.append({
             "time": w["time"],
@@ -207,19 +281,14 @@ def build_forecast(model, weather, metrics, curve, source):
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "island": ISLAND,
         "weather_source": source,
-        # Tank sized at ~2.2 days of demand. Deliberately tight: an oversized
+        # Tank sized at ~2.7 days of demand. Deliberately tight: an oversized
         # tank means the scheduler never faces a real constraint and the
         # lookahead logic has nothing to prove.
-        "plant": {
-            "tank_capacity_l": 60000,
-            "initial_tank_l": 36000,
-            "desal_pump_kw": 50.0,
-            "desal_output_lph": 6000,
-            "diesel_l_per_kwh": 0.28,
-            "reserve_floor_pct": 25,
-            "tank_target_pct": 92,
-        },
+        "plant": PLANT,
         "model": metrics,
+        # Ships the model itself, so the app can forecast demand for any island
+        # the operator points it at - not only the one trained against here.
+        "demand_model": demand_table,
         "validation_curve": curve,
         "hourly": rows,
     }
@@ -234,6 +303,7 @@ def build_forecast(model, weather, metrics, curve, source):
 if __name__ == "__main__":
     history = load_history()
     model, metrics, curve = train(history)
+    demand_table = export_demand_table(model)
     weather, source = fetch_solar()
-    build_forecast(model, weather, metrics, curve, source)
+    build_forecast(model, weather, metrics, curve, source, demand_table)
     print("\nDone. Restart the Expo app to pick up the new forecast.")

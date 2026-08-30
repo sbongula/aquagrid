@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { theme } from '../theme';
 
-export default function Header({ island, weatherSource, generatedAt }) {
+export default function Header({ island, weatherSource, generatedAt, live: isLive }) {
   const live = weatherSource.includes('live');
   const stamp = new Date(generatedAt).toLocaleString([], {
     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -21,7 +21,9 @@ export default function Header({ island, weatherSource, generatedAt }) {
       <Text style={styles.island}>
         {island.name} · pop. {island.population.toLocaleString()}
       </Text>
-      <Text style={styles.sub}>Forecast generated {stamp} · runs fully offline</Text>
+      <Text style={styles.sub}>
+        {isLive ? `Fetched ${stamp} · live` : `Forecast generated ${stamp} · runs fully offline`}
+      </Text>
     </View>
   );
 }

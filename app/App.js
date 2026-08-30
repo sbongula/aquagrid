@@ -7,6 +7,7 @@ import { runSchedule } from './src/logic/scheduler';
 import { fixedTimerSchedule, reactiveSchedule } from './src/logic/baselines';
 import { simulateSensor, detectLeak } from './src/logic/leak';
 import { buildContext, getBriefing, templateBriefing, askOperator } from './src/lib/ai';
+import { searchPlaces, buildLocationForecast } from './src/lib/geo';
 
 import Header from './src/components/Header';
 import TankGauge from './src/components/TankGauge';
@@ -18,6 +19,7 @@ import SavingsCard from './src/components/SavingsCard';
 import LeakPanel from './src/components/LeakPanel';
 import ModelCard from './src/components/ModelCard';
 import AskPanel from './src/components/AskPanel';
+import LocationPicker from './src/components/LocationPicker';
 
 // Hour of the 48-hour horizon the operator is standing in. Held in state so the
 // demo can scrub forward if needed; index 0 is the start of the forecast.
@@ -25,8 +27,15 @@ const NOW_INDEX = 0;
 const LEAK_START_HOUR = 14;
 
 export default function App() {
-  const { hourly, plant, island, model, validation_curve: curve, weather_source: weatherSource } = forecast;
   const [leakInjected, setLeakInjected] = useState(false);
+
+  // null = the island bundled at build time, which needs no network at all.
+  // Anything else was resolved at runtime from a location the operator picked.
+  const [custom, setCustom] = useState(null);
+
+  const active = custom || forecast;
+  const { hourly, plant, island, weather_source: weatherSource } = active;
+  const { model, validation_curve: curve, demand_model: demandModel } = forecast;
 
   // All scheduling is synchronous. Only the LLM call is async - never mix them.
   const { smart, timer, reactive } = useMemo(
@@ -77,7 +86,19 @@ export default function App() {
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" backgroundColor={theme.bg} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Header island={island} weatherSource={weatherSource} generatedAt={forecast.generated_at} />
+        <Header
+          island={island}
+          weatherSource={weatherSource}
+          generatedAt={custom ? custom.fetched_at : forecast.generated_at}
+          live={custom !== null}
+        />
+        <LocationPicker
+          island={island}
+          isCustom={custom !== null}
+          search={searchPlaces}
+          onReset={() => setCustom(null)}
+          onSelect={async (place) => setCustom(await buildLocationForecast(place, forecast.plant, demandModel))}
+        />
         <TankGauge step={step} plant={plant} hoursOfSupply={hoursOfSupply} />
         <DecisionCard step={step} />
         <BriefingCard text={briefing.text} live={briefing.live} loading={false} />
