@@ -94,6 +94,29 @@ tbody tr.hi td { background:linear-gradient(90deg,color-mix(in srgb,var(--good) 
 .stage p { margin:0; font-size:14.5px; color:var(--dim); line-height:1.55; }
 .stage code { font-size:11.5px; color:var(--dim); display:block; margin-top:12px; }
 
+/* prior art */
+.prior{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:8px 0 0}
+@media(min-width:760px){.prior{grid-template-columns:repeat(2,1fr)}}
+.pa{background:var(--panel);padding:18px 20px}
+.pa h4{font-family:"Bricolage Grotesque",sans-serif;font-size:15px;margin:0 0 7px;font-weight:700}
+.pa-is{font-size:13.5px;color:var(--dim);margin:0 0 9px;line-height:1.5}
+.pa-gap{font-size:13.5px;margin:0;line-height:1.5;padding-left:11px;border-left:2px solid var(--bad)}
+
+/* feature grid */
+.feats{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:30px 0}
+@media(min-width:760px){.feats{grid-template-columns:repeat(2,1fr)}}
+.feat{background:var(--panel);padding:22px}
+.feat-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.feat-no{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim)}
+.feat-tag{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.14em;color:var(--water)}
+.feat h3{font-size:18px;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
+.feat-what{font-size:15px;margin:0 0 12px;line-height:1.5}
+.feat-how{font-size:13.5px;color:var(--dim);margin:0 0 9px;line-height:1.5}
+.feat-how b{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--water);font-weight:500;margin-right:6px}
+.feat-ev{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--good);
+  margin:12px 0 0;padding-top:10px;border-top:1px solid var(--rule);line-height:1.5}
+
 /* charts */
 svg.chart { display:block; width:100%; height:auto; }
 .tk { font-size:10px; fill:var(--dim); font-family:"IBM Plex Mono",monospace; }
@@ -166,6 +189,25 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
 </header>
 
 <main>
+<section id="problem"><div class="wrap">
+  <div class="col"><h2>The problem</h2>
+  <p class="lede">Water and energy are the same problem on an island</p>
+  <p>On a small isolated island, water and energy are the same problem. Fresh water comes from rain when it falls and from a desalination plant when it does not, and that plant is usually the single largest electrical load on the island. The electricity comes from solar when the sun is up and from a diesel generator when it is not — and the diesel arrives by barge, every few weeks, whether or not you are running low.</p><p>So every hour there is a real decision: make water now, or wait. Making it at noon on a clear day is nearly free. Making it at 02:00 costs imported fuel. And the tank is a battery — it will hold a day or two of demand — which means the decision can be deferred, if you know what tomorrow looks like.</p><p>Almost nowhere is that decision actually made. It is delegated to a timer set decades ago.</p></div>
+  <div class="col" style="margin-top:34px"><h2 style="font-size:clamp(22px,2.8vw,28px)">How this is solved today</h2>
+  <p class="lede" style="margin-bottom:20px">Eight approaches in common use. None is stupid; all are blind the same way.</p></div>
+  <div class="prior">
+    <div class="pa"><h4>Wall timer / fixed schedule</h4><p class="pa-is">The pump runs the same hours every day, typically overnight, inherited from mainland off-peak electricity tariffs.</p><p class="pa-gap">On a diesel-and-solar island there is no off-peak. Those hours are the ones with no sun, so the timer systematically picks the most expensive water of the day.</p></div>
+    <div class="pa"><h4>Float switch / level control</h4><p class="pa-is">A level sensor starts the pump below a set point and stops it above another.</p><p class="pa-gap">Purely reactive. It responds to the tank after it has already drained, never anticipates, and is equally happy to run at midnight as at noon.</p></div>
+    <div class="pa"><h4>Operator judgement with SCADA</h4><p class="pa-is">A skilled operator watches gauges and decides by experience when to run.</p><p class="pa-gap">Works, and often works well — but it does not scale, does not survive staff turnover, and no human runs a 12-hour lookahead over a weather forecast every hour.</p></div>
+    <div class="pa"><h4>Commercial microgrid controllers</h4><p class="pa-is">Hybrid energy-management systems that dispatch generators, batteries and PV.</p><p class="pa-gap">They optimise the electrical side, treating the desalination plant as a fixed load to be served. The water tank&#x27;s value as storage is invisible to them. They also assume connectivity and a budget neither of which a village of 1,200 has.</p></div>
+    <div class="pa"><h4>Rainwater, managed separately</h4><p class="pa-is">Household and community tanks collect rain independently of the plant.</p><p class="pa-gap">The plant makes water on days the sky is about to fill the tank for free, and the rain overflows while diesel burns.</p></div>
+    <div class="pa"><h4>Threshold alarms for leaks</h4><p class="pa-is">Alert when pressure or level crosses a fixed bound.</p><p class="pa-gap">A threshold cannot distinguish a burst pipe from a busy evening. By the time the level is visibly wrong, the water is gone. Large utilities use district-metered minimum-night-flow analysis; that infrastructure does not exist on a small island.</p></div>
+    <div class="pa"><h4>Calendar or run-to-failure maintenance</h4><p class="pa-is">Membranes cleaned on a schedule, or when performance becomes obviously bad.</p><p class="pa-gap">Too early wastes a clean; too late means months of quietly elevated energy per cubic metre, paid for in diesel.</p></div>
+    <div class="pa"><h4>Fuel tracked by dipstick</h4><p class="pa-is">Litres remaining checked manually against a barge schedule on a whiteboard.</p><p class="pa-gap">Nobody projects the current burn rate forward against the delivery date until it is close, and the barge does not come early because you ran out.</p></div>
+  </div>
+  <div class="col" style="margin-top:30px"><p>Each of these is reasonable on its own. The failure is that <strong>none of them share a demand forecast</strong>, so none can defer a decision. The timer cannot know that tomorrow is sunny; the float switch cannot know that rain is coming in four hours; the leak alarm cannot know what the tank *should* be doing at 03:00 on a Tuesday; the maintenance calendar cannot see that specific energy has been climbing for six weeks.</p><p>Predict demand once, and every one of those problems becomes tractable with arithmetic. That is the whole thesis of AquaGrid: <strong>one forecast, shared by the scheduler and every detector.</strong></p></div>
+</div></section>
+
 <section><div class="wrap"><div class="col">
   <h2>Predict, decide, explain, detect</h2>
   <p class="lede">Four stages. Each one feeds the next.</p>
@@ -202,6 +244,125 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
       </tbody>
     </table></div>
     <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Reykjav&iacute;k is the honest answer, not a bug. Where there is little sun there is little for a scheduler to win, and the app says so.</p>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <div class="col"><h2>Every feature, and what it does</h2>
+  <p class="lede">Fourteen features across five roles &middot; predict, decide, supply, detect, explain</p></div>
+  <div class="feats">
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">01</span><span class="feat-tag">PREDICT</span></div>
+  <h3>Demand forecasting</h3>
+  <p class="feat-what">Predicts how many litres the island will use, every hour, 48 hours ahead.</p>
+  <p class="feat-how"><b>How</b> A RandomForestRegressor trained on two years of hourly history using five features: hour of day, day of week, weekend flag, temperature and tourist season. Evaluated on a chronological split so it is tested on the future.</p>
+  <p class="feat-how"><b>Why</b> Everything else depends on this. Without a demand curve you cannot know whether the tank will hold, so you cannot decide anything except reactively.</p>
+  <p class="feat-ev">MAE 45.3 L/h · R² 0.987 · 89% better than predicting the average</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">02</span><span class="feat-tag">DECIDE</span></div>
+  <h3>Pump scheduling</h3>
+  <p class="feat-what">Decides each hour whether to run the desalination pump, and on what power.</p>
+  <p class="feat-how"><b>How</b> Eight rules in strict priority order with a 12-hour lookahead that projects tank level against forecast demand, full-solar hours and expected rainfall. First matching rule wins.</p>
+  <p class="feat-how"><b>Why</b> This is the product. A wall timer runs the pump when power is most expensive; this runs it when power is free, and spends a little diesel early to avoid spending a lot later.</p>
+  <p class="feat-ev">78% less diesel than a fixed timer, zero shortage hours</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">03</span><span class="feat-tag">SUPPLY</span></div>
+  <h3>Rainwater harvesting</h3>
+  <p class="feat-what">Captures rainfall into the tank and holds the pump when a shower is coming.</p>
+  <p class="feat-how"><b>How</b> Precipitation comes from the same Open-Meteo call as solar. harvest = rain_mm × catchment_m² × runoff. Rule 2 suppresses pumping when forecast rain exceeds forecast demand over the next six hours.</p>
+  <p class="feat-how"><b>Why</b> Funafuti is in reality almost entirely rainwater-fed, with desalination as the backup. A scheduler that ignores rain is optimising the wrong variable, and makes water it is about to spill.</p>
+  <p class="feat-ev">11.3 m³ harvested — 24% of all water supplied</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">04</span><span class="feat-tag">SUPPLY</span></div>
+  <h3>Battery storage</h3>
+  <p class="feat-what">Stores surplus midday solar and spends it running the pump after dark.</p>
+  <p class="feat-how"><b>How</b> Solar serves the pump first; surplus charges the battery at round-trip efficiency. When pumping without enough sun, the battery discharges before any diesel is burned. Energy that arrives with the battery full is counted as curtailed.</p>
+  <p class="feat-how"><b>Why</b> The demand peak is 18:00–20:00 and the solar peak is midday. Without storage those never meet and the evening runs on diesel.</p>
+  <p class="feat-ev">66 kWh discharged to the pump · 304 kWh curtailed</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">05</span><span class="feat-tag">DECIDE</span></div>
+  <h3>Storm preparation</h3>
+  <p class="feat-what">Abandons fuel economy and fills the tank to 100% before a cyclone lands.</p>
+  <p class="feat-how"><b>How</b> Scans the 24-hour wind outlook. Above the storm threshold, Rule 0 overrides every cost rule until the tank is full.</p>
+  <p class="feat-how"><b>Why</b> After landfall the array is down, the pump may be offline and the resupply barge will not sail. Whatever is in the tank is what the island has. Optimising for fuel at that moment is the wrong objective.</p>
+  <p class="feat-ev">Simulate cyclone control, since the live forecast has none</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">06</span><span class="feat-tag">DETECT</span></div>
+  <h3>Leak detection</h3>
+  <p class="feat-what">Finds a burst pipe from the pattern of the loss, hours before the tank looks low.</p>
+  <p class="feat-how"><b>How</b> Each hour, compare the drop the sensor reports against the drop the forecast predicts (demand − pumped − harvested). σ is calibrated on the first twelve hours as a known-good baseline. Alert on 3σ for three consecutive hours.</p>
+  <p class="feat-how"><b>Why</b> A level threshold cannot tell a leak from a busy evening — by the time the tank is visibly low, thousands of litres are gone. A forecast knows what normal looks like at 03:00 on a Tuesday.</p>
+  <p class="feat-ev">450 L/h burst caught in 2 hours · estimated 452 L/h at 99% confidence</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">07</span><span class="feat-tag">DETECT</span></div>
+  <h3>Panel soiling detection</h3>
+  <p class="feat-what">Notices the solar array is producing less than the sunlight falling on it warrants.</p>
+  <p class="feat-how"><b>How</b> Compares metered array output against the irradiance-derived prediction across daylight hours only, and reports the shortfall and the kWh not collected.</p>
+  <p class="feat-how"><b>Why</b> Salt spray and dust cost an island real diesel silently, for months. Nobody climbs up to check panels that are still producing something.</p>
+  <p class="feat-ev">13% below predicted across 20 daylight hours — 90 kWh lost</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">08</span><span class="feat-tag">DETECT</span></div>
+  <h3>Membrane fouling prediction</h3>
+  <p class="feat-what">Predicts the date the reverse-osmosis membranes will need cleaning.</p>
+  <p class="feat-how"><b>How</b> Specific energy — kWh per m³ of fresh water — rises as membranes foul, because the pump must push harder for the same flow. Least-squares fit on 90 days of daily readings, projected forward to the clean-in-place threshold.</p>
+  <p class="feat-how"><b>Why</b> Maintenance on an island is scheduled around a barge, not around a fault. Six weeks of warning is the difference between a planned clean and an emergency one.</p>
+  <p class="feat-ev">+11.1% from design · threshold reached in 40 days</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">09</span><span class="feat-tag">DETECT</span></div>
+  <h3>Diesel inventory</h3>
+  <p class="feat-what">Warns when the fuel will run out before the next resupply barge.</p>
+  <p class="feat-how"><b>How</b> Projects the schedule&#x27;s burn rate against litres remaining and days until the barge, and runs the same projection for both baseline strategies.</p>
+  <p class="feat-how"><b>Why</b> Burning too much diesel and running out of diesel are different failures. The barge does not come early because you ran out.</p>
+  <p class="feat-ev">AquaGrid 39 days; fixed timer dry 3.4 days early, reactive 4.4 days early</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">10</span><span class="feat-tag">EXPLAIN</span></div>
+  <h3>Demand-side advisory</h3>
+  <p class="feat-what">Tells residents the hours when using water costs the island nothing.</p>
+  <p class="feat-how"><b>How</b> Finds runs of consecutive hours where the pump is already running on sun or stored sun, and turns them into a public notice — drafted by the LLM, or by a deterministic template offline.</p>
+  <p class="feat-how"><b>Why</b> Everything else schedules supply. The cheapest litre of diesel is the one nobody needed because the laundry ran at noon.</p>
+  <p class="feat-ev">Free windows surfaced as tappable chips with litres available</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">11</span><span class="feat-tag">EXPLAIN</span></div>
+  <h3>Rationing outlook</h3>
+  <p class="feat-what">Measures supply per person per day against the WHO minimum, and drafts the notice if it falls short.</p>
+  <p class="feat-how"><b>How</b> Divides available supply over the horizon by population and days, and compares it to 15 L per person per day — the WHO floor for drinking, cooking and basic hygiene.</p>
+  <p class="feat-how"><b>Why</b> When shortfall is unavoidable, the question stops being about fuel and becomes about whether people have enough to drink. That deserves a number, not a vibe.</p>
+  <p class="feat-ev">18.2 L per person per day — 1.2× the WHO minimum</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">12</span><span class="feat-tag">PREDICT</span></div>
+  <h3>Any-island operation</h3>
+  <p class="feat-what">Points the whole system at any location on Earth, with no retraining.</p>
+  <p class="feat-how"><b>How</b> The trained forest is evaluated exhaustively over its entire input grid and exported as a 15,120-cell lookup table. Open-Meteo geocoding resolves a typed name; the forecast endpoint supplies that island&#x27;s real weather; the plant is scaled to its population.</p>
+  <p class="feat-how"><b>Why</b> A demo tied to one island is a demo. This is the difference between a case study and a system.</p>
+  <p class="feat-ev">Table reproduces the model to a mean 5.5 L/h — 12% of its own error</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">13</span><span class="feat-tag">EXPLAIN</span></div>
+  <h3>Operator briefing and Q&amp;A</h3>
+  <p class="feat-what">Writes the shift briefing in plain language and answers questions about the decisions.</p>
+  <p class="feat-how"><b>How</b> A compact state object — never the whole forecast — goes to an open-weight model on Groq, raced against a six-second timeout. Three preset questions let a judge interrogate the scheduler in one tap.</p>
+  <p class="feat-how"><b>Why</b> A decision nobody can interrogate is not one an operator will trust. Every hour already carries a machine-written reason; this turns the set of them into something a person reads.</p>
+  <p class="feat-ev">~620 ms round trip · falls back to a deterministic template</p>
+</div>
+<div class="feat">
+  <div class="feat-head"><span class="feat-no">14</span><span class="feat-tag">PLATFORM</span></div>
+  <h3>Offline operation</h3>
+  <p class="feat-what">Runs completely with no network — scheduling, detection, charts and briefing.</p>
+  <p class="feat-how"><b>How</b> The model&#x27;s predictions and the weather forecast are bundled as a static asset at build time. The only two network calls, Groq and Open-Meteo geocoding, are optional enhancements that degrade to a deterministic path.</p>
+  <p class="feat-how"><b>Why</b> This is the actual operating condition on an isolated island. It is also why there is no backend to fail.</p>
+  <p class="feat-ev">Airplane mode: every screen renders, only the briefing degrades</p>
+</div>
   </div>
 </div></section>
 
