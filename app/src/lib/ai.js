@@ -1,0 +1,133 @@
+/**
+ * Operator briefing.
+ *
+ * The template briefing is the primary path: it is deterministic, instant, and
+ * works with the phone in airplane mode. The Groq call is an enhancement layered
+ * on top, raced against a 6 second timeout. The demo must never show a spinner
+ * that never resolves.
+ */
+
+import { GROQ_API_KEY, GROQ_MODEL } from '../config';
+
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const TIMEOUT_MS = 6000;
+
+const SYSTEM = (island) =>
+  `You are the control system for a solar-powered desalination plant on ${island}, an ` +
+  `isolated island. You speak to the plant operator: direct, concrete, no filler. Use the ` +
+  `numbers you are given and never invent any. Two to three sentences maximum. If a leak ` +
+  `is flagged, lead with it.`;
+
+/** Compact context object. Never send the whole forecast. */
+export function buildContext({ island, step, index, smart, timer, leak, hourly }) {
+  const next6 = smart.steps.slice(index + 1, index + 7).map((s) => ({
+    hour: s.time.slice(11, 16),
+    solarKw: Math.round(s.solarKw),
+    demandL: Math.round(s.demandL),
+    action: s.action,
+    source: s.source,
+  }));
+
+  const savedPct = timer.totals.dieselL > 0
+    ? 100 * (1 - smart.totals.dieselL / timer.totals.dieselL)
+    : 0;
+
+  return {
+    island,
+    timeLocal: step.time.slice(11, 16),
+    tankPct: Math.round(step.tankPct),
+    tankL: Math.round(step.tankL),
+    currentAction: step.action,
+    currentSource: step.source,
+    currentReason: step.reason,
+    next6Hours: next6,
+    dieselTodayL: Number(smart.steps.slice(0, 24).reduce((a, s) => a + s.dieselL, 0).toFixed(1)),
+    savedVsFixedTimerPct: Math.round(savedPct),
+    leak: leak.alert
+      ? { rateLph: leak.estimatedRateLph, since: leak.startedAtTime.slice(11, 16), totalLostL: leak.totalLostL }
+      : null,
+  };
+}
+
+/** Deterministic briefing. Always available, no network, no key. */
+export function templateBriefing(ctx, smart, index) {
+  const ahead = smart.steps.slice(index + 1);
+  const nextSolar = ahead.find((s) => s.source === 'solar');
+  const plannedPumpHours = ahead.slice(0, 24).filter((s) => s.action === 'pump').length;
+
+  const lead = ctx.leak
+    ? `LEAK: losing ${ctx.leak.rateLph} L/h beyond forecast since ${ctx.leak.since} — ` +
+      `${ctx.leak.totalLostL.toLocaleString()} L gone. Isolate the north line before anything else. `
+    : '';
+
+  const solarLine = nextSolar
+    ? `Next full-solar window opens at ${nextSolar.time.slice(11, 16)} — planning ${plannedPumpHours} pump hours over the next 24. `
+    : `No full-solar window in the forecast horizon — ${plannedPumpHours} pump hours planned on partial solar. `;
+
+  return (
+    `${lead}Tank at ${ctx.tankPct}% (${ctx.tankL.toLocaleString()} L). ${ctx.currentReason}. ` +
+    solarLine +
+    `${ctx.dieselTodayL} L of diesel today, ${ctx.savedVsFixedTimerPct}% below a fixed timer.`
+  );
+}
+
+async function callGroq(messages) {
+  const res = await fetch(GROQ_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ model: GROQ_MODEL, messages, temperature: 0.3, max_tokens: 220 }),
+  });
+  if (!res.ok) throw new Error(`Groq ${res.status}`);
+  const json = await res.json();
+  const text = json?.choices?.[0]?.message?.content?.trim();
+  if (!text) throw new Error('Groq returned no content');
+  return text;
+}
+
+function withTimeout(promise, ms = TIMEOUT_MS) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
+/**
+ * Returns { text, live }. `live` is false whenever we fell back, so the UI can
+ * label the source honestly rather than pretending an LLM wrote the template.
+ */
+export async function getBriefing(ctx, smart, index) {
+  const fallback = { text: templateBriefing(ctx, smart, index), live: false };
+  if (!GROQ_API_KEY) return fallback;
+
+  try {
+    const text = await withTimeout(
+      callGroq([
+        { role: 'system', content: SYSTEM(ctx.island) },
+        { role: 'user', content: `Current plant state:\n${JSON.stringify(ctx, null, 1)}\n\nWrite the shift briefing.` },
+      ]),
+    );
+    return { text, live: true };
+  } catch {
+    return fallback;
+  }
+}
+
+/** Follow-up questions from the operator (or a judge). */
+export async function askOperator(ctx, question) {
+  if (!GROQ_API_KEY) {
+    return 'No AI key configured — the briefing above is generated on-device from the schedule.';
+  }
+  try {
+    return await withTimeout(
+      callGroq([
+        { role: 'system', content: SYSTEM(ctx.island) },
+        { role: 'user', content: `Plant state:\n${JSON.stringify(ctx, null, 1)}\n\nOperator asks: ${question}` },
+      ]),
+    );
+  } catch {
+    return 'Could not reach the AI service. All scheduling and leak detection continue to run on-device.';
+  }
+}
