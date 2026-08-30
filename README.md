@@ -2,6 +2,8 @@
 
 **An AI that forecasts an island's water demand, schedules desalination against the solar forecast, harvests the rain, and catches failures nobody would notice until they were expensive.**
 
+**The island is a parameter, not a constant.** Search any place on Earth by name — AquaGrid fetches its real solar, temperature, rainfall and wind, forecasts its water demand *on the phone*, sizes a plant to its population, and re-runs every decision. Funafuti, Tuvalu is the worked example used throughout this README; every number below changes when you change the island. See [Any location](#any-location).
+
 DreamHacks 2026 · Track 2 — AI, Automation & Logic
 Repo: [github.com/sbongula/aquagrid](https://github.com/sbongula/aquagrid) · Site: [sbongula.github.io/aquagrid](https://sbongula.github.io/aquagrid)
 **Team handbook:** [AquaGrid-Team-Handbook.pdf](docs/team/AquaGrid-Team-Handbook.pdf) — 18 pages, every file and every tuned value explained.
@@ -67,7 +69,7 @@ The synthetic history in `ml/generate_data.py` is readable in one screen — twi
 
 ## Results
 
-48-hour horizon, live Open-Meteo forecast for Funafuti, Tuvalu. All three strategies run over the **identical forecast with identical physics** — same rain, same battery, same tank. Only the decision rule differs. Computed at runtime, not hardcoded.
+**Worked example: Funafuti, Tuvalu.** 48-hour horizon, live Open-Meteo forecast. All three strategies run over the **identical forecast with identical physics** — same rain, same battery, same tank. Only the decision rule differs. Computed at runtime, not hardcoded.
 
 | Strategy | Diesel | Cost | CO₂ | Pump hours | Shortage |
 |---|---|---|---|---|---|
@@ -76,6 +78,8 @@ The synthetic history in `ml/generate_data.py` is readable in one screen — twi
 | Reactive, top up below 80% | 79.2 L | $127 | 212 kg | 11 h | 0 h |
 
 **78% less diesel than the fixed timer these plants run today.** The tank starts at 32% — the level yesterday's weather actually left it at — and never drops below 27% against a 25% reserve floor.
+
+These are Funafuti's numbers on this forecast, not fixed properties of the system — the same code returns 80% on Apia and 23% on Reykjavík, because those islands get different amounts of sun.
 
 ### The number that matters more than the percentage
 
@@ -112,7 +116,7 @@ Rules 2, 4 and 5 are where the forecast earns its keep — they are the only one
 
 ## Rainwater, battery and storms
 
-**Rain.** Tuvalu is in reality almost entirely rainwater-fed. Precipitation comes from the same Open-Meteo call, and `harvest = rain_mm × catchment_m² × runoff` flows into the tank balance. Over this horizon 15.7 mm across 900 m² of public roof delivered **11.3 m³ — 24% of all water supplied.** Catchment is sized so rain matters without dominating; raise it and the reserve floor stops binding.
+**Rain.** Funafuti is in reality almost entirely rainwater-fed. Precipitation comes from the same Open-Meteo call, and `harvest = rain_mm × catchment_m² × runoff` flows into the tank balance. Over this horizon 15.7 mm across 900 m² of public roof delivered **11.3 m³ — 24% of all water supplied.** Catchment is sized so rain matters without dominating; raise it and the reserve floor stops binding.
 
 **Battery.** 150 kWh lets surplus midday solar run the pump into the 18:00–20:00 demand peak instead of being curtailed. Over the horizon: 180 kWh of solar went straight to the pump, 66 kWh came back out of the battery, and **304 kWh was curtailed** — sun that arrived with the battery full and the pump already running. That last figure is the honest ceiling on what a bigger battery could buy.
 

@@ -149,15 +149,17 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
     </g>
   </svg>
   <div class="wrap">
-    <p class="eyebrow">Funafuti, Tuvalu &middot; 8&deg;31&prime;S 179&deg;12&prime;E</p>
+    <p class="eyebrow">Point it at any island on Earth</p>
     <h1>AquaGrid</h1>
     <p class="thesis">An AI that forecasts an island&rsquo;s water demand, schedules desalination against the solar forecast, harvests the rain, and catches failures nobody would notice until they were expensive.</p>
     <p class="sub">Desalination is the largest electrical load on a small island, and it is usually run on a wall timer set to overnight hours &mdash; a habit inherited from mainland off-peak grid pricing. On a solar island that is exactly backwards. The water tank is a battery nobody schedules.</p>
+    <p class="sub" style="margin-top:14px"><strong style="color:var(--ink)">The island is a parameter, not a constant.</strong> Search any place by name and AquaGrid fetches its real weather, forecasts its demand on-device, sizes a plant to its population and re-runs everything. The figures below are one worked example &mdash; <a href="#anywhere">Funafuti, Tuvalu</a> &mdash; and every one of them moves when you change the island.</p>
     <div class="soundings">
       <div class="sound"><b style="color:var(--good)">78%</b><span>less diesel than<br>a fixed timer</span></div>
       <div class="sound"><b>45.3</b><span>L/h forecast error<br>R&sup2; 0.987</span></div>
       <div class="sound"><b style="color:var(--water)">24%</b><span>of water supplied<br>by rainfall</span></div>
       <div class="sound"><b style="color:var(--bad)">2 h</b><span>to detect a<br>450 L/h burst</span></div>
+      <div class="sound"><b>any</b><span>island on Earth,<br>computed on-device</span></div>
       <div class="sound"><b>0</b><span>servers, and it runs<br>with no signal</span></div>
     </div>
   </div>
@@ -183,10 +185,29 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
       <code>logic/leak.js &middot; assets.js</code></div>
   </div>
 </div></section>
+<section id="anywhere"><div class="wrap">
+  <div class="col"><h2>Any island on Earth</h2>
+  <p class="lede">Because we ship the model, not only its predictions</p>
+  <p>Every feature the forecaster uses is categorical except temperature. So the trained forest is evaluated exhaustively over its entire input grid and exported as a <strong>15,120-cell lookup table</strong> &mdash; 2 seasons &times; 7 days &times; 24 hours &times; 45 temperature buckets.</p>
+  <p>That is the model, not an approximation of it. The only loss is temperature discretised to 0.5&thinsp;&deg;C, costing a mean 5.5 L/h &mdash; 12% of the model&rsquo;s own error. A real forecaster running on the phone, with no ML runtime, no server and no inference API.</p></div>
+  <div class="panel">
+    <p class="panel-title">Same code, live forecasts, four islands</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Island</th><th class="n">Population</th><th class="n">Diesel saved</th><th class="n">Why</th></tr></thead>
+      <tbody>
+        <tr><td>Apia, Samoa</td><td class="n">40,407</td><td class="n" style="color:var(--good)">80%</td><td class="n">abundant sun</td></tr>
+        <tr><td>Mal&eacute;, Maldives</td><td class="n">103,693</td><td class="n" style="color:var(--good)">70%</td><td class="n">equatorial, steady</td></tr>
+        <tr><td>Santorini, Greece</td><td class="n">15,453</td><td class="n" style="color:var(--good)">64%</td><td class="n">strong but seasonal</td></tr>
+        <tr><td>Reykjav&iacute;k, Iceland</td><td class="n">118,918</td><td class="n" style="color:var(--warn)">23%</td><td class="n">barely any sun to schedule</td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Reykjav&iacute;k is the honest answer, not a bug. Where there is little sun there is little for a scheduler to win, and the app says so.</p>
+  </div>
+</div></section>
 
 <section><div class="wrap">
   <div class="col"><h2>One day, as the scheduler sees it</h2>
-  <p class="lede">Live Open-Meteo forecast &middot; next 24 hours</p></div>
+  <p class="lede">Funafuti, Tuvalu &middot; live Open-Meteo forecast &middot; next 24 hours</p></div>
   <div class="panel">
     <p class="panel-title">Solar output, predicted demand and rainfall</p>
     <div class="scroll"><svg class="chart" viewBox="0 0 760 224" role="img" aria-label="Solar output against predicted water demand over 24 hours">
@@ -219,7 +240,7 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
 
 <section><div class="wrap">
   <div class="col"><h2>The result</h2>
-  <p class="lede">48-hour horizon &middot; identical forecast, identical physics &middot; only the rule differs</p></div>
+  <p class="lede">Funafuti, Tuvalu &middot; 48-hour horizon &middot; identical forecast and physics, only the rule differs</p></div>
   <div class="panel">
     <p class="panel-title">Fuel, cost and carbon</p>
     <div class="scroll"><table>
@@ -267,7 +288,7 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
 
 <section><div class="wrap"><div class="col">
   <h2>Rain is the point</h2>
-  <p class="lede">Tuvalu is rainwater-fed. Desalination is the backup.</p>
+  <p class="lede">Funafuti, Tuvalu &middot; rainwater-fed, with desalination as the backup</p>
   <p>Any system that ignores the rain forecast is planning against the wrong problem. Precipitation comes from the same Open-Meteo call as the solar forecast, and <code>rain_mm &times; catchment &times; runoff</code> flows straight into the tank balance.</p>
   <p>Over this horizon, <strong>15.7 mm across 900 m&sup2; of public roof delivered 11.3 m&sup3; &mdash; 24% of all water supplied.</strong> Catchment is sized so rain matters without dominating; raise it and the reserve floor stops binding, and the scheduler has nothing left to decide.</p>
   <p>A 150 kWh battery carries surplus midday sun into the evening demand peak. Over the horizon 180 kWh went straight from panel to pump, 66 kWh came back out of the battery, and <strong>304 kWh was curtailed</strong> &mdash; sun that arrived with the battery full and the pump already running. That last figure is the honest ceiling on what a bigger battery could buy.</p>
@@ -302,25 +323,6 @@ footer { padding:44px 0 64px; color:var(--dim); font-size:13px; }
   </div>
 </div></section>
 
-<section><div class="wrap">
-  <div class="col"><h2>Any island on Earth</h2>
-  <p class="lede">Because we ship the model, not only its predictions</p>
-  <p>Every feature the forecaster uses is categorical except temperature. So the trained forest is evaluated exhaustively over its entire input grid and exported as a <strong>15,120-cell lookup table</strong> &mdash; 2 seasons &times; 7 days &times; 24 hours &times; 45 temperature buckets.</p>
-  <p>That is the model, not an approximation of it. The only loss is temperature discretised to 0.5&thinsp;&deg;C, costing a mean 5.5 L/h &mdash; 12% of the model&rsquo;s own error. A real forecaster running on the phone, with no ML runtime, no server and no inference API.</p></div>
-  <div class="panel">
-    <p class="panel-title">Same code, live forecasts, four islands</p>
-    <div class="scroll"><table>
-      <thead><tr><th>Island</th><th class="n">Population</th><th class="n">Diesel saved</th><th class="n">Why</th></tr></thead>
-      <tbody>
-        <tr><td>Apia, Samoa</td><td class="n">40,407</td><td class="n" style="color:var(--good)">80%</td><td class="n">abundant sun</td></tr>
-        <tr><td>Mal&eacute;, Maldives</td><td class="n">103,693</td><td class="n" style="color:var(--good)">70%</td><td class="n">equatorial, steady</td></tr>
-        <tr><td>Santorini, Greece</td><td class="n">15,453</td><td class="n" style="color:var(--good)">64%</td><td class="n">strong but seasonal</td></tr>
-        <tr><td>Reykjav&iacute;k, Iceland</td><td class="n">118,918</td><td class="n" style="color:var(--warn)">23%</td><td class="n">barely any sun to schedule</td></tr>
-      </tbody>
-    </table></div>
-    <p style="font-size:14px;color:var(--dim);margin:18px 0 0">Reykjav&iacute;k is the honest answer, not a bug. Where there is little sun there is little for a scheduler to win, and the app says so.</p>
-  </div>
-</div></section>
 
 <section><div class="wrap">
   <div class="col"><h2>The model</h2>
