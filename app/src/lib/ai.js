@@ -134,6 +134,43 @@ export async function getBriefing(ctx, smart, index) {
   }
 }
 
+/**
+ * The advisory is aimed at the village, not the operator, so it gets its own
+ * voice: no plant jargon, no kilowatts, just what to do and when.
+ */
+const ADVISORY_SYSTEM = (island) =>
+  `You write short public water notices for the community of ${island}, a small ` +
+  `island served by one desalination plant. Speak to residents, not engineers: no ` +
+  `kilowatts, no plant jargon. Say what to do and when, and why it saves the island ` +
+  `money or fuel. Use only the numbers you are given. Three sentences maximum.`;
+
+/**
+ * Returns { text, live }. Falls back to the deterministic template on any
+ * error, timeout or missing key, exactly like getBriefing.
+ */
+export async function getAdvisory(ctx, fallbackText) {
+  const fallback = { text: fallbackText, live: false };
+  if (!GROQ_API_KEY) return fallback;
+  try {
+    const text = await withTimeout(
+      callGroq([
+        { role: 'system', content: ADVISORY_SYSTEM(ctx.island) },
+        {
+          role: 'user',
+          content:
+            `Free-solar windows and supply position:\n${JSON.stringify(ctx, null, 1)}\n\n` +
+            (ctx.rationing?.required
+              ? 'Water is short. Write the public rationing notice.'
+              : 'Write the notice telling residents when water is cheapest to use.'),
+        },
+      ]),
+    );
+    return { text, live: true };
+  } catch {
+    return fallback;
+  }
+}
+
 /** Follow-up questions from the operator (or a judge). */
 export async function askOperator(ctx, question) {
   if (!GROQ_API_KEY) {

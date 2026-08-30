@@ -16,9 +16,15 @@ export const theme = {
 
 /** Colour for a scheduler step, by power source. */
 export const sourceColor = (source) =>
-  ({ solar: theme.good, hybrid: theme.warn, diesel: theme.bad }[source] || theme.border);
+  ({ solar: theme.good, battery: theme.water, hybrid: theme.warn, diesel: theme.bad }[source] ||
+    theme.border);
 
 export const sourceLabel = (step) => {
   if (step.action !== 'pump') return 'HOLDING';
-  return { solar: 'PUMPING — ON SOLAR', hybrid: 'PUMPING — PARTIAL SOLAR', diesel: 'PUMPING — ON DIESEL' }[step.source];
+  return {
+    solar: 'PUMPING — ON SOLAR',
+    battery: 'PUMPING — ON STORED SOLAR',
+    hybrid: 'PUMPING — PARTIAL SOLAR',
+    diesel: 'PUMPING — ON DIESEL',
+  }[step.source];
 };

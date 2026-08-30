@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
-import Svg, { Path, Polyline, Line, Text as SvgText } from 'react-native-svg';
+import Svg, { Path, Polyline, Line, Rect, Text as SvgText } from 'react-native-svg';
 import Card from './Card';
 import { theme } from '../theme';
 
@@ -34,6 +34,11 @@ export default function SolarDemandChart({ steps, plant }) {
 
   const thresholdY = yAt(plant.desal_pump_kw, 0, solarMax, H);
 
+  // Rain drawn as bars hanging from the top: free water arriving, which is why
+  // the scheduler sometimes holds the pump even when the tank is low.
+  const rainMax = Math.max(0.5, ...data.map((d) => d.rainMm || 0));
+  const barW = Math.max(3, (w / n) * 0.55);
+
   return (
     <Card title="NEXT 24 HOURS">
       <Svg width={w} height={H + 22}>
@@ -45,6 +50,13 @@ export default function SolarDemandChart({ steps, plant }) {
           {plant.desal_pump_kw} kW pump draw
         </SvgText>
         {data.map((d, i) =>
+          d.rainMm > 0 ? (
+            <Rect key={`r${i}`} x={xAt(i, n, w) - barW / 2} y={0}
+                  width={barW} height={(d.rainMm / rainMax) * 34}
+                  fill={theme.water} fillOpacity={0.5} rx={1.5} />
+          ) : null,
+        )}
+        {data.map((d, i) =>
           i % 6 === 0 ? (
             <SvgText key={i} x={xAt(i, n, w)} y={H + 16} fill={theme.textDim} fontSize="10" textAnchor="middle">
               {d.time.slice(11, 13)}:00
@@ -55,6 +67,9 @@ export default function SolarDemandChart({ steps, plant }) {
       <View style={styles.legend}>
         <Key color={theme.solar} label={`Solar output (peak ${Math.max(...data.map((d) => d.solarKw)).toFixed(0)} kW)`} />
         <Key color={theme.water} label="Predicted demand" />
+        {data.some((d) => d.rainMm > 0) && (
+          <Key color={theme.water} label={`Rain (${data.reduce((a, d) => a + d.rainMm, 0).toFixed(1)} mm)`} />
+        )}
       </View>
       <Text style={styles.note}>
         Solar above the dashed line runs the pump for free. Below it, every pump hour burns diesel.

@@ -76,8 +76,12 @@ PLANT = {
 
     # Diesel is delivered by barge. Running out between barges is a real island
     # failure mode and is not the same problem as burning too much.
-    "diesel_tank_l": 4000,
-    "diesel_stock_l": 2600,
+    # Deliberately late in the barge cycle and lower than plan: 25% of the day
+    # tank with 12 days still to run. This is the state where the difference
+    # between a good scheduler and a wall timer stops being about money and
+    # starts being about whether the island still has water.
+    "diesel_tank_l": 1200,
+    "diesel_stock_l": 300,
     "barge_interval_days": 21,
     "days_since_last_barge": 9,
 
@@ -300,8 +304,10 @@ def build_maintenance_history(days: int = 90):
     rows = []
     for i in range(days):
         day = today - timedelta(days=days - 1 - i)
-        # ~0.9% drift per month, plus daily measurement noise.
-        drift = design * 0.0003 * i
+        # ~3.5% drift per month, plus daily measurement noise. Tuned so the
+        # projected clean-in-place date lands about six weeks out - near enough
+        # to be actionable, far enough that it is a prediction and not an alarm.
+        drift = design * 0.00115 * i
         rows.append({
             "date": day.isoformat(),
             "specific_energy_kwh_m3": round(design + drift + float(rng.normal(0, 0.05)), 3),

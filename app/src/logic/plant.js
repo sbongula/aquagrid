@@ -22,7 +22,18 @@ export function scalePlant(basePlant, population, referencePopulation) {
     desal_pump_kw: r(basePlant.desal_pump_kw * k, 1),
     desal_output_lph: Math.round(basePlant.desal_output_lph * k),
     array_m2: Math.round(basePlant.array_m2 * k),
-    // unchanged: diesel_l_per_kwh, reserve_floor_pct, tank_target_pct
+
+    // Roof catchment, battery and fuel storage all scale with the settlement
+    // too - a larger island has more public roof, more panels to buffer and a
+    // bigger day tank. Keeping these fixed while demand grew would make rain
+    // and storage irrelevant everywhere except the reference island.
+    roof_catchment_m2: Math.round((basePlant.roof_catchment_m2 || 0) * k),
+    battery_kwh: r((basePlant.battery_kwh || 0) * k, 1),
+    diesel_tank_l: Math.round((basePlant.diesel_tank_l || 0) * k),
+    diesel_stock_l: Math.round((basePlant.diesel_stock_l || 0) * k),
+
+    // unchanged: diesel_l_per_kwh, reserve_floor_pct, tank_target_pct,
+    // runoff_coeff, battery_round_trip, barge_interval_days, storm_wind_kmh
     scale_factor: k,
   };
 }

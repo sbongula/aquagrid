@@ -96,7 +96,7 @@ export async function searchPlaces(query) {
 export async function buildLocationForecast(place, basePlant, demandModel) {
   const data = await getJson(
     `${WX_URL}?latitude=${place.lat}&longitude=${place.lon}` +
-      '&hourly=shortwave_radiation,temperature_2m,cloud_cover' +
+      '&hourly=shortwave_radiation,temperature_2m,cloud_cover,precipitation,wind_speed_10m' +
       // past_days gives us yesterday, which the app replays through the
       // scheduler so the starting tank level reflects this island's weather.
       '&past_days=1&forecast_days=3&timezone=auto',
@@ -120,6 +120,8 @@ export async function buildLocationForecast(place, basePlant, demandModel) {
       solar_kw: Number(((radiation * plant.array_m2 * plant.array_efficiency) / 1000).toFixed(2)),
       temp_c: tempC,
       cloud_pct: h.cloud_cover[i],
+      rain_mm: h.precipitation?.[i] || 0,
+      wind_kmh: h.wind_speed_10m?.[i] || 0,
       predicted_demand_lph: Number(
         predictDemandLph(demandModel, {
           hour: d.getHours(),

@@ -161,7 +161,11 @@ function classifySource(fromSolar, fromBattery, fromDiesel, need) {
  * The AquaGrid strategy. Rules are evaluated in strict priority order;
  * the first match wins.
  */
-export function runSchedule(hourly, plant, { lookaheadHours = 12, stormOverride = false } = {}) {
+export function runSchedule(
+  hourly,
+  plant,
+  { lookaheadHours = 12, stormOverride = false, simulatedWindKmh = 118 } = {},
+) {
   const { pumpKw, outLph, cap, floorL, targetL, catchment, stormKmh } = derive(plant);
   const totals = emptyTotals();
   const state = initialState(plant);
@@ -184,6 +188,7 @@ export function runSchedule(hourly, plant, { lookaheadHours = 12, stormOverride 
     // has is what is already in the tank.
     const stormWind = Math.max(...hourly.slice(i, i + 24).map((x) => x.wind_kmh || 0));
     const stormComing = stormOverride || stormWind >= stormKmh;
+    const reportedWind = stormOverride ? simulatedWindKmh : stormWind;
 
     // Rain that arrives soon is free water we do not have to make.
     const rainSoonL = hourly.slice(i, i + 6).reduce((a, x) => a + (x.rain_mm || 0), 0) * catchment;
@@ -195,7 +200,7 @@ export function runSchedule(hourly, plant, { lookaheadHours = 12, stormOverride 
       // RULE 0 — STORM PREPARATION
       action = 'pump';
       reason =
-        `Cyclone-force wind (${stormWind.toFixed(0)} km/h) forecast within 24h — ` +
+        `Cyclone-force wind (${reportedWind.toFixed(0)} km/h) forecast within 24h — ` +
         'filling to 100% now. After it lands the array is down and the barge is not coming.';
     } else if (tankBefore < floorL) {
       // RULE 1 — EMERGENCY

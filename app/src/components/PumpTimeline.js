@@ -32,6 +32,7 @@ export default function PumpTimeline({ steps }) {
 
       <View style={styles.legend}>
         <Key color={theme.good} label="Solar" />
+        <Key color={theme.water} label="Stored solar" />
         <Key color={theme.warn} label="Partial solar" />
         <Key color={theme.bad} label="Diesel" />
         <Key color={theme.border} label="Idle" />
