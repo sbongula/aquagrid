@@ -56,6 +56,33 @@ PLANT = {
     "tank_target_pct": 92,
     "array_m2": 320,
     "array_efficiency": 0.19,
+
+    # Rainwater harvesting. Tuvalu is in reality almost entirely rainwater-fed,
+    # with desalination as the backup - so this is not a bolt-on, it is how the
+    # island actually gets its water. Catchment is the public roof area plumbed
+    # into the central tank, not private household tanks, which are separate.
+    # 900 m2 of public roof plumbed to the central tank - a few community
+    # buildings, not the whole village. Sized deliberately: at Funafuti rainfall
+    # this covers roughly a quarter to a third of demand, which is enough that
+    # the scheduler must plan around it and not so much that it never has to
+    # make water at all. Raise it and the reserve floor stops binding.
+    "roof_catchment_m2": 900,
+    "runoff_coeff": 0.8,
+
+    # Battery. Lets surplus midday solar run the pump into the 18:00-20:00
+    # demand peak instead of being curtailed.
+    "battery_kwh": 150.0,
+    "battery_round_trip": 0.90,
+
+    # Diesel is delivered by barge. Running out between barges is a real island
+    # failure mode and is not the same problem as burning too much.
+    "diesel_tank_l": 4000,
+    "diesel_stock_l": 2600,
+    "barge_interval_days": 21,
+    "days_since_last_barge": 9,
+
+    # Sustained winds above this put the island into storm preparation.
+    "storm_wind_kmh": 90.0,
 }
 
 # Temperature grid for the exported lookup table. Tropical islands sit well
@@ -202,7 +229,7 @@ def fetch_solar(hours: int = WARMUP_HOURS + HORIZON_HOURS):
     url = (
         "https://api.open-meteo.com/v1/forecast"
         f"?latitude={ISLAND['lat']}&longitude={ISLAND['lon']}"
-        "&hourly=shortwave_radiation,temperature_2m,cloud_cover"
+        "&hourly=shortwave_radiation,temperature_2m,cloud_cover,precipitation,wind_speed_10m"
         # timezone=auto is essential: the island is UTC+12, so UTC timestamps
         # would put "peak solar" at local midnight and wreck every decision.
         "&past_days=1&forecast_days=3&timezone=auto"
@@ -218,6 +245,8 @@ def fetch_solar(hours: int = WARMUP_HOURS + HORIZON_HOURS):
                 "radiation_wm2": float(h["shortwave_radiation"][i] or 0.0),
                 "temp_c": float(h["temperature_2m"][i]),
                 "cloud_pct": float(h["cloud_cover"][i]),
+                "rain_mm": float(h["precipitation"][i] or 0.0),
+                "wind_kmh": float(h["wind_speed_10m"][i] or 0.0),
             }
             for i in range(min(hours, len(h["time"])))
         ]
@@ -241,18 +270,50 @@ def synth_solar(hours: int = WARMUP_HOURS + HORIZON_HOURS):
         solar_angle = math.sin(math.pi * (t.hour - 6) / 12.0)
         clear = max(0.0, 980.0 * solar_angle)
         cloud = float(np.clip(rng.normal(35, 22), 0, 100))
+        # Tropical showers: rain is bursty and correlated with cloud cover.
+        rain = 0.0
+        if cloud > 60 and rng.random() < 0.35:
+            rain = round(float(abs(rng.normal(1.2, 1.1))), 2)
         out.append({
             "time": t.strftime("%Y-%m-%dT%H:%M"),
             "radiation_wm2": round(clear * (1 - 0.75 * cloud / 100.0), 1),
             "temp_c": round(27.5 + 3.2 * math.sin(2 * math.pi * (t.hour - 9) / 24)
                             + float(rng.normal(0, 0.5)), 2),
             "cloud_pct": round(cloud, 1),
+            "rain_mm": rain,
+            "wind_kmh": round(float(abs(rng.normal(22, 9))), 1),
         })
     return out
 
 
+# --- 4b. Reverse-osmosis maintenance history --------------------------------
+def build_maintenance_history(days: int = 90):
+    """
+    Specific energy - kWh per cubic metre of fresh water - is the standard health
+    metric for a reverse-osmosis train. It rises as membranes foul, because the
+    pump has to push harder for the same flow. Ninety days of daily readings let
+    the app fit the trend and predict when a clean-in-place is due.
+    """
+    rng = np.random.default_rng(11)
+    design = PLANT["desal_pump_kw"] / (PLANT["desal_output_lph"] / 1000.0)
+    today = datetime.now(timezone.utc).date()
+    rows = []
+    for i in range(days):
+        day = today - timedelta(days=days - 1 - i)
+        # ~0.9% drift per month, plus daily measurement noise.
+        drift = design * 0.0003 * i
+        rows.append({
+            "date": day.isoformat(),
+            "specific_energy_kwh_m3": round(design + drift + float(rng.normal(0, 0.05)), 3),
+        })
+    print(f"Built {days} days of RO maintenance history "
+          f"(design {design:.2f} -> latest {rows[-1]['specific_energy_kwh_m3']:.2f} kWh/m3)")
+    return {"design_kwh_m3": round(design, 3), "clean_threshold_kwh_m3": round(design * 1.15, 3),
+            "daily": rows}
+
+
 # --- 5 & 6. Predict forward and export --------------------------------------
-def build_forecast(model, weather, metrics, curve, source, demand_table):
+def build_forecast(model, weather, metrics, curve, source, demand_table, maintenance):
     rows = []
     for w in weather:
         ts = datetime.fromisoformat(w["time"])
@@ -278,6 +339,8 @@ def build_forecast(model, weather, metrics, curve, source, demand_table):
             "solar_kw": solar_kw,
             "temp_c": w["temp_c"],
             "cloud_pct": w["cloud_pct"],
+            "rain_mm": round(w.get("rain_mm", 0.0), 2),
+            "wind_kmh": round(w.get("wind_kmh", 0.0), 1),
             "predicted_demand_lph": round(float(model.predict(feats)[0]), 1),
         })
 
@@ -290,6 +353,7 @@ def build_forecast(model, weather, metrics, curve, source, demand_table):
         # lookahead logic has nothing to prove.
         "plant": PLANT,
         "model": metrics,
+        "maintenance": maintenance,
         # The 24 hours before the horizon. The app replays these through the
         # scheduler to derive the starting tank level, so where the tank sits at
         # t=0 reflects yesterday's actual weather at this location.
@@ -314,5 +378,6 @@ if __name__ == "__main__":
     model, metrics, curve = train(history)
     demand_table = export_demand_table(model)
     weather, source = fetch_solar()
-    build_forecast(model, weather, metrics, curve, source, demand_table)
+    maintenance = build_maintenance_history()
+    build_forecast(model, weather, metrics, curve, source, demand_table, maintenance)
     print("\nDone. Restart the Expo app to pick up the new forecast.")

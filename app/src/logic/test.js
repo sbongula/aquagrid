@@ -16,9 +16,10 @@ const react = reactiveSchedule(hourly, plant);
 
 const row = (n, r) =>
   `${n.padEnd(12)} diesel ${r.totals.dieselL.toFixed(1).padStart(7)} L  $${r.totals.costUsd.toFixed(0).padStart(5)}  ` +
-  `CO2 ${r.totals.co2Kg.toFixed(0).padStart(5)} kg  pump ${String(r.totals.pumpHours).padStart(2)}h ` +
-  `(solar ${r.totals.solarPumpHours} / hybrid ${r.totals.hybridPumpHours} / diesel ${r.totals.dieselPumpHours})  ` +
-  `shortage ${r.totals.shortageHours}h`;
+  `pump ${String(r.totals.pumpHours).padStart(2)}h ` +
+  `(sol ${r.totals.solarPumpHours} / batt ${r.totals.batteryPumpHours} / hyb ${r.totals.hybridPumpHours} / dsl ${r.totals.dieselPumpHours})  ` +
+  `rain ${(r.totals.harvestedL / 1000).toFixed(1)}m3  spill ${(r.totals.spilledL / 1000).toFixed(1)}m3  ` +
+  `batt ${r.totals.batteryKwh.toFixed(0)}kWh  shortage ${r.totals.shortageHours}h`;
 
 console.log(row('AquaGrid', smart));
 console.log(row('FixedTimer', timer));

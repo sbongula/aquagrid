@@ -38,7 +38,7 @@ function std(xs) {
 }
 
 /**
- * expectedDrop = demand - pumped   (what the forecast says should happen)
+ * expectedDrop = demand - pumped - harvested   (what the forecast says should happen)
  * actualDrop   = sensor[i-1] - sensor[i]   (what the sensor says did happen)
  * residual     = actualDrop - expectedDrop (positive = losing water we cannot explain)
  *
@@ -48,7 +48,10 @@ function std(xs) {
 export function detectLeak(steps, sensorLevels, { window = 3, zThreshold = 3.0, noiseStd = 120 } = {}) {
   const residual = new Array(steps.length).fill(0);
   for (let i = 1; i < steps.length; i++) {
-    const expectedDrop = steps[i].demandL - steps[i].pumpedL;
+    // Rainwater is free inflow the forecast knows about, so it belongs in the
+            // expectation. Omitting it would read every shower as a negative leak.
+    const expectedDrop = steps[i].demandL - steps[i].pumpedL - (steps[i].harvestL || 0)
+      + (steps[i].spilledL || 0);
     const actualDrop = sensorLevels[i - 1] - sensorLevels[i];
     residual[i] = actualDrop - expectedDrop;
   }

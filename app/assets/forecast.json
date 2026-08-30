@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-30T15:44:00+00:00",
+  "generated_at": "2026-08-30T16:03:55+00:00",
   "island": {
     "name": "Funafuti, Tuvalu",
     "lat": -8.52,
@@ -16,7 +16,16 @@
     "reserve_floor_pct": 25,
     "tank_target_pct": 92,
     "array_m2": 320,
-    "array_efficiency": 0.19
+    "array_efficiency": 0.19,
+    "roof_catchment_m2": 900,
+    "runoff_coeff": 0.8,
+    "battery_kwh": 150.0,
+    "battery_round_trip": 0.9,
+    "diesel_tank_l": 4000,
+    "diesel_stock_l": 2600,
+    "barge_interval_days": 21,
+    "days_since_last_barge": 9,
+    "storm_wind_kmh": 90.0
   },
   "model": {
     "mae_lph": 45.3,
@@ -57,6 +66,372 @@
       }
     ]
   },
+  "maintenance": {
+    "design_kwh_m3": 8.333,
+    "clean_threshold_kwh_m3": 9.583,
+    "daily": [
+      {
+        "date": "2026-06-02",
+        "specific_energy_kwh_m3": 8.335
+      },
+      {
+        "date": "2026-06-03",
+        "specific_energy_kwh_m3": 8.404
+      },
+      {
+        "date": "2026-06-04",
+        "specific_energy_kwh_m3": 8.4
+      },
+      {
+        "date": "2026-06-05",
+        "specific_energy_kwh_m3": 8.315
+      },
+      {
+        "date": "2026-06-06",
+        "specific_energy_kwh_m3": 8.328
+      },
+      {
+        "date": "2026-06-07",
+        "specific_energy_kwh_m3": 8.319
+      },
+      {
+        "date": "2026-06-08",
+        "specific_energy_kwh_m3": 8.377
+      },
+      {
+        "date": "2026-06-09",
+        "specific_energy_kwh_m3": 8.348
+      },
+      {
+        "date": "2026-06-10",
+        "specific_energy_kwh_m3": 8.391
+      },
+      {
+        "date": "2026-06-11",
+        "specific_energy_kwh_m3": 8.263
+      },
+      {
+        "date": "2026-06-12",
+        "specific_energy_kwh_m3": 8.437
+      },
+      {
+        "date": "2026-06-13",
+        "specific_energy_kwh_m3": 8.356
+      },
+      {
+        "date": "2026-06-14",
+        "specific_energy_kwh_m3": 8.397
+      },
+      {
+        "date": "2026-06-15",
+        "specific_energy_kwh_m3": 8.359
+      },
+      {
+        "date": "2026-06-16",
+        "specific_energy_kwh_m3": 8.349
+      },
+      {
+        "date": "2026-06-17",
+        "specific_energy_kwh_m3": 8.394
+      },
+      {
+        "date": "2026-06-18",
+        "specific_energy_kwh_m3": 8.415
+      },
+      {
+        "date": "2026-06-19",
+        "specific_energy_kwh_m3": 8.366
+      },
+      {
+        "date": "2026-06-20",
+        "specific_energy_kwh_m3": 8.371
+      },
+      {
+        "date": "2026-06-21",
+        "specific_energy_kwh_m3": 8.415
+      },
+      {
+        "date": "2026-06-22",
+        "specific_energy_kwh_m3": 8.34
+      },
+      {
+        "date": "2026-06-23",
+        "specific_energy_kwh_m3": 8.31
+      },
+      {
+        "date": "2026-06-24",
+        "specific_energy_kwh_m3": 8.408
+      },
+      {
+        "date": "2026-06-25",
+        "specific_energy_kwh_m3": 8.357
+      },
+      {
+        "date": "2026-06-26",
+        "specific_energy_kwh_m3": 8.297
+      },
+      {
+        "date": "2026-06-27",
+        "specific_energy_kwh_m3": 8.355
+      },
+      {
+        "date": "2026-06-28",
+        "specific_energy_kwh_m3": 8.375
+      },
+      {
+        "date": "2026-06-29",
+        "specific_energy_kwh_m3": 8.341
+      },
+      {
+        "date": "2026-06-30",
+        "specific_energy_kwh_m3": 8.329
+      },
+      {
+        "date": "2026-07-01",
+        "specific_energy_kwh_m3": 8.408
+      },
+      {
+        "date": "2026-07-02",
+        "specific_energy_kwh_m3": 8.453
+      },
+      {
+        "date": "2026-07-03",
+        "specific_energy_kwh_m3": 8.399
+      },
+      {
+        "date": "2026-07-04",
+        "specific_energy_kwh_m3": 8.376
+      },
+      {
+        "date": "2026-07-05",
+        "specific_energy_kwh_m3": 8.435
+      },
+      {
+        "date": "2026-07-06",
+        "specific_energy_kwh_m3": 8.454
+      },
+      {
+        "date": "2026-07-07",
+        "specific_energy_kwh_m3": 8.406
+      },
+      {
+        "date": "2026-07-08",
+        "specific_energy_kwh_m3": 8.451
+      },
+      {
+        "date": "2026-07-09",
+        "specific_energy_kwh_m3": 8.478
+      },
+      {
+        "date": "2026-07-10",
+        "specific_energy_kwh_m3": 8.418
+      },
+      {
+        "date": "2026-07-11",
+        "specific_energy_kwh_m3": 8.39
+      },
+      {
+        "date": "2026-07-12",
+        "specific_energy_kwh_m3": 8.451
+      },
+      {
+        "date": "2026-07-13",
+        "specific_energy_kwh_m3": 8.448
+      },
+      {
+        "date": "2026-07-14",
+        "specific_energy_kwh_m3": 8.493
+      },
+      {
+        "date": "2026-07-15",
+        "specific_energy_kwh_m3": 8.377
+      },
+      {
+        "date": "2026-07-16",
+        "specific_energy_kwh_m3": 8.41
+      },
+      {
+        "date": "2026-07-17",
+        "specific_energy_kwh_m3": 8.404
+      },
+      {
+        "date": "2026-07-18",
+        "specific_energy_kwh_m3": 8.362
+      },
+      {
+        "date": "2026-07-19",
+        "specific_energy_kwh_m3": 8.457
+      },
+      {
+        "date": "2026-07-20",
+        "specific_energy_kwh_m3": 8.48
+      },
+      {
+        "date": "2026-07-21",
+        "specific_energy_kwh_m3": 8.419
+      },
+      {
+        "date": "2026-07-22",
+        "specific_energy_kwh_m3": 8.528
+      },
+      {
+        "date": "2026-07-23",
+        "specific_energy_kwh_m3": 8.502
+      },
+      {
+        "date": "2026-07-24",
+        "specific_energy_kwh_m3": 8.495
+      },
+      {
+        "date": "2026-07-25",
+        "specific_energy_kwh_m3": 8.486
+      },
+      {
+        "date": "2026-07-26",
+        "specific_energy_kwh_m3": 8.516
+      },
+      {
+        "date": "2026-07-27",
+        "specific_energy_kwh_m3": 8.404
+      },
+      {
+        "date": "2026-07-28",
+        "specific_energy_kwh_m3": 8.504
+      },
+      {
+        "date": "2026-07-29",
+        "specific_energy_kwh_m3": 8.506
+      },
+      {
+        "date": "2026-07-30",
+        "specific_energy_kwh_m3": 8.39
+      },
+      {
+        "date": "2026-07-31",
+        "specific_energy_kwh_m3": 8.498
+      },
+      {
+        "date": "2026-08-01",
+        "specific_energy_kwh_m3": 8.471
+      },
+      {
+        "date": "2026-08-02",
+        "specific_energy_kwh_m3": 8.525
+      },
+      {
+        "date": "2026-08-03",
+        "specific_energy_kwh_m3": 8.466
+      },
+      {
+        "date": "2026-08-04",
+        "specific_energy_kwh_m3": 8.49
+      },
+      {
+        "date": "2026-08-05",
+        "specific_energy_kwh_m3": 8.51
+      },
+      {
+        "date": "2026-08-06",
+        "specific_energy_kwh_m3": 8.452
+      },
+      {
+        "date": "2026-08-07",
+        "specific_energy_kwh_m3": 8.528
+      },
+      {
+        "date": "2026-08-08",
+        "specific_energy_kwh_m3": 8.496
+      },
+      {
+        "date": "2026-08-09",
+        "specific_energy_kwh_m3": 8.528
+      },
+      {
+        "date": "2026-08-10",
+        "specific_energy_kwh_m3": 8.48
+      },
+      {
+        "date": "2026-08-11",
+        "specific_energy_kwh_m3": 8.563
+      },
+      {
+        "date": "2026-08-12",
+        "specific_energy_kwh_m3": 8.541
+      },
+      {
+        "date": "2026-08-13",
+        "specific_energy_kwh_m3": 8.504
+      },
+      {
+        "date": "2026-08-14",
+        "specific_energy_kwh_m3": 8.547
+      },
+      {
+        "date": "2026-08-15",
+        "specific_energy_kwh_m3": 8.581
+      },
+      {
+        "date": "2026-08-16",
+        "specific_energy_kwh_m3": 8.61
+      },
+      {
+        "date": "2026-08-17",
+        "specific_energy_kwh_m3": 8.445
+      },
+      {
+        "date": "2026-08-18",
+        "specific_energy_kwh_m3": 8.57
+      },
+      {
+        "date": "2026-08-19",
+        "specific_energy_kwh_m3": 8.552
+      },
+      {
+        "date": "2026-08-20",
+        "specific_energy_kwh_m3": 8.526
+      },
+      {
+        "date": "2026-08-21",
+        "specific_energy_kwh_m3": 8.483
+      },
+      {
+        "date": "2026-08-22",
+        "specific_energy_kwh_m3": 8.599
+      },
+      {
+        "date": "2026-08-23",
+        "specific_energy_kwh_m3": 8.475
+      },
+      {
+        "date": "2026-08-24",
+        "specific_energy_kwh_m3": 8.569
+      },
+      {
+        "date": "2026-08-25",
+        "specific_energy_kwh_m3": 8.608
+      },
+      {
+        "date": "2026-08-26",
+        "specific_energy_kwh_m3": 8.466
+      },
+      {
+        "date": "2026-08-27",
+        "specific_energy_kwh_m3": 8.533
+      },
+      {
+        "date": "2026-08-28",
+        "specific_energy_kwh_m3": 8.485
+      },
+      {
+        "date": "2026-08-29",
+        "specific_energy_kwh_m3": 8.566
+      },
+      {
+        "date": "2026-08-30",
+        "specific_energy_kwh_m3": 8.632
+      }
+    ]
+  },
   "warmup": [
     {
       "time": "2026-08-30T00:00",
@@ -64,6 +439,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.5,
       "cloud_pct": 55.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 18.0,
       "predicted_demand_lph": 330.9
     },
     {
@@ -72,6 +449,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.1,
       "cloud_pct": 50.0,
+      "rain_mm": 0.4,
+      "wind_kmh": 16.2,
       "predicted_demand_lph": 256.7
     },
     {
@@ -80,6 +459,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.5,
       "cloud_pct": 74.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 15.1,
       "predicted_demand_lph": 200.0
     },
     {
@@ -88,6 +469,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.4,
       "cloud_pct": 61.0,
+      "rain_mm": 0.4,
+      "wind_kmh": 11.2,
       "predicted_demand_lph": 211.5
     },
     {
@@ -96,6 +479,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.0,
       "cloud_pct": 57.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 14.0,
       "predicted_demand_lph": 321.3
     },
     {
@@ -104,6 +489,8 @@
       "solar_kw": 0.0,
       "temp_c": 26.8,
       "cloud_pct": 38.0,
+      "rain_mm": 0.7,
+      "wind_kmh": 12.5,
       "predicted_demand_lph": 791.0
     },
     {
@@ -112,6 +499,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.8,
       "cloud_pct": 39.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 16.6,
       "predicted_demand_lph": 1912.2
     },
     {
@@ -120,6 +509,8 @@
       "solar_kw": 3.04,
       "temp_c": 27.9,
       "cloud_pct": 24.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 15.5,
       "predicted_demand_lph": 2386.6
     },
     {
@@ -128,6 +519,8 @@
       "solar_kw": 15.08,
       "temp_c": 28.3,
       "cloud_pct": 16.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 15.0,
       "predicted_demand_lph": 2069.2
     },
     {
@@ -136,6 +529,8 @@
       "solar_kw": 28.09,
       "temp_c": 28.5,
       "cloud_pct": 31.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 16.0,
       "predicted_demand_lph": 1586.9
     },
     {
@@ -144,6 +539,8 @@
       "solar_kw": 39.46,
       "temp_c": 28.5,
       "cloud_pct": 30.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 16.5,
       "predicted_demand_lph": 1398.6
     },
     {
@@ -152,6 +549,8 @@
       "solar_kw": 50.4,
       "temp_c": 28.6,
       "cloud_pct": 48.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 16.5,
       "predicted_demand_lph": 1342.3
     },
     {
@@ -160,6 +559,8 @@
       "solar_kw": 54.23,
       "temp_c": 28.1,
       "cloud_pct": 83.0,
+      "rain_mm": 0.3,
+      "wind_kmh": 18.9,
       "predicted_demand_lph": 1434.0
     },
     {
@@ -168,6 +569,8 @@
       "solar_kw": 47.18,
       "temp_c": 27.6,
       "cloud_pct": 70.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 20.9,
       "predicted_demand_lph": 1383.2
     },
     {
@@ -176,6 +579,8 @@
       "solar_kw": 47.0,
       "temp_c": 27.8,
       "cloud_pct": 73.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 18.3,
       "predicted_demand_lph": 1290.2
     },
     {
@@ -184,6 +589,8 @@
       "solar_kw": 41.28,
       "temp_c": 27.9,
       "cloud_pct": 55.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 20.3,
       "predicted_demand_lph": 1284.3
     },
     {
@@ -192,6 +599,8 @@
       "solar_kw": 28.76,
       "temp_c": 27.9,
       "cloud_pct": 32.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 18.0,
       "predicted_demand_lph": 1429.8
     },
     {
@@ -200,6 +609,8 @@
       "solar_kw": 16.54,
       "temp_c": 28.3,
       "cloud_pct": 46.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 18.5,
       "predicted_demand_lph": 1749.5
     },
     {
@@ -208,6 +619,8 @@
       "solar_kw": 4.38,
       "temp_c": 28.2,
       "cloud_pct": 48.0,
+      "rain_mm": 0.4,
+      "wind_kmh": 21.6,
       "predicted_demand_lph": 2465.2
     },
     {
@@ -216,6 +629,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 50.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 20.3,
       "predicted_demand_lph": 2644.4
     },
     {
@@ -224,6 +639,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 67.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 22.1,
       "predicted_demand_lph": 1986.6
     },
     {
@@ -232,6 +649,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.2,
       "cloud_pct": 41.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 20.4,
       "predicted_demand_lph": 1269.3
     },
     {
@@ -240,6 +659,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 63.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 18.4,
       "predicted_demand_lph": 873.0
     },
     {
@@ -248,6 +669,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 84.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 20.0,
       "predicted_demand_lph": 484.3
     }
   ],
@@ -16241,6 +16664,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 98.0,
+      "rain_mm": 0.3,
+      "wind_kmh": 18.7,
       "predicted_demand_lph": 313.8
     },
     {
@@ -16249,6 +16674,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.1,
       "cloud_pct": 100.0,
+      "rain_mm": 1.7,
+      "wind_kmh": 22.8,
       "predicted_demand_lph": 229.9
     },
     {
@@ -16257,6 +16684,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.1,
       "cloud_pct": 90.0,
+      "rain_mm": 0.7,
+      "wind_kmh": 15.4,
       "predicted_demand_lph": 186.8
     },
     {
@@ -16265,6 +16694,8 @@
       "solar_kw": 0.0,
       "temp_c": 26.4,
       "cloud_pct": 98.0,
+      "rain_mm": 0.5,
+      "wind_kmh": 23.9,
       "predicted_demand_lph": 182.4
     },
     {
@@ -16273,6 +16704,8 @@
       "solar_kw": 0.0,
       "temp_c": 26.9,
       "cloud_pct": 96.0,
+      "rain_mm": 1.0,
+      "wind_kmh": 18.7,
       "predicted_demand_lph": 231.9
     },
     {
@@ -16281,6 +16714,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.2,
       "cloud_pct": 98.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 18.8,
       "predicted_demand_lph": 595.3
     },
     {
@@ -16289,6 +16724,8 @@
       "solar_kw": 0.0,
       "temp_c": 26.9,
       "cloud_pct": 97.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 21.4,
       "predicted_demand_lph": 1462.1
     },
     {
@@ -16297,6 +16734,8 @@
       "solar_kw": 2.37,
       "temp_c": 26.9,
       "cloud_pct": 71.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 20.9,
       "predicted_demand_lph": 1773.2
     },
     {
@@ -16305,6 +16744,8 @@
       "solar_kw": 15.02,
       "temp_c": 27.1,
       "cloud_pct": 66.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 18.9,
       "predicted_demand_lph": 1526.6
     },
     {
@@ -16313,6 +16754,8 @@
       "solar_kw": 29.55,
       "temp_c": 27.5,
       "cloud_pct": 98.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 17.5,
       "predicted_demand_lph": 1140.7
     },
     {
@@ -16321,6 +16764,8 @@
       "solar_kw": 30.58,
       "temp_c": 26.5,
       "cloud_pct": 100.0,
+      "rain_mm": 1.8,
+      "wind_kmh": 12.6,
       "predicted_demand_lph": 1035.2
     },
     {
@@ -16329,6 +16774,8 @@
       "solar_kw": 40.98,
       "temp_c": 26.6,
       "cloud_pct": 100.0,
+      "rain_mm": 0.3,
+      "wind_kmh": 11.1,
       "predicted_demand_lph": 1017.8
     },
     {
@@ -16337,6 +16784,8 @@
       "solar_kw": 34.96,
       "temp_c": 25.9,
       "cloud_pct": 98.0,
+      "rain_mm": 3.3,
+      "wind_kmh": 11.2,
       "predicted_demand_lph": 1071.1
     },
     {
@@ -16345,6 +16794,8 @@
       "solar_kw": 44.02,
       "temp_c": 26.1,
       "cloud_pct": 96.0,
+      "rain_mm": 1.1,
+      "wind_kmh": 18.8,
       "predicted_demand_lph": 1055.2
     },
     {
@@ -16353,6 +16804,8 @@
       "solar_kw": 38.91,
       "temp_c": 26.7,
       "cloud_pct": 44.0,
+      "rain_mm": 0.8,
+      "wind_kmh": 17.8,
       "predicted_demand_lph": 935.1
     },
     {
@@ -16361,6 +16814,8 @@
       "solar_kw": 42.68,
       "temp_c": 26.7,
       "cloud_pct": 4.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 16.0,
       "predicted_demand_lph": 937.1
     },
     {
@@ -16369,6 +16824,8 @@
       "solar_kw": 32.22,
       "temp_c": 27.3,
       "cloud_pct": 83.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 18.4,
       "predicted_demand_lph": 1108.1
     },
     {
@@ -16377,6 +16834,8 @@
       "solar_kw": 14.65,
       "temp_c": 28.1,
       "cloud_pct": 29.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 19.8,
       "predicted_demand_lph": 1346.1
     },
     {
@@ -16385,6 +16844,8 @@
       "solar_kw": 4.01,
       "temp_c": 28.5,
       "cloud_pct": 41.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 22.6,
       "predicted_demand_lph": 1951.0
     },
     {
@@ -16393,6 +16854,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.5,
       "cloud_pct": 59.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 24.4,
       "predicted_demand_lph": 2054.5
     },
     {
@@ -16401,6 +16864,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 92.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 24.9,
       "predicted_demand_lph": 1535.6
     },
     {
@@ -16409,6 +16874,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.6,
       "cloud_pct": 56.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 26.1,
       "predicted_demand_lph": 1025.8
     },
     {
@@ -16417,6 +16884,8 @@
       "solar_kw": 0.0,
       "temp_c": 26.9,
       "cloud_pct": 80.0,
+      "rain_mm": 0.3,
+      "wind_kmh": 30.4,
       "predicted_demand_lph": 657.2
     },
     {
@@ -16425,6 +16894,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.7,
       "cloud_pct": 11.0,
+      "rain_mm": 1.1,
+      "wind_kmh": 23.4,
       "predicted_demand_lph": 391.8
     },
     {
@@ -16433,6 +16904,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.0,
       "cloud_pct": 30.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 24.8,
       "predicted_demand_lph": 210.2
     },
     {
@@ -16441,6 +16914,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.3,
       "cloud_pct": 25.0,
+      "rain_mm": 0.4,
+      "wind_kmh": 26.2,
       "predicted_demand_lph": 206.4
     },
     {
@@ -16449,6 +16924,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.5,
       "cloud_pct": 9.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 27.3,
       "predicted_demand_lph": 189.2
     },
     {
@@ -16457,6 +16934,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.6,
       "cloud_pct": 48.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 29.9,
       "predicted_demand_lph": 194.7
     },
     {
@@ -16465,6 +16944,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.2,
       "cloud_pct": 41.0,
+      "rain_mm": 0.3,
+      "wind_kmh": 30.0,
       "predicted_demand_lph": 204.4
     },
     {
@@ -16473,6 +16954,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.2,
       "cloud_pct": 26.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 29.6,
       "predicted_demand_lph": 469.6
     },
     {
@@ -16481,6 +16964,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.5,
       "cloud_pct": 23.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 30.5,
       "predicted_demand_lph": 1245.6
     },
     {
@@ -16489,6 +16974,8 @@
       "solar_kw": 3.4,
       "temp_c": 28.6,
       "cloud_pct": 3.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 31.6,
       "predicted_demand_lph": 1515.5
     },
     {
@@ -16497,6 +16984,8 @@
       "solar_kw": 16.36,
       "temp_c": 28.6,
       "cloud_pct": 16.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 31.2,
       "predicted_demand_lph": 1310.0
     },
     {
@@ -16505,6 +16994,8 @@
       "solar_kw": 29.73,
       "temp_c": 28.5,
       "cloud_pct": 36.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 30.9,
       "predicted_demand_lph": 975.1
     },
     {
@@ -16513,6 +17004,8 @@
       "solar_kw": 40.19,
       "temp_c": 28.6,
       "cloud_pct": 15.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 30.1,
       "predicted_demand_lph": 881.1
     },
     {
@@ -16521,6 +17014,8 @@
       "solar_kw": 49.37,
       "temp_c": 28.6,
       "cloud_pct": 25.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 30.3,
       "predicted_demand_lph": 835.5
     },
     {
@@ -16529,6 +17024,8 @@
       "solar_kw": 51.25,
       "temp_c": 28.5,
       "cloud_pct": 21.0,
+      "rain_mm": 0.2,
+      "wind_kmh": 30.9,
       "predicted_demand_lph": 938.9
     },
     {
@@ -16537,6 +17034,8 @@
       "solar_kw": 52.11,
       "temp_c": 28.4,
       "cloud_pct": 25.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 32.5,
       "predicted_demand_lph": 880.7
     },
     {
@@ -16545,6 +17044,8 @@
       "solar_kw": 51.74,
       "temp_c": 28.3,
       "cloud_pct": 13.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 34.0,
       "predicted_demand_lph": 773.6
     },
     {
@@ -16553,6 +17054,8 @@
       "solar_kw": 43.65,
       "temp_c": 28.2,
       "cloud_pct": 16.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 35.5,
       "predicted_demand_lph": 784.6
     },
     {
@@ -16561,6 +17064,8 @@
       "solar_kw": 32.16,
       "temp_c": 28.2,
       "cloud_pct": 2.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 35.6,
       "predicted_demand_lph": 862.4
     },
     {
@@ -16569,6 +17074,8 @@
       "solar_kw": 18.18,
       "temp_c": 28.3,
       "cloud_pct": 3.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 34.0,
       "predicted_demand_lph": 1113.0
     },
     {
@@ -16577,6 +17084,8 @@
       "solar_kw": 4.74,
       "temp_c": 28.2,
       "cloud_pct": 9.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 35.5,
       "predicted_demand_lph": 1555.4
     },
     {
@@ -16585,6 +17094,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.1,
       "cloud_pct": 4.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 33.5,
       "predicted_demand_lph": 1685.3
     },
     {
@@ -16593,6 +17104,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.2,
       "cloud_pct": 41.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 33.0,
       "predicted_demand_lph": 1244.7
     },
     {
@@ -16601,6 +17114,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.6,
       "cloud_pct": 61.0,
+      "rain_mm": 0.0,
+      "wind_kmh": 33.3,
       "predicted_demand_lph": 892.4
     },
     {
@@ -16609,6 +17124,8 @@
       "solar_kw": 0.0,
       "temp_c": 28.0,
       "cloud_pct": 65.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 35.5,
       "predicted_demand_lph": 588.9
     },
     {
@@ -16617,6 +17134,8 @@
       "solar_kw": 0.0,
       "temp_c": 27.3,
       "cloud_pct": 88.0,
+      "rain_mm": 0.1,
+      "wind_kmh": 35.8,
       "predicted_demand_lph": 298.1
     }
   ]
