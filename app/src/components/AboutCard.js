@@ -56,7 +56,7 @@ export default function AboutCard() {
       </Pressable>
 
       <Text style={styles.credit}>
-        Rishik · Neekin · Srihan · Ednit · Gowtham{'\n'}
+        BitHeads — Rishik · Neekin · Srihan · Ednit · Gowtham{'\n'}
         DreamHacks 2026 · Track 2 — AI, Automation & Logic
       </Text>
     </Card>

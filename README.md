@@ -608,6 +608,8 @@ None of this makes anyone's water secure on its own. It is a scheduler, built in
 
 ### The team
 
+**BitHeads**
+
 | | Presenting | |
 |---|---|---|
 | **Rishik** | The problem | Why an island's water and energy are the same problem, and how these plants are run today. |
@@ -616,7 +618,7 @@ None of this makes anyone's water secure on its own. It is a scheduler, built in
 | **Ednit** | The features | The eight rules, rainwater, the battery, and the four detectors. |
 | **Gowtham** | The code and the site | Repository walkthrough, the live test run, the website and the handbook. |
 
-Built for DreamHacks 2026, Track 2 — AI, Automation & Logic.
+BitHeads · DreamHacks 2026, Track 2 — AI, Automation & Logic.
 
 
 ## Limitations

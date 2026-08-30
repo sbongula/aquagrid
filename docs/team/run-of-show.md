@@ -1,5 +1,7 @@
 # AquaGrid — run of show
 
+**Team BitHeads**
+
 **One minute each.** Every section opens with a title slide — that is your cue to take over, and a free two seconds to breathe. Then two content slides. Deck: `slides.html` (arrow keys, `F` for fullscreen) or `AquaGrid-Slides.pdf`.
 
 Everything below is written to be *said out loud*. Short sentences. Every number you need is already on your slide, so nothing has to be memorised — glance at it and say it.
