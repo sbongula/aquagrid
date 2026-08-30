@@ -32,6 +32,7 @@ import LeakPanel from './src/components/LeakPanel';
 import AssetHealthCard from './src/components/AssetHealthCard';
 import AdvisoryCard from './src/components/AdvisoryCard';
 import ModelCard from './src/components/ModelCard';
+import AboutCard from './src/components/AboutCard';
 
 // Hour of the horizon the operator is standing in.
 const NOW_INDEX = 0;
@@ -242,6 +243,7 @@ function Dashboard() {
           rationing={rationing}
         />
         <ModelCard model={model} curve={curve} />
+        <AboutCard />
 
         <DemoBar stormMode={stormMode} onToggleStorm={() => setStormMode((v) => !v)} />
 

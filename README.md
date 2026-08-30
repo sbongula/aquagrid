@@ -589,6 +589,30 @@ Groq serves **open-weight** models free with no credit card — no proprietary m
 
 **The key lives client-side.** There is no backend to hide it behind — the deliberate trade for an app that works offline. `src/config.js` is gitignored and no key is committed. Beyond a demo this belongs behind a proxy.
 
+## Why we built this
+
+Tuvalu is one of the most climate-vulnerable countries on Earth. Nine low-lying atolls, a highest point of around four metres, and a freshwater lens so thin and so easily contaminated by saltwater intrusion that groundwater is largely undrinkable. The island runs on rain. When the rain stops, it runs on desalination, and desalination runs on diesel that arrives by barge.
+
+This is not hypothetical. In 2011 a prolonged drought left Funafuti with days of fresh water remaining. A state of emergency was declared and neighbouring countries flew in portable desalination units and shipped in water. The vulnerability was never really about the plant being too small. It was that nobody could see far enough ahead to act early.
+
+What struck us, reading about how these plants are actually operated, is that the hard parts are already solved. The panels are on the roof. The tank is in the ground. The desalination unit works. The weather forecast is free and public. What is missing is the thin layer in between — the part that looks at tomorrow and decides what to do tonight. That layer is software, and software is the cheapest thing you can add to an island.
+
+So AquaGrid is deliberately not a hardware proposal. It does not ask anyone to buy anything. It takes the equipment an island already has and schedules it against a forecast, which is the difference between making water when it is free and making water when it is expensive. On our test case that is 78% less diesel — and, more importantly, the difference between fuel lasting until the next barge and not.
+
+We also made a decision early that shaped everything else: it had to work with no signal. An app that needs a server to decide whether to run a pump is an app that fails exactly when an island is cut off, which is exactly when it matters. So the model is trained offline and runs on the phone. You can put the device in airplane mode in the middle of the demo and nothing stops working. That is not a limitation we worked around. It is the requirement.
+
+Every number in this project is computed, not asserted. The savings come from running three schedulers over the same forecast and the same physics. The model is tested on the 60 days that came after the ones it learned from. The leak detector is given a real injected fault and has to find it. We would rather show a smaller honest number than a larger one we cannot defend — which is why Reykjavík, where there is barely any sun to schedule against, is in the results table at 23% alongside Apia at 80%.
+
+None of this makes anyone's water secure on its own. It is a scheduler, built in a hackathon, on synthetic demand data and simulated sensors, and we have said so plainly wherever it applies. But the underlying idea — that a forecast shared between the pump, the tank and the fuel log turns four separate blind spots into one solved problem — is real, and it does not need any new hardware to be true.
+
+### The team
+
+**Srihan Bongula** — <!-- role -->
+
+<!-- Add teammates here: name — what they built. -->
+
+Built for DreamHacks 2026, Track 2 — AI, Automation & Logic.
+
 ## Limitations
 
 Stated plainly, because a system you cannot audit is not one you should trust with an island's water.
