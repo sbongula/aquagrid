@@ -1,0 +1,539 @@
+<title>AquaGrid Team Handbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+@page { size: A4; margin: 20mm 18mm 18mm; }
+:root{
+  --ink:#0B1E29; --dim:#55707E; --rule:#C9D8E0; --panel:#F4F8FA;
+  --water:#0E6F91; --solar:#9C6203; --good:#1B7A55; --bad:#B03A31; --warn:#8A5E05;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; color:var(--ink); background:#fff;
+  font-family:"Source Serif 4",Georgia,serif; font-size:10.4pt; line-height:1.52;
+}
+h1,h2,h3,h4,.dsp{font-family:"Bricolage Grotesque",system-ui,sans-serif;text-wrap:balance}
+code,pre,.mono,td.n,th.n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+code{font-size:9pt;background:var(--panel);padding:1px 4px;border-radius:2px}
+pre{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--water);
+    padding:10px 12px;font-size:8.4pt;line-height:1.45;overflow-x:auto;border-radius:2px;margin:10px 0}
+pre code{background:none;padding:0;font-size:inherit}
+
+/* cover */
+.cover{height:247mm;display:flex;flex-direction:column;justify-content:space-between;page-break-after:always}
+.cover h1{font-size:52pt;line-height:.95;margin:0;font-weight:800;letter-spacing:-.03em}
+.cover .sub{font-size:14pt;line-height:1.4;margin:18px 0 0;max-width:130mm}
+.cover .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:8.5pt;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--water);margin:0 0 14px}
+.cover .meta{font-family:"IBM Plex Mono",monospace;font-size:8.5pt;color:var(--dim);line-height:1.9}
+.cover .top{padding-top:26mm}
+.rule-x{height:1px;background:var(--rule);margin:22px 0}
+
+h2{font-size:19pt;margin:0 0 3px;font-weight:800;letter-spacing:-.02em;page-break-after:avoid}
+h2 .num{font-family:"IBM Plex Mono",monospace;font-size:10pt;color:var(--water);
+  display:block;letter-spacing:.14em;margin-bottom:5px;font-weight:400}
+h3{font-size:12.5pt;margin:20px 0 5px;font-weight:600;page-break-after:avoid}
+h4{font-size:10.5pt;margin:14px 0 4px;font-weight:600;page-break-after:avoid;
+   font-family:"IBM Plex Mono",monospace;color:var(--water);letter-spacing:.02em}
+section{page-break-before:always;padding-bottom:4mm}
+section.cont{page-break-before:auto}
+p{margin:0 0 9px}
+.lede{color:var(--dim);font-size:9.6pt;margin:0 0 16px;
+  font-family:"IBM Plex Mono",monospace;letter-spacing:.02em}
+ul,ol{margin:8px 0 12px;padding-left:18px}
+li{margin-bottom:5px}
+strong{font-weight:600}
+.dim{color:var(--dim)}
+
+table{width:100%;border-collapse:collapse;font-size:9pt;margin:10px 0 14px;page-break-inside:avoid}
+th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:7.6pt;letter-spacing:.1em;
+   text-transform:uppercase;color:var(--dim);padding:0 8px 5px 0;border-bottom:1.2px solid var(--rule);font-weight:400}
+td{padding:6px 8px 6px 0;border-bottom:.5px solid var(--rule);vertical-align:top}
+td.n,th.n{text-align:right;padding-right:0}
+td code{font-size:8.2pt}
+tr.hi td{background:#EAF5F0}
+
+.callout{background:var(--panel);border:1px solid var(--rule);border-radius:2px;
+  padding:11px 13px;margin:12px 0;font-size:9.4pt;page-break-inside:avoid}
+.callout .tag{font-family:"IBM Plex Mono",monospace;font-size:7.6pt;letter-spacing:.12em;
+  text-transform:uppercase;display:block;margin-bottom:5px}
+.warn{border-left:3px solid var(--warn)} .warn .tag{color:var(--warn)}
+.note{border-left:3px solid var(--water)} .note .tag{color:var(--water)}
+.stop{border-left:3px solid var(--bad)} .stop .tag{color:var(--bad)}
+
+.kv{display:grid;grid-template-columns:34mm 1fr;gap:3px 10px;font-size:9.2pt;margin:10px 0}
+.kv dt{font-family:"IBM Plex Mono",monospace;font-size:8.4pt;color:var(--water)}
+.kv dd{margin:0}
+.toc{font-size:10pt}
+.toc div{display:flex;gap:8px;align-items:baseline;padding:4px 0;border-bottom:.5px dotted var(--rule)}
+.toc .n{font-family:"IBM Plex Mono",monospace;font-size:8.4pt;color:var(--water);width:10mm}
+.toc .t{flex:1}
+.toc .d{color:var(--dim);font-size:8.6pt}
+.flow{font-family:"IBM Plex Mono",monospace;font-size:8pt;line-height:1.5;white-space:pre;
+  background:var(--panel);border:1px solid var(--rule);padding:10px;border-radius:2px;overflow-x:auto}
+</style>
+
+<div class="cover">
+  <div class="top">
+    <p class="eyebrow">Team Handbook &middot; v1</p>
+    <h1>AquaGrid</h1>
+    <p class="sub">How every part of the system works, what each file is responsible for, and the things you must not &ldquo;fix&rdquo;.</p>
+  </div>
+  <div>
+    <div class="rule-x"></div>
+    <p class="meta">
+      DreamHacks 2026 &middot; Track 2 &mdash; AI, Automation &amp; Logic<br>
+      github.com/sbongula/aquagrid<br>
+      sbongula.github.io/aquagrid<br>
+      Expo SDK 57 &middot; React Native 0.86 &middot; scikit-learn &middot; Groq
+    </p>
+  </div>
+</div>
+
+<section class="cont">
+<h2><span class="num">00</span>What this document is</h2>
+<p class="lede">Read section 01 and 02. Read the rest when you touch that file.</p>
+
+<p>AquaGrid decides, hour by hour, whether to run an island&rsquo;s desalination pump. It does that using a trained demand forecaster, a live weather forecast, a battery, the rain, and a set of rules that trade diesel against the risk of running the tank dry. It then explains every decision in plain language and watches for four kinds of failure.</p>
+
+<p>The whole thing runs <strong>on the phone with no server</strong>. That is the single most important architectural fact and section 02 explains why.</p>
+
+<div class="toc">
+  <div><span class="n">01</span><span class="t">Run it in five minutes</span><span class="d">setup, three commands</span></div>
+  <div><span class="n">02</span><span class="t">Architecture, and why there is no backend</span><span class="d">read this before changing anything</span></div>
+  <div><span class="n">03</span><span class="t">Repository map</span><span class="d">every file, one line each</span></div>
+  <div><span class="n">04</span><span class="t">The data contract &mdash; forecast.json</span><span class="d">the only interface between Python and the app</span></div>
+  <div><span class="n">05</span><span class="t">The ML pipeline</span><span class="d">generate_data.py, train_model.py</span></div>
+  <div><span class="n">06</span><span class="t">The scheduler</span><span class="d">eight rules and the physics they share</span></div>
+  <div><span class="n">07</span><span class="t">Baselines</span><span class="d">what we compare against, and why it is fair</span></div>
+  <div><span class="n">08</span><span class="t">The four detectors</span><span class="d">leak, soiling, fouling, fuel</span></div>
+  <div><span class="n">09</span><span class="t">Advisory &mdash; talking to the village</span><span class="d">free-solar windows, WHO minimum</span></div>
+  <div><span class="n">10</span><span class="t">Any location</span><span class="d">shipping the model, not its predictions</span></div>
+  <div><span class="n">11</span><span class="t">The LLM layer</span><span class="d">Groq, and the fallback that always works</span></div>
+  <div><span class="n">12</span><span class="t">The screen, card by card</span><span class="d">what each component shows</span></div>
+  <div><span class="n">13</span><span class="t">Testing and definition of done</span><span class="d">one command</span></div>
+  <div><span class="n">14</span><span class="t">Things you must not &ldquo;fix&rdquo;</span><span class="d">tuned values that look wrong</span></div>
+  <div><span class="n">15</span><span class="t">Demo script</span><span class="d">90 seconds, in order</span></div>
+</div>
+</section>
+
+<section>
+<h2><span class="num">01</span>Run it in five minutes</h2>
+<p class="lede">Two halves: Python trains, the app consumes.</p>
+
+<h4>Train the model and export the forecast</h4>
+<pre><code>cd ml
+python -m venv ../.venv
+../.venv/bin/pip install -r requirements.txt
+../.venv/bin/python generate_data.py    # 17,520 rows of synthetic history
+../.venv/bin/python train_model.py      # trains, evaluates, writes ../app/assets/forecast.json</code></pre>
+<p><code>train_model.py</code> prints MAE, R&sup2; and feature importances, fetches a live 48-hour forecast from Open-Meteo, and writes the JSON the app ships with. If the network is blocked it falls back to a modelled clear-sky curve and says so in <code>weather_source</code>. <strong>The build never blocks on the network.</strong></p>
+
+<h4>Run the app</h4>
+<pre><code>cd app
+npm install
+cp src/config.example.js src/config.js   # optional: paste a Groq key
+npx expo start                            # add --ios for the simulator</code></pre>
+<p>Install <strong>Expo Go</strong> on a phone and scan the QR code.</p>
+
+<h4>Verify the logic without a phone</h4>
+<pre><code>cd app && node src/logic/test.js</code></pre>
+<p>Prints all three strategies, the savings, the leak result and the lookup-table fidelity. Exits non-zero if any check fails. Everything in <code>src/logic/</code> is free of React imports specifically so this works.</p>
+
+<div class="callout warn"><span class="tag">If the phone connects but never loads</span>
+Campus and guest wifi block device-to-laptop traffic. Use <code>npx expo start --tunnel</code>.</div>
+
+<div class="callout warn"><span class="tag">After changing a function signature in logic/</span>
+Fast Refresh keeps stale module closures and you will get errors like <code>Cannot create property 'socKwh' on number</code> even though the code is correct. Restart with <code>npx expo start --clear</code>. This already bit us once.</div>
+
+<div class="callout stop"><span class="tag">Never</span>
+Do not run <code>npx expo prebuild</code> or <code>eas build</code>. Expo Go only. There is no time and no need.</div>
+</section>
+
+<section>
+<h2><span class="num">02</span>Architecture, and why there is no backend</h2>
+<p class="lede">Read this before you propose adding an API.</p>
+
+<div class="flow">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474; Python (laptop)   &#9474;          &#9474; Expo app (phone)          &#9474;
+&#9474;                   &#9474;          &#9474;                           &#9474;
+&#9474; synthetic history &#9474;          &#9474; forecast.json (bundled)   &#9474;
+&#9474;        &#8595;          &#9474;          &#9474;        &#8595;                  &#9474;
+&#9474; RandomForest &#9472;&#9472;&#9472;&#9472;&#9472;&#9532;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9658;&#9474; scheduler.js  decisions   &#9474;
+&#9474;        &#8595;          &#9474;  writes  &#9474; leak.js       burst pipe  &#9474;
+&#9474; Open-Meteo        &#9474;  JSON    &#9474; assets.js     slow decay  &#9474;
+&#9474; solar/rain/wind   &#9474;          &#9474; fuel.js       barge risk  &#9474;
+&#9474;        &#8595;          &#9474;          &#9474; advisory.js   the village &#9474;
+&#9474; forecast.json     &#9474;          &#9474; Groq LLM      optional    &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;          &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</div>
+
+<p>Python trains and evaluates the model on a laptop and exports everything the app needs into one JSON file. The app bundles that file as a static asset. Scheduling, rainwater harvesting, battery dispatch, leak and asset detection, and all charting run in JavaScript on the device.</p>
+
+<h3>Why this and not a server</h3>
+<p>A laptop-hosted API reached from a phone means LAN addresses, ngrok tunnels, CORS and cold starts. Those are the four most common ways a demo dies. Removing the server removes all four.</p>
+<p>More importantly it is the <em>correct</em> design for the problem. An island whose uplink is a satellite dish cannot depend on a cloud round-trip to decide whether to run its pump. <strong>The app works in airplane mode.</strong> Say that out loud in the demo.</p>
+
+<div class="callout note"><span class="tag">If a judge asks &ldquo;is the AI real?&rdquo;</span>
+Yes. The model is trained and evaluated in Python on a chronological split, the metrics are in the README, and its predictions drive every decision. &ldquo;Trained offline, inference on-device&rdquo; is how most production mobile ML actually ships. Since we also export the model as a lookup table (section 10), the forecaster genuinely runs on the phone for locations the laptop never saw.</div>
+
+<h3>What is and is not synchronous</h3>
+<p>All scheduling is <strong>synchronous</strong> and lives in <code>useMemo</code>. Only the two LLM calls are async and they live in <code>useEffect</code>. Never mix them &mdash; putting a promise in <code>useMemo</code> is the classic way to break this app.</p>
+</section>
+
+<section>
+<h2><span class="num">03</span>Repository map</h2>
+<p class="lede">Every file that matters, one line each.</p>
+
+<h4>ml/ &mdash; the Python half</h4>
+<table>
+<tr><td style="width:44mm"><code>generate_data.py</code></td><td>Synthesises two years of hourly demand with real, readable structure. Auditable in one screen.</td></tr>
+<tr><td><code>train_model.py</code></td><td>Trains the forest, evaluates on a chronological split, fetches weather, exports <code>forecast.json</code>.</td></tr>
+<tr><td><code>requirements.txt</code></td><td>numpy, pandas, scikit-learn. Nothing else.</td></tr>
+</table>
+
+<h4>app/src/logic/ &mdash; pure JavaScript, no React, node-testable</h4>
+<table>
+<tr><td style="width:44mm"><code>scheduler.js</code></td><td>The eight rules, the shared physics in <code>settleHour</code>, and the warm-up replay.</td></tr>
+<tr><td><code>baselines.js</code></td><td>Fixed-timer and reactive strategies. Same physics, different rule.</td></tr>
+<tr><td><code>leak.js</code></td><td>Burst-pipe detection by residual analysis, plus the simulated tank sensor.</td></tr>
+<tr><td><code>assets.js</code></td><td>Panel soiling and RO membrane fouling.</td></tr>
+<tr><td><code>fuel.js</code></td><td>Diesel inventory against barge lead time.</td></tr>
+<tr><td><code>advisory.js</code></td><td>Free-solar windows and litres per person per day.</td></tr>
+<tr><td><code>demand.js</code></td><td>The exported model, running on-device.</td></tr>
+<tr><td><code>plant.js</code></td><td>Scales a plant to an arbitrary population.</td></tr>
+<tr><td><code>test.js</code></td><td>The definition-of-done harness. <code>node src/logic/test.js</code>.</td></tr>
+</table>
+
+<h4>app/src/lib/</h4>
+<table>
+<tr><td style="width:44mm"><code>geo.js</code></td><td>Open-Meteo geocoding and live weather for any island.</td></tr>
+<tr><td><code>ai.js</code></td><td>Groq briefing, question answering and public notice, each with a deterministic fallback.</td></tr>
+</table>
+
+<h4>app/src/components/ &mdash; 16 components</h4>
+<p class="dim" style="font-size:9pt">Covered card by card in section 12.</p>
+
+<h4>Other</h4>
+<table>
+<tr><td style="width:44mm"><code>app/assets/forecast.json</code></td><td>The single interface between the two halves. Generated, not hand-edited.</td></tr>
+<tr><td><code>app/src/config.js</code></td><td><strong>Gitignored.</strong> Holds the Groq key. Copy from <code>config.example.js</code>.</td></tr>
+<tr><td><code>docs/index.html</code></td><td>The project website. Charts generated from the real forecast.</td></tr>
+</table>
+</section>
+
+<section>
+<h2><span class="num">04</span>The data contract &mdash; forecast.json</h2>
+<p class="lede">Everything the app renders comes from here. Import it directly; Metro bundles JSON with no config.</p>
+
+<pre><code>import forecast from './assets/forecast.json';</code></pre>
+
+<table>
+<tr><th style="width:38mm">Key</th><th>What it is</th></tr>
+<tr><td><code>island</code></td><td>Name, lat, lon, population.</td></tr>
+<tr><td><code>weather_source</code></td><td><code>"open-meteo (live)"</code> or the offline fallback label. Drives the header pill.</td></tr>
+<tr><td><code>plant</code></td><td>Tank, pump, output, diesel rate, reserve floor, target, array, catchment, runoff, battery, fuel stock, barge interval, storm threshold.</td></tr>
+<tr><td><code>model</code></td><td>MAE, RMSE, R&sup2;, naive baseline, row counts, feature importances.</td></tr>
+<tr><td><code>demand_model</code></td><td>The 15,120-cell lookup table. Section 10.</td></tr>
+<tr><td><code>maintenance</code></td><td>90 days of RO specific-energy readings, plus design and clean threshold.</td></tr>
+<tr><td><code>validation_curve</code></td><td>72 held-out hours, actual vs predicted, for the model detail modal.</td></tr>
+<tr><td><code>warmup</code></td><td>The 24 hours <em>before</em> the horizon. Replayed to derive the starting tank level.</td></tr>
+<tr><td><code>hourly</code></td><td>48 entries: time, hour, solar_kw, temp_c, cloud_pct, rain_mm, wind_kmh, predicted_demand_lph.</td></tr>
+</table>
+
+<div class="callout note"><span class="tag">Why warmup exists</span>
+Without it every island opens at exactly the seeded percentage &mdash; 59% &mdash; and the biggest number on screen looks like a constant rather than a measurement. Replaying yesterday&rsquo;s real weather makes hour zero a consequence. Funafuti opens at 32%, Reykjav&iacute;k at 41%.</div>
+</section>
+
+<section>
+<h2><span class="num">05</span>The ML pipeline</h2>
+<p class="lede">ml/generate_data.py and ml/train_model.py</p>
+
+<h3>generate_data.py</h3>
+<p>Two years of hourly demand with structure a model can genuinely learn, not noise it can only memorise:</p>
+<ul>
+<li>Twin daily peaks &mdash; morning wash 06:00&ndash;08:00, evening cooking 18:00&ndash;20:00</li>
+<li>Weekends +30% &mdash; people are home, laundry day</li>
+<li>Tourist season (Jun&ndash;Aug) +22%</li>
+<li>Demand rises ~3.5% per &deg;C</li>
+<li>Gaussian noise so nothing is perfectly predictable</li>
+</ul>
+<p>Anyone can read this file and verify the patterns are real, which is exactly what you want a judge to be able to do.</p>
+
+<h3>train_model.py</h3>
+<p><code>RandomForestRegressor(n_estimators=180, max_depth=14, min_samples_leaf=3)</code> on a <strong>chronological split</strong> &mdash; the last 60 days are held out, so the model is tested on the future, never on shuffled rows. This is the single most defensible thing about the model and you should say &ldquo;chronological split&rdquo; out loud.</p>
+
+<table>
+<tr><th>Metric</th><th class="n">Value</th></tr>
+<tr><td>MAE</td><td class="n"><strong>45.3 L/h</strong></td></tr>
+<tr><td>RMSE</td><td class="n">57.0 L/h</td></tr>
+<tr><td>R&sup2;</td><td class="n"><strong>0.987</strong></td></tr>
+<tr><td>Naive &ldquo;predict the mean&rdquo;</td><td class="n">409.7 L/h</td></tr>
+<tr class="hi"><td>Improvement over naive</td><td class="n"><strong>89%</strong></td></tr>
+</table>
+
+<p>Feature importances: <code>hour</code> 0.897, <code>is_tourist_season</code> 0.032, <code>is_weekend</code> 0.031, <code>day_of_week</code> 0.028, <code>temp_c</code> 0.012. Hour dominating is correct &mdash; that is what a village water profile looks like.</p>
+
+<p>The script then fetches Open-Meteo with <code>past_days=1&amp;forecast_days=3&amp;timezone=auto</code>, converts shortwave radiation to kW through the panel area, predicts demand forward, and writes the JSON.</p>
+
+<div class="callout stop"><span class="tag">Do not change timezone=auto</span>
+Funafuti is UTC+12. With UTC timestamps, peak solar lands at local midnight and <em>every</em> pump decision inverts. This was a real bug we already fixed.</div>
+</section>
+
+<section>
+<h2><span class="num">06</span>The scheduler</h2>
+<p class="lede">app/src/logic/scheduler.js &mdash; the core of the system</p>
+
+<h3>Shared physics: settleHour()</h3>
+<p>Every strategy &mdash; ours and both baselines &mdash; applies its decision through the same function, so comparisons differ only in the rule. Order of operations per hour:</p>
+<ol>
+<li><strong>Solar first.</strong> <code>fromSolar = min(solar_kw, pumpKw)</code></li>
+<li><strong>Battery next.</strong> Discharge before burning anything, capped at the pump draw.</li>
+<li><strong>Diesel last.</strong> <code>dieselL = remaining_kW &times; diesel_l_per_kwh</code></li>
+<li><strong>Charge.</strong> Surplus solar charges the battery at round-trip efficiency; what will not fit is <em>curtailed</em> and counted.</li>
+<li><strong>Water.</strong> <code>tank + pumped + harvested &minus; demand</code>, clamped to capacity. Overflow is counted as spill.</li>
+<li><strong>Fuel stock</strong> decrements. Shortage hours increment if the tank hits zero.</li>
+</ol>
+<p><code>harvest = rain_mm &times; roof_catchment_m2 &times; runoff_coeff</code>. One millimetre over one square metre is one litre.</p>
+
+<h3>The eight rules &mdash; strict priority, first match wins</h3>
+<table>
+<tr><th style="width:8mm">#</th><th style="width:36mm">Rule</th><th>Fires when</th></tr>
+<tr><td>0</td><td><strong>Storm prep</strong></td><td>Cyclone-force wind within 24 h. Fill to 100% regardless of cost.</td></tr>
+<tr><td>1</td><td><strong>Emergency</strong></td><td>Below the 25% reserve floor.</td></tr>
+<tr><td>2</td><td><strong>Rain hold</strong></td><td>More rain than demand in the next 6 h, reserves comfortable. Hold; the tank fills free.</td></tr>
+<tr><td>3</td><td><strong>Free solar</strong></td><td>Sun alone clears the full pump draw and the tank is below target.</td></tr>
+<tr><td>4</td><td><strong>Stored solar</strong></td><td>Shortfall ahead and the battery can carry the pump.</td></tr>
+<tr><td>5</td><td><strong>Pre-emptive hybrid</strong></td><td>Shortfall ahead with partial sun. Spend a little diesel now to avoid a lot tonight.</td></tr>
+<tr><td>6</td><td><strong>Reluctant diesel</strong></td><td>Shortfall ahead, no sun, empty battery, reserves thin.</td></tr>
+<tr><td>7</td><td><strong>Hold</strong></td><td>Everything else. Wait for the sun.</td></tr>
+</table>
+
+<h3>The lookahead</h3>
+<pre><code>horizon        = next 12 hours
+projDemand     = sum of predicted demand
+projSolarHours = hours where solar_kw &gt;= pumpKw
+projRainL      = sum of rain &times; catchment
+willBreach     = tank + (projSolarHours &times; outLph) + projRainL - projDemand &lt; floorL</code></pre>
+<p><strong>Rules 2, 4 and 5 are the intelligence of the system.</strong> They are the only ones acting on information the plant does not yet have. If none of them fire in a demo run, the plant parameters have drifted &mdash; see section 14.</p>
+
+<h3>warmUpTank()</h3>
+<p>Runs the scheduler over the <code>warmup</code> array and returns the final tank level, which becomes <code>initial_tank_l</code> for the displayed horizon.</p>
+</section>
+
+<section>
+<h2><span class="num">07</span>Baselines</h2>
+<p class="lede">app/src/logic/baselines.js &mdash; what makes the savings number honest</p>
+
+<p>Both run over the <strong>identical forecast with identical physics</strong> &mdash; same rain, same battery, same tank, same <code>settleHour</code>. Only the decision rule differs. A judge will ask how the savings were computed; this is the answer.</p>
+
+<h4>fixedTimerSchedule</h4>
+<p>Pumps 01:00&ndash;05:00 every day regardless of sun, rain or tank level. This is how these plants are <em>actually</em> run today &mdash; a wall timer set to mainland off-peak grid hours. On a solar island it is exactly backwards, because those hours have no sun.</p>
+
+<h4>reactiveSchedule</h4>
+<p>Pumps whenever the tank drops below 80%. Responds to the tank but is blind to the forecast, so it pumps at night as readily as at noon and makes water it is about to spill.</p>
+
+<table>
+<tr><th>Strategy</th><th class="n">Diesel</th><th class="n">Cost</th><th class="n">CO&#8322;</th><th class="n">Pump h</th></tr>
+<tr class="hi"><td><strong>AquaGrid</strong></td><td class="n"><strong>15.3 L</strong></td><td class="n"><strong>$25</strong></td><td class="n"><strong>41 kg</strong></td><td class="n">6</td></tr>
+<tr><td>Fixed timer</td><td class="n">70.0 L</td><td class="n">$112</td><td class="n">188 kg</td><td class="n">8</td></tr>
+<tr><td>Reactive</td><td class="n">79.2 L</td><td class="n">$127</td><td class="n">212 kg</td><td class="n">11</td></tr>
+</table>
+<p><strong>78% less diesel than the fixed timer.</strong> Note it delivers comparable water in <em>fewer</em> pump hours &mdash; it chooses which hours.</p>
+</section>
+
+<section>
+<h2><span class="num">08</span>The four detectors</h2>
+<p class="lede">One idea: compare what the plant does against what the forecast says it should.</p>
+
+<h3>Burst pipe &mdash; leak.js</h3>
+<pre><code>expectedDrop = demand - pumped - harvested + spilled
+actualDrop   = sensor[i-1] - sensor[i]
+residual     = actualDrop - expectedDrop     // positive = unexplained loss
+sigma        = std(residual over first 12 h) // known-good baseline
+ALERT when residual/sigma &gt; 3 for 3 consecutive hours</code></pre>
+<p>A 450 L/h burst injected at hour 14 is caught at <strong>hour 16</strong>, estimated at 452 L/h with 99% confidence.</p>
+<div class="callout warn"><span class="tag">Do not drop harvested from expectedDrop</span>
+Rainwater is free inflow the forecast knows about. Omit it and every shower reads as a negative leak. This broke once already.</div>
+
+<h3>Dirty panels &mdash; assets.js / detectSoiling</h3>
+<p>Compares metered array output against the irradiance-derived prediction, over daylight hours only &mdash; at night both are zero and the ratio is meaningless. Reports shortfall percentage and kWh not collected. Currently: <strong>13% below predicted, 90 kWh lost.</strong></p>
+
+<h3>Fouling membranes &mdash; assets.js / projectFouling</h3>
+<p>Specific energy (kWh per m&sup3;) is the standard health metric for a reverse-osmosis train and rises as membranes foul, because the pump pushes harder for the same flow. Ordinary least squares on 90 days of daily readings, projected to the clean-in-place threshold. Currently: <strong>+11.1% from design, threshold in 40 days.</strong></p>
+
+<h3>Fuel exhaustion &mdash; fuel.js</h3>
+<p>Burning too much diesel and running out of diesel are different failures.</p>
+<table>
+<tr><th>Strategy</th><th class="n">Burn</th><th class="n">Lasts</th><th class="n">vs 12-day barge</th></tr>
+<tr class="hi"><td><strong>AquaGrid</strong></td><td class="n">8 L/day</td><td class="n">39 days</td><td class="n">holds</td></tr>
+<tr><td>Fixed timer</td><td class="n">35 L/day</td><td class="n">8.6 days</td><td class="n"><strong>dry 3.4 d early</strong></td></tr>
+<tr><td>Reactive</td><td class="n">40 L/day</td><td class="n">7.6 days</td><td class="n"><strong>dry 4.4 d early</strong></td></tr>
+</table>
+<p>This is arguably a stronger claim than the percentage. The barge does not come early because you ran out.</p>
+</section>
+
+<section>
+<h2><span class="num">09</span>Advisory &mdash; talking to the village</h2>
+<p class="lede">app/src/logic/advisory.js</p>
+
+<p>Everything else schedules supply. This is the one piece that addresses demand. The cheapest litre of diesel is the one nobody needed.</p>
+
+<h4>freeSolarWindows()</h4>
+<p>Runs of consecutive hours where the pump is already running on sun or stored sun &mdash; hours when extra village demand costs the island nothing. Turned into chips in the UI and a sentence in the notice.</p>
+
+<h4>rationingOutlook()</h4>
+<p>Supply per person per day against the <strong>WHO minimum of 15 L</strong> for drinking, cooking and basic hygiene. Currently 18.2 L &mdash; 1.2&times; the floor, so no notice is warranted. When it falls below, the LLM drafts the public notice instead of the &ldquo;when water is cheap&rdquo; one.</p>
+
+<p>The advisory has its own system prompt written for <em>residents</em>: no kilowatts, no plant jargon, say what to do and when.</p>
+</section>
+
+<section>
+<h2><span class="num">10</span>Any location</h2>
+<p class="lede">app/src/logic/demand.js, plant.js and lib/geo.js</p>
+
+<h3>We ship the model, not only its predictions</h3>
+<p>Every feature the forecaster uses is categorical &mdash; hour, day of week, weekend, tourist season &mdash; except temperature, a single continuous variable. So the whole function can be evaluated exhaustively on a grid and shipped as a table.</p>
+<p><strong>15,120 cells</strong>: 2 seasons &times; 7 days &times; 24 hours &times; 45 temperature buckets at 0.5&nbsp;&deg;C. Shape is <code>table[tourist][dow][hour][tempBucket]</code>, in L/h for the reference population.</p>
+<p>This is the model, not an approximation. The only loss is temperature discretisation, costing a <strong>mean 5.5 L/h</strong> &mdash; 12% of the model&rsquo;s own 45.3 L/h error. <code>test.js</code> asserts it stays below a quarter of the model MAE. <code>demand.js</code> interpolates between adjacent buckets because a forest is a step function in temperature.</p>
+
+<h3>plant.js &mdash; sizing for an arbitrary island</h3>
+<p>Tank, pump, output, panel area, roof catchment, battery and fuel storage all scale linearly with population off the reference plant. That holds the ratios that drive decisions constant &mdash; specific energy per m&sup3;, days of storage, and how many hours a day solar clears the pump draw &mdash; so <strong>only the weather genuinely differs between locations.</strong> State this as an assumption; it is one.</p>
+
+<h3>geo.js</h3>
+<p>Open-Meteo geocoding, then the same forecast endpoint with <code>past_days=1&amp;timezone=auto</code>. Both free, no key.</p>
+<div class="callout note"><span class="tag">Search quirk, already handled</span>
+The geocoder matches settlement names only, so <code>"Mal&eacute; Maldives"</code> and <code>"Apia, Samoa"</code> return nothing on a literal query. We retry on the first token and prefer results whose country or region matches the rest.</div>
+
+<table>
+<tr><th>Island</th><th class="n">Population</th><th class="n">Saved</th><th>Why</th></tr>
+<tr><td>Apia, Samoa</td><td class="n">40,407</td><td class="n">80%</td><td>abundant sun</td></tr>
+<tr><td>Mal&eacute;, Maldives</td><td class="n">103,693</td><td class="n">70%</td><td>equatorial, steady</td></tr>
+<tr><td>Santorini, Greece</td><td class="n">15,453</td><td class="n">64%</td><td>strong but seasonal</td></tr>
+<tr><td>Reykjav&iacute;k, Iceland</td><td class="n">118,918</td><td class="n">23%</td><td>little sun to schedule</td></tr>
+</table>
+<p>Reykjav&iacute;k at 23% is the honest answer, not a bug. Where there is little sun there is little for a scheduler to win.</p>
+</section>
+
+<section>
+<h2><span class="num">11</span>The LLM layer</h2>
+<p class="lede">app/src/lib/ai.js</p>
+
+<p>Three functions, all with the same two-path shape:</p>
+<dl class="kv">
+<dt>getBriefing</dt><dd>The operator&rsquo;s shift briefing.</dd>
+<dt>askOperator</dt><dd>Answers the three preset questions.</dd>
+<dt>getAdvisory</dt><dd>The public water notice, in a different voice.</dd>
+</dl>
+
+<p><strong>The template is the primary path</strong> &mdash; deterministic, instant, works in airplane mode. The Groq call is an enhancement raced against a 6-second timeout. Any error, timeout or missing key falls silently back, and the UI labels which one wrote the text so we never claim an LLM wrote a template.</p>
+
+<h4>Provider</h4>
+<p>Groq free tier, no credit card. Model is <code>openai/gpt-oss-120b</code> &mdash; <strong>open-weight</strong>, so no proprietary model is in the loop. <code>groq/compound-mini</code> is tried as a second model before the template.</p>
+
+<div class="callout warn"><span class="tag">gpt-oss is a reasoning model</span>
+Without <code>reasoning_effort: 'low'</code> it spends the entire token budget thinking and returns <em>empty content</em>. We hit exactly this. Also note <code>llama-3.3-70b-versatile</code> is decommissioned on Groq &mdash; do not put it back.</div>
+
+<div class="callout stop"><span class="tag">Key handling</span>
+<code>src/config.js</code> is gitignored and no key is committed. The key lives client-side because there is no backend to hide it behind &mdash; the deliberate trade for an offline app. Say so in the README rather than hoping nobody notices. Beyond a demo this belongs behind a proxy, and the demo key should be revoked afterwards.</div>
+</section>
+
+<section>
+<h2><span class="num">12</span>The screen, card by card</h2>
+<p class="lede">One SafeAreaView, one ScrollView, no navigation library.</p>
+
+<table>
+<tr><th style="width:34mm">Component</th><th>What it shows</th></tr>
+<tr><td><code>Header</code></td><td>Island, population, live/offline pill from <code>weather_source</code>, timestamp.</td></tr>
+<tr><td><code>LocationPicker</code></td><td>Current island and a search sheet. <strong>Anchored to the top</strong> so the keyboard cannot cover the results.</td></tr>
+<tr><td><code>StormBanner</code></td><td>Only when a cyclone is in the outlook. Explains why fuel rules are overridden.</td></tr>
+<tr><td><code>TankGauge</code></td><td>Tank %, litres, hours of supply, tick marks at the 25% floor and 92% target.</td></tr>
+<tr><td><code>DecisionCard</code></td><td><strong>The most important element.</strong> Current action colour-coded by source, with the scheduler&rsquo;s own reason string, demand, production, rain inflow, diesel and battery draw.</td></tr>
+<tr><td><code>BriefingCard</code></td><td>The operator briefing, badged <code>AI</code> or <code>on-device</code>.</td></tr>
+<tr><td><code>AskPanel</code></td><td>Three preset questions. Presets not free text, so nobody types on camera.</td></tr>
+<tr><td><code>SolarDemandChart</code></td><td>Solar area, demand line, rainfall bars, dashed rule at the pump draw. That rule makes the whole strategy legible.</td></tr>
+<tr><td><code>PumpTimeline</code></td><td>24 bars coloured by source. Tap one to read that hour&rsquo;s reason.</td></tr>
+<tr><td><code>BatteryCard</code></td><td>State of charge over 24 h, plus solar-to-pump, from-battery and curtailed kWh.</td></tr>
+<tr><td><code>WaterSourcesCard</code></td><td>Rain vs desalinated split. On Tuvalu this is the headline.</td></tr>
+<tr><td><code>SavingsCard</code></td><td>Three strategies, diesel, cost, CO&#8322;. Hero percentage computed, never hardcoded.</td></tr>
+<tr><td><code>FuelCard</code></td><td>Litres remaining, days to empty, barge countdown, and the same for both baselines.</td></tr>
+<tr><td><code>LeakPanel</code></td><td>Green all-clear or red alert, plus <strong>Simulate burst pipe</strong>.</td></tr>
+<tr><td><code>AssetHealthCard</code></td><td>Soiling and fouling, with the 90-day regression chart and <strong>Simulate dirty panels</strong>.</td></tr>
+<tr><td><code>AdvisoryCard</code></td><td>Public notice, free-solar window chips, litres per person against the WHO marker.</td></tr>
+<tr><td><code>ModelCard</code></td><td>MAE, R&sup2;, 89% vs naive, feature-importance bars, and a modal with predicted vs actual.</td></tr>
+<tr><td><code>DemoBar</code></td><td><strong>Simulate cyclone.</strong> Every switch changes a real input; nothing fakes an outcome.</td></tr>
+</table>
+
+<p>Charts are hand-drawn with <code>react-native-svg</code>. <strong>Do not add a charting library</strong> &mdash; version drift against the Expo SDK is a real risk and each chart is about sixty lines.</p>
+</section>
+
+<section>
+<h2><span class="num">13</span>Testing and definition of done</h2>
+<p class="lede">One command, exits non-zero on failure.</p>
+<pre><code>cd app && node src/logic/test.js</code></pre>
+
+<p>It asserts: zero shortage hours, a clean run produces no leak alert, an injected burst <em>is</em> caught within three hours, savings are positive, and the lookup table stays within a quarter of the model&rsquo;s MAE. It prints the full comparison table, the 24-hour timeline and the warm-up result.</p>
+
+<h4>Before recording the video</h4>
+<ul>
+<li><code>python train_model.py</code> runs clean and prints MAE / R&sup2; / importances</li>
+<li><code>forecast.json</code> has 48 hourly entries and 24 warm-up entries</li>
+<li><code>node src/logic/test.js</code> passes</li>
+<li>The app loads in Expo Go on a physical phone</li>
+<li>Savings are computed from both schedules, not hardcoded</li>
+<li>&ldquo;Simulate burst pipe&rdquo; alerts within 3 simulated hours</li>
+<li>Airplane mode: every screen renders; only the briefing degrades, and it degrades to the template rather than an error</li>
+<li>No API key committed</li>
+<li>README quotes the metrics <code>train_model.py</code> actually printed</li>
+</ul>
+
+<div class="callout note"><span class="tag">Expo Go dev overlay</span>
+The floating blue gear button is Expo Go&rsquo;s, not ours. Drag it into a corner before recording.</div>
+</section>
+
+<section>
+<h2><span class="num">14</span>Things you must not &ldquo;fix&rdquo;</h2>
+<p class="lede">Values tuned so the system has a real decision to make. Every one of these looks wrong and is not.</p>
+
+<table>
+<tr><th style="width:36mm">Value</th><th>Why it is what it is</th></tr>
+<tr><td><code>timezone=auto</code></td><td>Funafuti is UTC+12. UTC timestamps put peak solar at local midnight and invert every decision.</td></tr>
+<tr><td><code>array_m2 = 320</code></td><td>Peak output only clears the 50 kW pump draw for two or three midday hours. Enlarge it and every hour becomes a solar hour, the reserve floor never binds, and rules 4&ndash;6 become dead code.</td></tr>
+<tr><td><code>desal_pump_kw = 50</code></td><td>Raised from 42 for the same reason. At 42 the scheduler coasted on solar alone and reported an implausible 100% saving.</td></tr>
+<tr><td><code>tank_capacity_l = 60000</code></td><td>About 2.7 days of demand. Deliberately tight, so the reserve floor actually binds.</td></tr>
+<tr><td><code>roof_catchment_m2 = 900</code></td><td>Rain covers ~26% of demand. At 2,500 it covered 72% and the scheduler had nothing to do.</td></tr>
+<tr><td><code>diesel_stock_l = 300</code></td><td>25% of the day tank with 12 days to the barge. This is the state where a good scheduler stops being about money.</td></tr>
+<tr><td>Fouling drift rate</td><td>Tuned so the clean-in-place date lands ~6 weeks out &mdash; near enough to act on, far enough to be a prediction rather than an alarm.</td></tr>
+</table>
+
+<div class="callout warn"><span class="tag">The general trap</span>
+Three separate times, a change made the plant <em>too capable</em> and the scheduler stopped having to decide anything &mdash; which reads to a judge as a broken demo, not a good one. If you change a plant parameter, re-run <code>test.js</code> and confirm <strong>all five sources still fire</strong>: solar, battery, hybrid, diesel and hold.</div>
+
+<h4>Also do not</h4>
+<ul>
+<li>Add a backend, navigation library, or charting library.</li>
+<li>Put a promise in <code>useMemo</code>.</li>
+<li>Hardcode the savings number. A judge will ask how it was computed.</li>
+<li>Reinstate <code>llama-3.3-70b-versatile</code>, which no longer exists on Groq.</li>
+</ul>
+</section>
+
+<section>
+<h2><span class="num">15</span>Demo script</h2>
+<p class="lede">90 seconds, shot on the phone, one take, phone in a stand.</p>
+
+<table>
+<tr><th style="width:20mm">Time</th><th>Beat</th></tr>
+<tr><td class="mono">0:00&ndash;0:10</td><td><strong>The problem.</strong> &ldquo;On an isolated island, desalination is the biggest power draw, and it usually runs on a dumb timer at night, on 100% diesel.&rdquo;</td></tr>
+<tr><td class="mono">0:10&ndash;0:22</td><td><strong>Open the app.</strong> Tank gauge, current decision, read the reason line out loud. It is a full sentence, not a status code.</td></tr>
+<tr><td class="mono">0:22&ndash;0:38</td><td><strong>Chart and timeline.</strong> Point at the dashed pump-draw line. Green hours are free solar, cyan is stored solar running the pump after dark, amber is a deliberate partial-solar top-up.</td></tr>
+<tr><td class="mono">0:38&ndash;0:48</td><td><strong>Rain.</strong> &ldquo;Tuvalu runs on rainwater; desal is the backup. A quarter of this water fell out of the sky, and the scheduler holds the pump when a shower is coming.&rdquo;</td></tr>
+<tr><td class="mono">0:48&ndash;0:58</td><td><strong>Savings, then fuel.</strong> Say 78% out loud, then scroll to the fuel card: &ldquo;and both naive schedulers run out of diesel before the next barge.&rdquo;</td></tr>
+<tr><td class="mono">0:58&ndash;1:10</td><td><strong>Tap Simulate burst pipe.</strong> The alert fires. &ldquo;It caught that from the forecast residual, not a threshold &mdash; no human would have noticed for hours.&rdquo;</td></tr>
+<tr><td class="mono">1:10&ndash;1:20</td><td><strong>Change location.</strong> Search another island. Everything recomputes on-device.</td></tr>
+<tr><td class="mono">1:20&ndash;1:30</td><td><strong>Airplane mode.</strong> Everything still works. &ldquo;Built for an island with no reliable connectivity.&rdquo;</td></tr>
+</table>
+
+<div class="callout note"><span class="tag">Ending</span>
+Ending on airplane mode is the strongest closing beat available. Do not cut it.</div>
+</section>
