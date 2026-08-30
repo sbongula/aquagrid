@@ -7,7 +7,7 @@
  * that never resolves.
  */
 
-import { GROQ_API_KEY, GROQ_MODEL, GROQ_MODEL_FALLBACK, GROQ_MODEL_LABEL } from '../config';
+import { GROQ_API_KEY, GROQ_MODEL, GROQ_MODEL_FALLBACK, GROQ_MODEL_LABEL } from '../config.js';
 
 export const MODEL_LABEL = GROQ_MODEL_LABEL;
 
@@ -180,19 +180,36 @@ export async function getAdvisory(ctx, fallbackText) {
   }
 }
 
-/** Follow-up questions from the operator (or a judge). */
-export async function askOperator(ctx, question) {
+/**
+ * Multi-turn conversation with the operator.
+ *
+ * The plant state is re-sent as a system message on every turn rather than
+ * being buried in the first question, so the model answers against the current
+ * schedule even deep into a conversation. History is bounded: the last few
+ * exchanges are enough for follow-ups like "why?" without growing the request
+ * unboundedly.
+ */
+const MAX_HISTORY_MESSAGES = 8;
+
+export async function askOperator(ctx, question, history = []) {
   if (!GROQ_API_KEY) {
-    return 'No AI key configured — the briefing above is generated on-device from the schedule.';
+    return 'No AI key configured. Everything else on this screen — the schedule, the alerts, the numbers — is computed on-device and unaffected.';
   }
   try {
     return await withTimeout(
       callGroq([
         { role: 'system', content: SYSTEM(ctx.island) },
-        { role: 'user', content: `Plant state:\n${JSON.stringify(ctx, null, 1)}\n\nOperator asks: ${question}` },
+        {
+          role: 'system',
+          content:
+            `Current plant state, refreshed each turn:\n${JSON.stringify(ctx, null, 1)}\n\n` +
+            'Answer follow-up questions in context. If asked something the data cannot answer, say so.',
+        },
+        ...history.slice(-MAX_HISTORY_MESSAGES).map((m) => ({ role: m.role, content: m.text })),
+        { role: 'user', content: question },
       ]),
     );
   } catch {
-    return 'Could not reach the AI service. All scheduling and leak detection continue to run on-device.';
+    return 'Could not reach the AI service just now. All scheduling and detection continue to run on-device.';
   }
 }
