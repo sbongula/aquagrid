@@ -38,6 +38,9 @@ FEATURES = ["hour", "day_of_week", "is_weekend", "temp_c", "is_tourist_season"]
 HISTORY_CSV = "water_history.csv"
 OUT_PATH = os.path.join("..", "app", "assets", "forecast.json")
 HORIZON_HOURS = 48
+# One day of *past* weather, replayed through the scheduler on-device so the
+# starting tank level is the outcome of yesterday rather than a magic constant.
+WARMUP_HOURS = 24
 
 # Reference plant, sized for the reference island. Every other location scales
 # linearly off this, so the pump/array/tank ratios - and therefore the decisions
@@ -194,7 +197,7 @@ def export_demand_table(model):
 
 
 # --- 4. Live environmental data ---------------------------------------------
-def fetch_solar(hours: int = HORIZON_HOURS):
+def fetch_solar(hours: int = WARMUP_HOURS + HORIZON_HOURS):
     """Open-Meteo needs no API key. Returns (records, source_label)."""
     url = (
         "https://api.open-meteo.com/v1/forecast"
@@ -202,7 +205,7 @@ def fetch_solar(hours: int = HORIZON_HOURS):
         "&hourly=shortwave_radiation,temperature_2m,cloud_cover"
         # timezone=auto is essential: the island is UTC+12, so UTC timestamps
         # would put "peak solar" at local midnight and wreck every decision.
-        "&forecast_days=3&timezone=auto"
+        "&past_days=1&forecast_days=3&timezone=auto"
     )
     try:
         import urllib.request
@@ -226,10 +229,11 @@ def fetch_solar(hours: int = HORIZON_HOURS):
         return synth_solar(hours), "modelled clear-sky (offline fallback)"
 
 
-def synth_solar(hours: int):
+def synth_solar(hours: int = WARMUP_HOURS + HORIZON_HOURS):
     """Clear-sky irradiance with light cloud, so the repo works with no network."""
     rng = np.random.default_rng(7)
-    start = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    start = (datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+             - timedelta(hours=WARMUP_HOURS))
     out = []
     for i in range(hours):
         t = start + timedelta(hours=i)
@@ -286,17 +290,22 @@ def build_forecast(model, weather, metrics, curve, source, demand_table):
         # lookahead logic has nothing to prove.
         "plant": PLANT,
         "model": metrics,
+        # The 24 hours before the horizon. The app replays these through the
+        # scheduler to derive the starting tank level, so where the tank sits at
+        # t=0 reflects yesterday's actual weather at this location.
+        "warmup": rows[:WARMUP_HOURS],
         # Ships the model itself, so the app can forecast demand for any island
         # the operator points it at - not only the one trained against here.
         "demand_model": demand_table,
         "validation_curve": curve,
-        "hourly": rows,
+        "hourly": rows[WARMUP_HOURS:WARMUP_HOURS + HORIZON_HOURS],
     }
 
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w") as f:
         json.dump(payload, f, indent=2)
-    print(f"\nWrote {os.path.abspath(OUT_PATH)}  ({len(rows)} forecast hours)")
+    print(f"\nWrote {os.path.abspath(OUT_PATH)}  "
+          f"({len(payload['hourly'])} forecast hours + {len(payload['warmup'])} warm-up)")
     return payload
 
 

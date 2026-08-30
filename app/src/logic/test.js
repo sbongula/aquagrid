@@ -1,10 +1,14 @@
 import fs from 'node:fs';
-import { runSchedule } from './scheduler.js';
+import { runSchedule, warmUpTank } from './scheduler.js';
 import { fixedTimerSchedule, reactiveSchedule } from './baselines.js';
 import { simulateSensor, detectLeak } from './leak.js';
 
 const f = JSON.parse(fs.readFileSync(new URL('../../assets/forecast.json', import.meta.url)));
-const { hourly, plant } = f;
+const { hourly } = f;
+const plant = { ...f.plant, initial_tank_l: warmUpTank(f.warmup, f.plant) };
+console.log(`Warm-up over ${f.warmup.length}h of yesterday's weather -> tank starts at ` +
+  `${((plant.initial_tank_l / plant.tank_capacity_l) * 100).toFixed(1)}% ` +
+  `(seed was ${((f.plant.initial_tank_l / f.plant.tank_capacity_l) * 100).toFixed(0)}%)\n`);
 
 const smart = runSchedule(hourly, plant);
 const timer = fixedTimerSchedule(hourly, plant);

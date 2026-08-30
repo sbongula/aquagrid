@@ -84,6 +84,18 @@ export function finaliseTotals(totals) {
 }
 
 /**
+ * Replay the 24 hours before the horizon to derive the tank level the operator
+ * actually starts at. Without this every location opens at exactly the seeded
+ * percentage, which makes the largest number on screen look like a constant
+ * rather than a consequence of that island's weather.
+ */
+export function warmUpTank(warmup, plant) {
+  if (!warmup || !warmup.length) return plant.initial_tank_l;
+  const { steps } = runSchedule(warmup, plant);
+  return steps[steps.length - 1].tankL;
+}
+
+/**
  * The AquaGrid strategy. Rules are evaluated in strict priority order;
  * the first match wins.
  */

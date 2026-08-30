@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
-  View, Text, TextInput, Pressable, Modal, ActivityIndicator, ScrollView, StyleSheet,
+  View, Text, TextInput, Pressable, Modal, ActivityIndicator, ScrollView,
+  StyleSheet, Keyboard, TouchableWithoutFeedback,
 } from 'react-native';
 import { theme } from '../theme';
 
@@ -77,10 +78,17 @@ export default function LocationPicker({ island, onSelect, onReset, isCustom, se
         </View>
       </View>
 
-      <Modal visible={open} animationType="slide" transparent onRequestClose={() => setOpen(false)}>
+      <Modal visible={open} animationType="fade" transparent onRequestClose={() => setOpen(false)}>
+        {/* Anchored to the top of the screen: the software keyboard occupies the
+            bottom half, and a bottom sheet would put the results underneath it. */}
         <View style={styles.backdrop}>
           <View style={styles.sheet}>
-            <Text style={styles.sheetTitle}>Choose an island</Text>
+            <View style={styles.sheetHead}>
+              <Text style={styles.sheetTitle}>Choose an island</Text>
+              <Pressable onPress={() => { Keyboard.dismiss(); setOpen(false); }} hitSlop={12}>
+                <Text style={styles.closeX}>✕</Text>
+              </Pressable>
+            </View>
             <Text style={styles.sheetSub}>
               Any location on Earth. We fetch its real solar and temperature forecast, then
               run the demand model on-device and size the plant to its population.
@@ -105,7 +113,7 @@ export default function LocationPicker({ island, onSelect, onReset, isCustom, se
             )}
             {error && <Text style={styles.err}>{error}</Text>}
 
-            <ScrollView style={{ maxHeight: 300 }} keyboardShouldPersistTaps="handled">
+            <ScrollView style={styles.results} keyboardShouldPersistTaps="handled">
               {results.map((p) => (
                 <Pressable
                   key={p.id}
@@ -127,10 +135,12 @@ export default function LocationPicker({ island, onSelect, onReset, isCustom, se
               ))}
             </ScrollView>
 
-            <Pressable onPress={() => setOpen(false)} style={styles.close}>
-              <Text style={styles.closeText}>Cancel</Text>
-            </Pressable>
           </View>
+
+          {/* Tapping the dimmed area below the sheet closes it. */}
+          <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setOpen(false); }}>
+            <View style={{ flex: 1 }} />
+          </TouchableWithoutFeedback>
         </View>
       </Modal>
     </>
@@ -154,11 +164,17 @@ const styles = StyleSheet.create({
   btnText: { color: theme.water, fontSize: 13, fontWeight: '700' },
   btnGhost: { paddingHorizontal: 14, paddingVertical: 4, alignItems: 'center' },
   btnGhostText: { color: theme.textDim, fontSize: 11, fontWeight: '600' },
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-start' },
   sheet: {
-    backgroundColor: theme.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20,
-    padding: 20, paddingBottom: 28, maxHeight: '88%',
+    backgroundColor: theme.surface,
+    borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
+    borderBottomWidth: 1, borderColor: theme.border,
+    paddingHorizontal: 20, paddingBottom: 18,
+    paddingTop: 64, // clears the status bar / notch
   },
+  sheetHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  closeX: { color: theme.textDim, fontSize: 20, fontWeight: '700' },
+  results: { maxHeight: 260 },
   sheetTitle: { color: theme.text, fontSize: 19, fontWeight: '800' },
   sheetSub: { color: theme.textDim, fontSize: 12, lineHeight: 18, marginTop: 6, marginBottom: 14 },
   input: {

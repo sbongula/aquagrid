@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, View, Text, StatusBar, StyleSheet, Platform }
 
 import forecast from './assets/forecast.json';
 import { theme } from './src/theme';
-import { runSchedule } from './src/logic/scheduler';
+import { runSchedule, warmUpTank } from './src/logic/scheduler';
 import { fixedTimerSchedule, reactiveSchedule } from './src/logic/baselines';
 import { simulateSensor, detectLeak } from './src/logic/leak';
 import { buildContext, getBriefing, templateBriefing, askOperator } from './src/lib/ai';
@@ -34,7 +34,14 @@ export default function App() {
   const [custom, setCustom] = useState(null);
 
   const active = custom || forecast;
-  const { hourly, plant, island, weather_source: weatherSource } = active;
+  const { hourly, island, weather_source: weatherSource } = active;
+
+  // Start the horizon where yesterday actually left the tank, not at a seeded
+  // constant - otherwise every island opens at the same percentage.
+  const plant = useMemo(
+    () => ({ ...active.plant, initial_tank_l: warmUpTank(active.warmup, active.plant) }),
+    [active],
+  );
   const { model, validation_curve: curve, demand_model: demandModel } = forecast;
 
   // All scheduling is synchronous. Only the LLM call is async - never mix them.

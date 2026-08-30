@@ -61,11 +61,14 @@ The result is a real forecaster running on the phone with no ML runtime, no serv
 | Weather | Open-Meteo forecast with `timezone=auto` |
 | Demand | Lookup table, scaled linearly by population |
 | Plant sizing | Tank, pump, output and panel area all scale with population off the reference plant |
+| Warm-up | The previous 24 h of real weather, replayed to derive the starting tank level |
 | Offline | Falls back to the island bundled at build time, which needs no network at all |
 
 Plant sizing scales everything together, which keeps the ratios that actually drive decisions constant — specific energy per m³, days of storage, and how many hours a day solar clears the pump draw. So the scheduler faces the same *shape* of decision on a village of 1,200 as on a city of 130,000, and **only the weather genuinely differs between locations.** That is an assumption, and it is why savings vary by island rather than by size.
 
-Malé, Maldives (pop. 103,693) resolves to a 5,184,650 L tank, a 4,320 kW pump and 27,651 m² of panels — an 86× scale-up computed at runtime on the phone.
+Malé, Maldives (pop. 103,693) resolves to a 5,184,650 L tank, a 4,320 kW pump and 27,651 m² of panels — an 86× scale-up computed at runtime on the phone. Every figure on screen moves with the choice: starting tank level, the pump timeline, diesel burned, and the savings against the baselines.
+
+Search is forgiving of how people actually type place names. The geocoder matches a settlement name alone, so `"Malé Maldives"` and `"Apia, Samoa"` both return nothing on a literal query; the app retries on the first token and prefers results whose country or region matches the rest of the string.
 
 ## Model performance
 
@@ -90,11 +93,13 @@ The synthetic history in `ml/generate_data.py` is readable in one screen — twi
 
 | Strategy | Diesel | Cost | CO₂ | Pump hours | Shortage |
 |---|---|---|---|---|---|
-| **AquaGrid** | **19.7 L** | **$32** | **53 kg** | 5 h (3 solar / 1 partial / 1 diesel) | 0 h |
+| **AquaGrid** | **52.5 L** | **$84** | **141 kg** | 8 h (3 solar / 2 partial / 3 diesel) | 0 h |
 | Fixed timer 01:00–05:00 | 112.0 L | $179 | 300 kg | 8 h (all diesel) | 0 h |
-| Reactive, top up below 80% | 103.4 L | $165 | 277 kg | 10 h (0 solar / 4 partial / 6 diesel) | 0 h |
+| Reactive, top up below 80% | 149.6 L | $239 | 401 kg | 13 h (0 solar / 4 partial / 9 diesel) | 0 h |
 
-**82% less diesel than the fixed timer these plants run today**, with the tank never dropping below 26.7% against a 25% reserve floor.
+**53% less diesel than the fixed timer these plants run today**, and it delivers the same water in the same 8 pump hours — it just chooses *which* eight. The tank dips to 24.8%, brushing the 25% reserve floor and firing the emergency rule once, and never runs dry.
+
+These figures move with the weather and the island. On a run of live forecasts the same code returned 80% on Apia, 70% on Malé, 64% on Santorini and 23% on Reykjavík — where there is barely any sun to schedule against, so there is far less for a scheduler to win.
 
 Assumptions stated openly: diesel at **$1.60/L** island-delivered, **2.68 kg CO₂ per litre** burned.
 
@@ -107,6 +112,8 @@ Five rules, evaluated in strict priority order, with a 12-hour lookahead that as
 3. **Pre-emptive hybrid** — a shortfall is forecast within 12 h and there is partial sun. Spend a little diesel *now* to avoid a full-diesel run tonight.
 4. **Reluctant diesel** — shortfall forecast, no usable sun, reserves thin.
 5. **Hold** — wait for the sun.
+
+**The starting tank level is a result, not a constant.** Open-Meteo is asked for `past_days=1`, and the scheduler replays those 24 hours before the displayed horizon begins. So where the tank sits at hour zero is the consequence of yesterday's actual weather at that location — Funafuti opens at 28%, Reykjavík at 41%. Seeding every island at the same percentage would have made the largest number on screen look like a constant rather than a measurement.
 
 Rule 3 is where the forecast earns its keep: it is the only rule that acts on information the plant does not yet have.
 
