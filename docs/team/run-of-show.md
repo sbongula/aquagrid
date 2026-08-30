@@ -1,20 +1,20 @@
 # AquaGrid — run of show
 
-**One minute each.** Two slides per person. Deck: `slides.html` (arrow keys, `F` for fullscreen) or `AquaGrid-Slides.pdf`.
+**One minute each.** Every section opens with a title slide — that is your cue to take over, and a free two seconds to breathe. Then two content slides. Deck: `slides.html` (arrow keys, `F` for fullscreen) or `AquaGrid-Slides.pdf`.
 
 Everything below is written to be *said out loud*. Short sentences. Every number you need is already on your slide, so nothing has to be memorised — glance at it and say it.
 
 | Who | Part | Slides | Time |
 |---|---|---|---|
-| **Rishik** | The problem | 2–3 | 60 s |
-| **Neekin** | The solution | 4–5 | 60 s |
-| **Srihan** | The architecture | 6–7 | 60 s |
-| **Ednit** | The features | 8–9 | 60 s |
-| **All** | Demo | 10–11 | 60 s |
-| **Gowtham** | The code and the site | 12–13 | 60 s |
+| **Rishik** | The problem | 2–4 | 60 s |
+| **Neekin** | The solution | 5–7 | 60 s |
+| **Srihan** | The architecture | 8–10 | 60 s |
+| **Ednit** | The features | 11–13 | 60 s |
+| **All** | Demo | 14–16 | 60 s |
+| **Gowtham** | The code and the site | 17–19 | 60 s |
 
 ## Rishik — The problem
-*Slides 2–3 · 60 seconds*
+*Slides 2–4 · 60 seconds*
 
 - Small islands can't just turn on a tap. Rain fills their tanks — and when the rain stops, a machine turns seawater into drinking water.
 
@@ -31,7 +31,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 **Then say:** “So we built something that can. Neekin.”
 
 ## Neekin — The solution
-*Slides 4–5 · 60 seconds*
+*Slides 5–7 · 60 seconds*
 
 - Our app does four things: predict, decide, explain, detect.
 
@@ -48,7 +48,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 **Then say:** “And all of it runs on a phone. Srihan.”
 
 ## Srihan — The architecture
-*Slides 6–7 · 60 seconds*
+*Slides 8–10 · 60 seconds*
 
 - The whole thing runs on the phone. There's no server anywhere.
 
@@ -67,7 +67,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 **Then say:** “Ednit will show you what it actually does.”
 
 ## Ednit — The features
-*Slides 8–9 · 60 seconds*
+*Slides 11–13 · 60 seconds*
 
 - This is one real day. Orange is sunshine, blue is water being used.
 
@@ -84,7 +84,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 **Then say:** “Easier to just show you.”
 
 ## All — Demo
-*Slides 10–11 · 60 seconds*
+*Slides 14–16 · 60 seconds*
 
 - Here's what it's doing right now — and why, in a full sentence.
 
@@ -105,7 +105,7 @@ Everything below is written to be *said out loud*. Short sentences. Every number
 **Then say:** “Gowtham can show you it's real underneath.”
 
 ## Gowtham — The code and the site
-*Slides 12–13 · 60 seconds*
+*Slides 17–19 · 60 seconds*
 
 - All the decisions come from 755 lines of code, and we can test the whole thing with one command — no phone needed.
 
