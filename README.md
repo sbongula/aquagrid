@@ -6,7 +6,8 @@
 
 DreamHacks 2026 · Track 2 — AI, Automation & Logic
 Repo: [github.com/sbongula/aquagrid](https://github.com/sbongula/aquagrid) · Site: [sbongula.github.io/aquagrid](https://sbongula.github.io/aquagrid)
-**Team handbook:** [AquaGrid-Team-Handbook.pdf](docs/team/AquaGrid-Team-Handbook.pdf) — 18 pages, every file and every tuned value explained.
+**Team handbook:** [AquaGrid-Team-Handbook.pdf](docs/team/AquaGrid-Team-Handbook.pdf) — 35 pages, every file and every tuned value explained.
+**Presentation:** [slides.html](docs/team/slides.html) · [AquaGrid-Slides.pdf](docs/team/AquaGrid-Slides.pdf) · [run of show](docs/team/run-of-show.md)
 
 ---
 
