@@ -6,7 +6,7 @@ import { theme } from './src/theme';
 import { runSchedule } from './src/logic/scheduler';
 import { fixedTimerSchedule, reactiveSchedule } from './src/logic/baselines';
 import { simulateSensor, detectLeak } from './src/logic/leak';
-import { buildContext, getBriefing, templateBriefing } from './src/lib/ai';
+import { buildContext, getBriefing, templateBriefing, askOperator } from './src/lib/ai';
 
 import Header from './src/components/Header';
 import TankGauge from './src/components/TankGauge';
@@ -17,6 +17,7 @@ import PumpTimeline from './src/components/PumpTimeline';
 import SavingsCard from './src/components/SavingsCard';
 import LeakPanel from './src/components/LeakPanel';
 import ModelCard from './src/components/ModelCard';
+import AskPanel from './src/components/AskPanel';
 
 // Hour of the 48-hour horizon the operator is standing in. Held in state so the
 // demo can scrub forward if needed; index 0 is the start of the forecast.
@@ -80,6 +81,7 @@ export default function App() {
         <TankGauge step={step} plant={plant} hoursOfSupply={hoursOfSupply} />
         <DecisionCard step={step} />
         <BriefingCard text={briefing.text} live={briefing.live} loading={false} />
+        <AskPanel ctx={ctx} ask={askOperator} live={briefing.live} />
         <SolarDemandChart steps={smart.steps} plant={plant} />
         <PumpTimeline steps={smart.steps} />
         <SavingsCard smart={smart} timer={timer} reactive={reactive} />
