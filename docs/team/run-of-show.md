@@ -1,121 +1,138 @@
 # AquaGrid — run of show
 
-**One minute each, six minutes total**, plus the demo and questions. Slide deck: `slides.html` (arrow keys, `F` for fullscreen) or `AquaGrid-Slides.pdf`.
+**One minute each.** Two slides per person. Deck: `slides.html` (arrow keys, `F` for fullscreen) or `AquaGrid-Slides.pdf`.
+
+Everything below is written to be *said out loud*. Short sentences. Every number you need is already on your slide, so nothing has to be memorised — glance at it and say it.
 
 | Who | Part | Slides | Time |
 |---|---|---|---|
-| **Rishik** | The problem | 2–4 | 60 s |
-| **Neekin** | The solution | 5–8 | 60 s |
-| **Srihan** | The architecture | 9–11 | 60 s |
-| **Ednit** | The features | 12–14 | 60 s |
-| **All** | Demo | 15 | 60 s |
-| **Gowtham** | The code and the site | 16–17 | 60 s |
-
-Every number below is one the app computes. Saying the specific figure is what makes it land — but none of it needs memorising, it is all on the slide.
+| **Rishik** | The problem | 2–3 | 60 s |
+| **Neekin** | The solution | 4–5 | 60 s |
+| **Srihan** | The architecture | 6–7 | 60 s |
+| **Ednit** | The features | 8–9 | 60 s |
+| **All** | Demo | 10–11 | 60 s |
+| **Gowtham** | The code and the site | 12–13 | 60 s |
 
 ## Rishik — The problem
-*Slides 2–4 · 60 seconds*
+*Slides 2–3 · 60 seconds*
 
-- Water and energy are the same problem on an island. Fresh water is rain when it falls, desalination when it isn't — and that plant is the biggest electrical load there is.
+- Small islands can't just turn on a tap. Rain fills their tanks — and when the rain stops, a machine turns seawater into drinking water.
 
-- Its power is solar by day, diesel by night. The diesel comes by barge every few weeks, whether or not you're running low.
+- That machine uses more electricity than anything else on the island.
 
-- So every hour is a decision: make water now, or wait. Noon on a clear day is nearly free. 02:00 costs imported fuel. And the tank holds a day or two — so you *can* wait, if you know what tomorrow looks like.
+- In the day that power is free, because it's sunshine. At night it's a diesel generator — and the diesel arrives by boat every few weeks.
 
-- Almost nowhere is that decision made. It's a wall timer, set to overnight hours borrowed from mainland off-peak tariffs. On a solar island that's exactly backwards.
+- The tank holds about two days of water. So it's really a battery for water. You can fill it whenever you want — which means you should fill it when the power is free.
 
-- Tuvalu makes it real: in 2011 a drought left Funafuti with days of water and a state of emergency. The plant wasn't too small — nobody could see far enough ahead.
+- But nobody actually chooses. Most islands run the machine on a timer set for the middle of the night, because that's when electricity is cheap on the mainland. On a solar island that's backwards — the middle of the night is exactly when there's no sun.
 
-**Hand off:** “So what could you do with a forecast? Neekin.”
+- And this matters. In 2011 Tuvalu got down to a few days of drinking water and declared a state of emergency. Their machine wasn't too small. Nobody could see what was coming.
+
+**Then say:** “So we built something that can. Neekin.”
 
 ## Neekin — The solution
-*Slides 5–8 · 60 seconds*
+*Slides 4–5 · 60 seconds*
 
-- One idea: predict demand once, and share that forecast with everything else.
+- Our app does four things: predict, decide, explain, detect.
 
-- Predict, decide, explain, detect. A random forest forecasts 48 hours out; eight rules dispatch the pump across solar, battery, rain and diesel.
+- It predicts how much water the island will use for the next two days. It decides the best hours to run the machine. It explains why in plain English. And it spots problems early.
 
-- The model is honest — 45.3 litres per hour mean error, R-squared 0.987, 89% better than predicting the average, tested on the 60 days that came *after* the ones it learned from.
+- We trained an AI on two years of water use. Then — and this is the important bit — we tested it on days it had never seen. Real future days, not a shuffled deck.
 
-- Result: 78% less diesel than the timer these plants run today. Same water, fewer pump hours — it just picks which hours.
+- It gets within about 45 litres an hour, out of roughly 940. That's 89% better than just guessing the average.
 
-- But here's the number that matters more. 300 litres of fuel, 12 days to the barge. We make it last 39. The fixed timer runs dry 3.4 days early; the reactive one, 4.4. Burning too much fuel and running out are different failures.
+- Here's what that's worth. The normal night timer burns 70 litres of diesel. Ours burns 15.
 
-**Hand off:** “The interesting part is that this runs on a phone. Srihan.”
+- But the number that really matters is this: the island has 300 litres of fuel and the boat is 12 days away. The night timer runs out of fuel *before the boat arrives*. So does filling-when-low. Ours doesn't.
+
+**Then say:** “And all of it runs on a phone. Srihan.”
 
 ## Srihan — The architecture
 *Slides 6–7 · 60 seconds*
 
-- It all runs on the phone. The app is React Native — one screen, eighteen components, charts hand-drawn in SVG because a charting library is one more thing that can break.
+- The whole thing runs on the phone. There's no server anywhere.
 
-- The brain is a RandomForest, trained offline in scikit-learn and **bundled inside the app**. There is no server call to make a prediction.
+- The app is React Native — that's what you see and tap. We drew every chart ourselves.
 
-- The phone fetches its own weather from Open-Meteo — solar, temperature, rain and wind — with no API key. And Groq serves an open-weight model, GPT-OSS 120B, that writes the briefing and answers questions. That one is optional.
+- The brain is a RandomForest AI. We trained it on a laptop, then packed it *inside* the app.
 
-- The trick that makes it work on-device: every feature is categorical except temperature, so we evaluate the trained forest over its entire input grid and carry the whole thing as a 15,120-cell table. That is the model, not a sample of it — the only loss is temperature rounded to half a degree, 5.5 litres against its own 45.
+- The phone grabs its own weather forecast from Open-Meteo — that's free and needs no sign-up. And Groq gives us an open AI model called GPT-OSS that explains things in normal English.
 
-- 72 predictions in 0.011 milliseconds. So it forecasts for islands the laptop never saw, with no ML runtime and no signal.
+- Normally an AI lives on a big computer and your phone asks it questions over the internet. We did the maths ahead of time for every situation the AI could face — 15,120 answers — and packed them all in. It predicts a whole day in a hundredth of a millisecond.
 
-- And there is no backend, deliberately — an app that needs a server to decide whether to run a pump fails exactly when an island is cut off.
+- And no server is deliberate. An app that needs the internet to decide when to make water would stop working exactly when an island gets cut off — which is when you need it most.
 
-- Two AI systems, and only one decides: the forest makes every call, the language model makes none. Remove it and no number changes.
+- One last thing: the AI makes every decision. The language model only writes the words. Delete it and every number stays the same.
 
-**Hand off:** “Ednit will show you what it actually does.”
+**Then say:** “Ednit will show you what it actually does.”
 
 ## Ednit — The features
-*Slides 12–14 · 60 seconds*
+*Slides 8–9 · 60 seconds*
 
-- Here's one real day. Amber is solar, cyan is demand, the dashed line is the pump draw. Bars along the top are rain. The strip underneath is what the pump actually did.
+- This is one real day. Orange is sunshine, blue is water being used.
 
-- Eight rules, first match wins. Three of them act on information the plant doesn't have yet — rain hold, stored solar, and the pre-emptive hybrid that spends a little diesel now to avoid a lot tonight.
+- When the orange goes above the dotted line, there's enough sun to run the machine for free.
 
-- Rain isn't a bolt-on: Tuvalu is rainwater-fed, and it supplied 24% of all water here. The battery carried 66 kilowatt-hours of midday sun into the evening peak — and 304 were curtailed, which is the honest ceiling on a bigger battery.
+- The strip along the bottom is what it actually chose. Green means it ran on sunshine. Red means it had to use diesel. Dark means it waited.
 
-- Then four detectors, all the same idea — compare what the plant does against what the forecast says it should. Burst pipe in two hours. Panels 13% down. Membranes due in 40 days. Fuel against the barge.
+- It also catches problems. It knows how fast the tank *should* empty — so when the real tank drops faster than that, something's wrong.
 
-**Hand off:** “Easier to show than describe.”
+- We tested it with a burst pipe. It found it in two hours. It also spots dirty solar panels, filters that need cleaning, and running low on fuel before the boat comes.
+
+- And it uses the rain. Rain off the rooftops gave 24% of all the water — so if rain is coming, it waits instead of wasting fuel.
+
+**Then say:** “Easier to just show you.”
 
 ## All — Demo
-*Slides 15 · 60 seconds*
+*Slides 10–11 · 60 seconds*
 
-- Current decision — read the reason line out loud. It's a sentence, not a status code.
+- Here's what it's doing right now — and why, in a full sentence.
 
-- Chart and timeline: green is free solar, cyan is stored solar after dark, amber is a deliberate top-up.
+- Here's the day ahead. Green is free sun, blue is stored sun, red is diesel.
 
-- Savings, then the fuel card.
+- Here's how much fuel it saves.
 
-- Simulate burst pipe — the alert fires. “Caught from the forecast residual, not a threshold.”
+- Now watch — press burst pipe. The alarm appears. Nobody would have spotted that for hours.
 
-- Simulate cyclone — the objective flips from saving fuel to filling the tank.
+- Press cyclone. It stops trying to save fuel and fills the tank instead, because after a storm the boat isn't coming.
 
-- Change the island. Everything recomputes on-device.
+- Switch to a different island — it works everything out again, on the phone.
 
-- Ask the operator a question, then a follow-up.
+- Ask it a question. Then just ask 'why?' and it remembers what it said.
 
-- Airplane mode. Nothing stops working. End there.
+- And now aeroplane mode. Everything still works. Because on a real island, the internet is the first thing to go.
 
-**Hand off:** “Gowtham can show you it's real underneath.”
+**Then say:** “Gowtham can show you it's real underneath.”
 
 ## Gowtham — The code and the site
-*Slides 16–17 · 60 seconds*
+*Slides 12–13 · 60 seconds*
 
-- The decision layer is 755 lines, no dependencies beyond the language, and zero React imports — which is why it tests without a phone.
+- All the decisions come from 755 lines of code, and we can test the whole thing with one command — no phone needed.
 
-- Run `node src/logic/test.js` live: all three strategies, the savings, the leak result, and an assertion that the lookup table stays within a quarter of the model's own error.
+- It's in four parts: one teaches the AI, one makes the decisions, one talks to the weather service, and one draws the screen.
 
-- ml/ trains and exports. logic/ decides and detects. lib/ handles location and the LLM. components/ is presentation only.
+- The weather data is completely free and needs no sign-up.
 
-- APIs: Open-Meteo for forecast and geocoding — no key, no account — and Groq for narration, which is optional. Nothing else touches the network.
+- Everything's written down — a website and a 35-page handbook explaining every file. The charts on the site are built from the real data, not screenshots, so they can't go out of date.
 
-- The site and the 32-page handbook are in the same repo, and the site's charts are generated from the real forecast, so they can't drift from what the app computes.
+- And we didn't just claim it saves fuel. We ran three different ways of doing it — ours, the night timer, and fill-when-low — on the same weather, and compared them.
 
-**Hand off:** “Happy to take questions.”
+**Then say:** “Happy to take questions.”
+
+## If a judge asks…
+
+**“Is the AI real, or is it just ChatGPT?”**  
+Real. We trained it ourselves on two years of data, and we tested it on days it had never seen. It makes every decision. The ChatGPT-style model only writes the sentences — you could delete it and every number would stay identical.
+
+**“Why is Reykjavík only 23%?”**  
+Because there's barely any sun in Iceland, so there's much less for us to save. We left that number in on purpose. A smaller honest number is worth more than a big one we can't back up.
+
+**“Isn't the data made up?”**  
+The water usage is simulated — we say so everywhere. But the weather is real and live, and the patterns we built in are the ones real households have: a morning peak, an evening peak, and more water on hot days.
 
 ## On the day
 
-- **Pace the AI taps.** Three questions in quick succession can hit Groq's free-tier limit. It falls back to the on-device template — safe, but less impressive. Leave a couple of seconds.
-- **Move the Expo Go gear button** out of shot. It is Expo's dev overlay, not ours.
-- **End on airplane mode.** Strongest closing beat available.
-- **“Is the AI real?”** The random forest is trained by us on a chronological split and makes every decision. The language model makes none.
-- **“Why is Reykjavík only 23%?”** Because there is barely any sun there to schedule against. It is in the table on purpose — a smaller honest number beats a larger indefensible one.
+- **Don't tap the AI questions too fast.** Three in a row can hit the free limit and it falls back to a simpler answer. Leave a couple of seconds.
+- **Move the blue gear button** out of the way before you start — that's part of the developer tool, not our app.
+- **Finish on aeroplane mode.** It's the strongest ending you have.
 

@@ -52,6 +52,7 @@ b{color:var(--ink);font-weight:700} em{color:var(--water);font-style:normal}
 .stat{border-top:2px solid var(--rule);padding-top:1.4cqw}
 .stat b{display:block;font-size:5cqw;line-height:1;letter-spacing:-.02em}
 .stat.good b{color:var(--good)}
+.stat.bad2 b{color:var(--bad)}
 .stat b small{font-size:1.9cqw;color:var(--dim);font-weight:600}
 .stat span{display:block;font-size:1.45cqw;color:var(--dim);margin-top:.9cqw;line-height:1.4}
 .box{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:2cqw}
@@ -90,7 +91,7 @@ table.t tr.hi td{background:rgba(69,192,138,.10);font-weight:700;color:var(--ink
 
 .chart{width:100%;height:auto;display:block;margin-bottom:1.2cqw}
 .tl{display:flex;gap:.35cqw} .tl i{display:block}
-.key{display:flex;gap:1.6cqw;align-items:center;font-size:1.35cqw;color:var(--dim);margin-top:1.2cqw}
+.key{display:flex;flex-wrap:wrap;gap:1.2cqw;align-items:center;font-size:1.35cqw;color:var(--dim);margin-top:1.2cqw}
 .key i{display:inline-block;width:1.2cqw;height:1.2cqw;border-radius:2px;margin-right:.5cqw}
 
 .beats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
@@ -120,158 +121,154 @@ table.t tr.hi td{background:rgba(69,192,138,.10);font-weight:700;color:var(--ink
 <section class="slide" data-i="0"><div class="body"><div class="center">
   <img class="mark" src="../icon.png" alt="">
   <h1>AquaGrid</h1>
-  <p class="tag">An AI that forecasts an island&rsquo;s water demand, schedules desalination against
-  the solar forecast, harvests the rain, and catches failures before they get expensive.</p>
+  <p class="tag">An app that works out the smartest time to make drinking water on a small island
+  &mdash; so the island wastes less fuel and never runs dry.</p>
   <p class="names">Rishik &middot; Neekin &middot; Srihan &middot; Ednit &middot; Gowtham</p>
   <p class="foot2">DreamHacks 2026 &middot; Track 2 &mdash; AI, Automation &amp; Logic</p>
 </div></div><div class="num">1 / 14</div></section>
-<section class="slide" data-i="1"><div class="badge"><span class="who">Rishik</span><span class="part">The problem</span></div><div class="body"><h2>Water and energy are the same problem</h2>
+<section class="slide" data-i="1"><div class="badge"><span class="who">Rishik</span><span class="part">The problem</span></div><div class="body"><h2>Small islands have to <em>make</em> their water</h2>
 <div class="two">
-  <div><p>Fresh water is rain when it falls, and a desalination plant when it isn&rsquo;t &mdash;
-  and that plant is the <b>largest electrical load on the island</b>.</p>
-  <p>Its power is solar by day, diesel by night. The diesel arrives <b>by barge every few weeks</b>,
-  whether or not you are running low.</p></div>
+  <div><p>Rain fills the tanks. When the rain stops, a machine turns seawater into drinking water.</p>
+  <p>That machine is the <b>hungriest thing on the island</b> for electricity.</p>
+  <p>By day that power is free &mdash; it&rsquo;s sunshine. At night it&rsquo;s a diesel generator,
+  and the diesel comes <b>by boat every few weeks</b>.</p></div>
   <div class="cols1">
-    <div class="stat"><b>Noon, clear sky</b><span>nearly free</span></div>
-    <div class="stat"><b>02:00</b><span>imported diesel</span></div>
-    <div class="stat"><b>The tank</b><span>holds a day or two</span></div>
+    <div class="stat good"><b>Midday</b><span>sunshine &mdash; free</span></div>
+    <div class="stat bad2"><b>2 a.m.</b><span>diesel &mdash; costs money</span></div>
+    <div class="stat"><b>The tank</b><span>holds about 2 days</span></div>
   </div>
 </div>
-<p class="big">So every hour is a decision &mdash; and it <em>can</em> be deferred, if you know what
-tomorrow looks like.</p></div><div class="num">2 / 14</div></section>
-<section class="slide" data-i="2"><div class="badge"><span class="who">Rishik</span><span class="part">The problem</span></div><div class="body"><h2>Almost nowhere is that decision made</h2>
-<p class="big">It is delegated to a <b>wall timer</b>, set to overnight hours inherited from mainland
-off-peak electricity tariffs.</p>
-<p class="big warn">On a solar island that is exactly backwards. Those are the hours with no sun.</p>
+<p class="big">The tank is basically a <b>battery for water</b>. You can fill it whenever you like
+&mdash; so you should fill it when power is free.</p></div><div class="num">2 / 14</div></section>
+<section class="slide" data-i="2"><div class="badge"><span class="who">Rishik</span><span class="part">The problem</span></div><div class="body"><h2>But nobody chooses. A timer does.</h2>
+<p class="big">Most islands run the machine on a <b>timer set to the middle of the night</b>, because
+that&rsquo;s when electricity is cheap on the mainland.</p>
+<p class="big warn">On a solar island that&rsquo;s backwards &mdash; the middle of the night is
+exactly when there is <b>no sun</b>.</p>
 <div class="rule"></div>
-<div class="two">
-  <div><p>Tuvalu makes it concrete. The freshwater lens is thin and salt-contaminated, so the island
-  runs on rain.</p></div>
-  <div><p>In <b>2011 a drought left Funafuti with days of water</b> and a declared state of emergency.
-  The plant was not too small &mdash; <b>nobody could see far enough ahead to act early</b>.</p></div>
-</div></div><div class="num">3 / 14</div></section>
-<section class="slide" data-i="3"><div class="badge"><span class="who">Neekin</span><span class="part">The solution</span></div><div class="body"><h2>One forecast, shared by everything</h2>
+<p class="big">This is a real problem. In <b>2011 Tuvalu ran down to a few days of drinking water</b>
+and had to declare a state of emergency.</p>
+<p>Their machine wasn&rsquo;t too small. The problem was that <b>nobody could see what was coming</b>.</p></div><div class="num">3 / 14</div></section>
+<section class="slide" data-i="3"><div class="badge"><span class="who">Neekin</span><span class="part">The solution</span></div><div class="body"><h2>So we taught it to see what&rsquo;s coming</h2>
 <div class="pipe4">
-  <div><span>01</span><b>Predict</b><p>Demand, 48 h ahead</p></div>
-  <div><span>02</span><b>Decide</b><p>8 rules, 12 h lookahead</p></div>
-  <div><span>03</span><b>Explain</b><p>A reason for every hour</p></div>
-  <div><span>04</span><b>Detect</b><p>Failures nobody would see</p></div>
+  <div><span>01</span><b>Predict</b><p>How much water the island will use, 2 days ahead</p></div>
+  <div><span>02</span><b>Decide</b><p>The best hours to run the machine</p></div>
+  <div><span>03</span><b>Explain</b><p>Says why, in plain English</p></div>
+  <div><span>04</span><b>Detect</b><p>Spots problems early</p></div>
 </div>
+<p class="big">We trained an AI on <b>2 years of water use</b>. Then we tested it on days it had
+<b>never seen before</b> &mdash; real future days, not a shuffled deck.</p>
 <div class="cols3">
-  <div class="stat"><b>45.3<small> L/h</small></b><span>mean absolute error</span></div>
-  <div class="stat"><b>0.987</b><span>R&sup2;</span></div>
-  <div class="stat good"><b>89%</b><span>better than predicting the average</span></div>
-</div>
-<p class="big"><b>Chronological split</b> &mdash; tested on the 60 days that came <em>after</em> the ones it learned from.</p></div><div class="num">4 / 14</div></section>
-<section class="slide" data-i="4"><div class="badge"><span class="who">Neekin</span><span class="part">The solution</span></div><div class="body"><h2>78% less diesel &mdash; and something better</h2>
+  <div class="stat"><b>45<small> litres</small></b><span>how far off it is, per hour &mdash; out of about 940</span></div>
+  <div class="stat"><b>0.987</b><span>accuracy score, where 1.0 is perfect</span></div>
+  <div class="stat good"><b>89%</b><span>better than just guessing the average</span></div>
+</div></div><div class="num">4 / 14</div></section>
+<section class="slide" data-i="4"><div class="badge"><span class="who">Neekin</span><span class="part">The solution</span></div><div class="body"><h2>It uses <em>a fifth</em> of the fuel</h2>
 <table class="t">
-<tr><th>Strategy</th><th class="n">Diesel</th><th class="n">Cost</th><th class="n">CO&#8322;</th><th class="n">Fuel lasts</th><th class="n">Outcome</th></tr>
-<tr class="hi"><td>AquaGrid</td><td class="n">15.3 L</td><td class="n">$25</td><td class="n">41 kg</td><td class="n">39 days</td><td class="n ok">holds</td></tr>
-<tr><td>Fixed timer 01&ndash;05</td><td class="n">70.0 L</td><td class="n">$112</td><td class="n">188 kg</td><td class="n">8.6 days</td><td class="n bad">dry &minus;3.4 d</td></tr>
-<tr><td>Reactive &lt; 80%</td><td class="n">79.2 L</td><td class="n">$127</td><td class="n">212 kg</td><td class="n">7.6 days</td><td class="n bad">dry &minus;4.4 d</td></tr>
+<tr><th>How it&rsquo;s run</th><th class="n">Diesel used</th><th class="n">Cost</th><th class="n">Fuel lasts</th><th class="n">Result</th></tr>
+<tr class="hi"><td><b>AquaGrid</b></td><td class="n">15 L</td><td class="n">$25</td><td class="n">39 days</td><td class="n ok">fine</td></tr>
+<tr><td>Night timer</td><td class="n">70 L</td><td class="n">$112</td><td class="n">8.6 days</td><td class="n bad">runs out</td></tr>
+<tr><td>Fill when low</td><td class="n">79 L</td><td class="n">$127</td><td class="n">7.6 days</td><td class="n bad">runs out</td></tr>
 </table>
-<p class="big">300 litres of fuel, <b>12 days to the barge</b>. Burning too much diesel and running
-out of diesel are <b>different failures</b>.</p></div><div class="num">5 / 14</div></section>
-<section class="slide" data-i="5"><div class="badge"><span class="who">Srihan</span><span class="part">The architecture</span></div><div class="body"><h2>It all runs on the phone</h2>
+<p class="big">Here&rsquo;s the part that really matters. The island has <b>300 litres of diesel</b>
+and the boat is <b>12 days away</b>.</p>
+<p class="big">The other two ways <b>run out of fuel before the boat arrives</b>. Ours doesn&rsquo;t.</p></div><div class="num">5 / 14</div></section>
+<section class="slide" data-i="5"><div class="badge"><span class="who">Srihan</span><span class="part">The architecture</span></div><div class="body"><h2>The whole thing runs on the phone</h2>
 <div class="layers">
-  <div><span>THE APP</span><b>React Native</b><p>Expo &middot; one screen, 18 components, charts hand-drawn in SVG</p></div>
-  <div><span>THE BRAIN</span><b>RandomForest, bundled in</b><p>trained offline in scikit-learn, shipped inside the app &mdash; no server call to predict</p></div>
-  <div><span>THE WEATHER</span><b>Open-Meteo</b><p>the phone fetches its own solar, temperature, rain and wind &middot; no API key</p></div>
-  <div><span>THE VOICE</span><b>Groq &middot; GPT-OSS 120B</b><p>open-weight LLM writes the briefing and answers questions &middot; optional</p></div>
+  <div><span>THE APP</span><b>React Native</b><p>what you see and tap &mdash; we drew every chart ourselves</p></div>
+  <div><span>THE BRAIN</span><b>RandomForest AI</b><p>we trained it on a laptop, then packed it <b>inside the app</b></p></div>
+  <div><span>THE WEATHER</span><b>Open-Meteo</b><p>the phone grabs its own sun and rain forecast &mdash; free, no sign-up</p></div>
+  <div><span>THE VOICE</span><b>Groq &middot; GPT-OSS 120B</b><p>an open AI model that explains things in plain English</p></div>
 </div>
-<p class="big">Scheduling, rainwater, battery dispatch, every detector and every chart are computed
-<b>on the device</b>. There is no backend &mdash; an app that needs a server to run a pump fails
-exactly when an island is cut off.</p></div><div class="num">6 / 14</div></section>
-<section class="slide" data-i="6"><div class="badge"><span class="who">Srihan</span><span class="part">The architecture</span></div><div class="body"><h2>We ship the model, not its predictions</h2>
-<p class="mid">Every feature is categorical except temperature &mdash; so the trained forest is
-evaluated over its <b>entire input grid</b> and travels inside the app as a table.</p>
+<p class="big">There is <b>no server anywhere</b>. An app that needs the internet to decide when to
+make water would stop working <b>exactly when an island gets cut off</b> &mdash; which is when you
+need it most.</p></div><div class="num">6 / 14</div></section>
+<section class="slide" data-i="6"><div class="badge"><span class="who">Srihan</span><span class="part">The architecture</span></div><div class="body"><h2>We put the whole AI <em>inside</em> the app</h2>
+<p class="mid">Normally an AI lives on a big computer and your phone asks it questions over the
+internet. We did the maths <b>ahead of time</b> for every situation the AI could ever face, and
+packed all the answers into the app.</p>
 <div class="cols3">
-  <div class="stat"><b>15,120</b><span>cells &mdash; the whole model, not a sample of it</span></div>
-  <div class="stat"><b>5.5<small> L/h</small></b><span>fidelity loss against its own 45.3</span></div>
-  <div class="stat good"><b>0.011<small> ms</small></b><span>72 predictions, on the phone</span></div>
+  <div class="stat"><b>15,120</b><span>answers &mdash; the whole AI, not a sample</span></div>
+  <div class="stat good"><b>0.011<small> ms</small></b><span>time to predict a whole day, on the phone</span></div>
+  <div class="stat"><b>Any island</b><span>works for places the laptop never saw</span></div>
 </div>
-<p class="big">So it forecasts for islands the laptop never saw &mdash; with no ML runtime, no
-inference API, and no signal required.</p>
 <div class="two">
-  <div class="box"><b>RandomForest &middot; scikit-learn</b><p>Trained by us. Makes <b>every</b> decision.</p></div>
-  <div class="box dim"><b>GPT-OSS 120B &middot; Groq</b><p>Open-weight, optional. Makes <b>none</b> &mdash; remove it and no number changes.</p></div>
+  <div class="box"><b>The RandomForest</b><p>We trained this. It makes <b>every</b> decision.</p></div>
+  <div class="box dim"><b>The language model</b><p>Only writes the words. Delete it and <b>every number stays the same</b>.</p></div>
 </div></div><div class="num">7 / 14</div></section>
-<section class="slide" data-i="7"><div class="badge"><span class="who">Ednit</span><span class="part">The features</span></div><div class="body"><h2>One day, as the scheduler sees it</h2>
+<section class="slide" data-i="7"><div class="badge"><span class="who">Ednit</span><span class="part">The features</span></div><div class="body"><h2>One real day</h2>
 <svg viewBox="0 0 1000 280" class="chart">
   <rect x="-9.0" y="0" width="18" height="4.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="34.5" y="0" width="18" height="23.7" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="78.0" y="0" width="18" height="9.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="121.4" y="0" width="18" height="7.0" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="164.9" y="0" width="18" height="13.9" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="208.4" y="0" width="18" height="2.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="251.9" y="0" width="18" height="2.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="295.3" y="0" width="18" height="1.4" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="382.3" y="0" width="18" height="1.4" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="425.8" y="0" width="18" height="25.1" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="469.3" y="0" width="18" height="4.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="512.7" y="0" width="18" height="46.0" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="556.2" y="0" width="18" height="15.3" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="599.7" y="0" width="18" height="11.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="904.0" y="0" width="18" height="2.8" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="947.5" y="0" width="18" height="4.2" rx="2" fill="#4CC5E8" opacity=".4"/><rect x="991.0" y="0" width="18" height="15.3" rx="2" fill="#4CC5E8" opacity=".4"/>
   <path d="M 0,250 L 0.0,250.0 L 43.5,250.0 L 87.0,250.0 L 130.4,250.0 L 173.9,250.0 L 217.4,250.0 L 260.9,250.0 L 304.3,239.7 L 347.8,184.7 L 391.3,121.5 L 434.8,117.0 L 478.3,71.8 L 521.7,98.0 L 565.2,58.6 L 608.7,80.8 L 652.2,64.4 L 695.7,109.9 L 739.1,186.3 L 782.6,232.6 L 826.1,250.0 L 869.6,250.0 L 913.0,250.0 L 956.5,250.0 L 1000.0,250.0 L 1000,250 Z" fill="#F0A830" fill-opacity=".22" stroke="#F0A830" stroke-width="3"/>
   <polyline points="0.0,215.9 43.5,225.0 87.0,229.7 130.4,230.2 173.9,224.8 217.4,185.3 260.9,91.1 304.3,57.3 347.8,84.1 391.3,126.1 434.8,137.5 478.3,139.4 521.7,133.6 565.2,135.4 608.7,148.4 652.2,148.2 695.7,129.6 739.1,103.8 782.6,38.0 826.1,26.8 869.6,83.2 913.0,138.6 956.5,178.6 1000.0,207.4" fill="none" stroke="#4CC5E8" stroke-width="3"/>
   <line x1="0" y1="32.6" x2="1000" y2="32.6" stroke="#E2EDF2" stroke-opacity=".5" stroke-dasharray="7 7" stroke-width="2"/>
-  <text x="1000" y="58.6" fill="#E2EDF2" opacity=".7" font-size="15" font-family="monospace" text-anchor="end">50 kW pump draw</text>
+  <text x="1000" y="58.6" fill="#E2EDF2" opacity=".7" font-size="15" font-family="monospace" text-anchor="end">enough sun to run it for free</text>
   <text x="0.0" y="272" fill="#88A5B2" font-size="13" font-family="monospace" text-anchor="middle">00</text><text x="173.9" y="272" fill="#88A5B2" font-size="13" font-family="monospace" text-anchor="middle">04</text><text x="347.8" y="272" fill="#88A5B2" font-size="13" font-family="monospace" text-anchor="middle">08</text><text x="521.7" y="272" fill="#88A5B2" font-size="13" font-family="monospace" text-anchor="middle">12</text><text x="695.7" y="272" fill="#88A5B2" font-size="13" font-family="monospace" text-anchor="middle">16</text><text x="869.6" y="272" fill="#88A5B2" font-size="13" font-family="monospace" text-anchor="middle">20</text>
 </svg>
 <div class="tl"><i style="flex:1;height:54px;border-radius:3px;background:#E8685F"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#E8B54C"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#4CC5E8"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i><i style="flex:1;height:54px;border-radius:3px;background:#1C3542"></i></div>
-<div class="key"><i style="background:#45C08A"></i>Solar<i style="background:#4CC5E8"></i>Stored solar<i style="background:#E8B54C"></i>Partial<i style="background:#E8685F"></i>Diesel<i style="background:#1C3542"></i>Held</div></div><div class="num">8 / 14</div></section>
-<section class="slide" data-i="8"><div class="badge"><span class="who">Ednit</span><span class="part">The features</span></div><div class="body"><h2>Eight rules, and four ways to fail</h2>
-<div class="rules">
-<div><span>0</span>Storm prep</div><div><span>1</span>Emergency</div>
-<div class="hl"><span>2</span>Rain hold</div><div><span>3</span>Free solar</div>
-<div class="hl"><span>4</span>Stored solar</div><div class="hl"><span>5</span>Pre-emptive hybrid</div>
-<div><span>6</span>Reluctant diesel</div><div><span>7</span>Hold</div>
-</div>
-<p class="mid">Highlighted three act on information the plant <b>does not have yet</b>.
-Rain supplied <b>24%</b> of all water; the battery carried <b>66 kWh</b> into the evening peak.</p>
+<div class="key"><i style="background:#F0A830"></i>Sunshine<i style="background:#4CC5E8"></i>Water being used<i style="background:#45C08A"></i>Ran on sun<i style="background:#E8B54C"></i>Part sun<i style="background:#E8685F"></i>Ran on diesel<i style="background:#1C3542"></i>Waited</div>
+<p class="mid">Orange above the dotted line means the sun alone can run the machine. The strip
+underneath is what it actually chose to do, hour by hour.</p></div><div class="num">8 / 14</div></section>
+<section class="slide" data-i="8"><div class="badge"><span class="who">Ednit</span><span class="part">The features</span></div><div class="body"><h2>It also catches problems early</h2>
+<p class="mid">It knows how fast the tank <em>should</em> empty. So when the real tank drops faster
+than that, something is wrong &mdash; and it says so.</p>
 <div class="cols4">
-  <div class="det"><b>Burst pipe</b><span>caught in 2 h</span></div>
-  <div class="det"><b>Dirty panels</b><span>13% below irradiance</span></div>
-  <div class="det"><b>Fouling membranes</b><span>clean due in 40 days</span></div>
-  <div class="det"><b>Fuel</b><span>dry before the barge</span></div>
+  <div class="det"><b>Burst pipe</b><span>found in 2 hours</span></div>
+  <div class="det"><b>Dirty solar panels</b><span>losing 13% of the sunshine</span></div>
+  <div class="det"><b>Worn-out filters</b><span>need cleaning in 40 days</span></div>
+  <div class="det"><b>Running low on fuel</b><span>before the boat comes</span></div>
 </div>
-<p class="big">All four the same idea: what the plant <em>does</em> versus what the forecast says it <em>should</em>.</p></div><div class="num">9 / 14</div></section>
-<section class="slide" data-i="9"><div class="badge"><span class="who">All</span><span class="part">Demo</span></div><div class="body"><h2 class="demo">Demo</h2>
+<div class="rule"></div>
+<div class="two">
+  <div><p><b>It saves the rain too.</b> Rain off the rooftops gave <b>24%</b> of all the water &mdash;
+  so if rain is coming, it waits instead of wasting fuel.</p></div>
+  <div><p><b>And it stores sunshine.</b> A battery carries midday sun into the evening, when everyone
+  gets home and uses the most water.</p></div>
+</div></div><div class="num">9 / 14</div></section>
+<section class="slide" data-i="9"><div class="badge"><span class="who">All</span><span class="part">Demo</span></div><div class="body"><h2 class="demo">Let&rsquo;s show you</h2>
 <div class="beats">
-  <div><span>1</span>Current decision &mdash; read the reason line</div>
-  <div><span>2</span>Chart &amp; timeline &mdash; green free, cyan stored, amber deliberate</div>
-  <div><span>3</span>Savings, then fuel against the barge</div>
-  <div><span>4</span><b>Simulate burst pipe</b> &mdash; the alert fires</div>
+  <div><span>1</span>What it&rsquo;s doing right now &mdash; and <b>why</b>, in a full sentence</div>
+  <div><span>2</span>The day ahead: green = free sun, blue = stored sun, red = diesel</div>
+  <div><span>3</span>How much fuel it saves</div>
+  <div><span>4</span><b>Press &ldquo;burst pipe&rdquo;</b> &mdash; watch the alarm appear</div>
 </div>
-<p class="big">&ldquo;Caught from the forecast residual, not a threshold &mdash; no human would have
-noticed for hours.&rdquo;</p></div><div class="num">10 / 14</div></section>
-<section class="slide" data-i="10"><div class="badge"><span class="who">All</span><span class="part">Demo</span></div><div class="body"><h2 class="demo">Demo</h2>
+<p class="big">Nobody would have spotted that leak for hours. The app found it in two.</p></div><div class="num">10 / 14</div></section>
+<section class="slide" data-i="10"><div class="badge"><span class="who">All</span><span class="part">Demo</span></div><div class="body"><h2 class="demo">And then</h2>
 <div class="beats">
-  <div><span>5</span><b>Simulate cyclone</b> &mdash; the objective flips</div>
-  <div><span>6</span>Change island &mdash; everything recomputes on-device</div>
-  <div><span>7</span>Ask the operator, then a follow-up</div>
-  <div><span>8</span><b>Airplane mode</b> &mdash; nothing stops working</div>
+  <div><span>5</span><b>Press &ldquo;cyclone&rdquo;</b> &mdash; it stops saving fuel and fills the tank</div>
+  <div><span>6</span>Switch to a different island &mdash; it works everything out again</div>
+  <div><span>7</span>Ask it a question. Then ask &ldquo;why?&rdquo;</div>
+  <div><span>8</span><b>Turn on aeroplane mode</b> &mdash; everything still works</div>
 </div>
-<p class="big">Built for an island with no reliable connectivity. <b>End there.</b></p></div><div class="num">11 / 14</div></section>
-<section class="slide" data-i="11"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>The code</h2>
+<p class="big">Because on a real island, the internet is the first thing to go.</p></div><div class="num">11 / 14</div></section>
+<section class="slide" data-i="11"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>How it&rsquo;s built</h2>
 <div class="cols3">
-  <div class="stat"><b>755</b><span>lines in the decision layer</span></div>
-  <div class="stat"><b>0</b><span>React imports in it &mdash; so it tests without a phone</span></div>
-  <div class="stat good"><b>node<br>src/logic/test.js</b><span>three strategies, the leak, the table fidelity</span></div>
+  <div class="stat"><b>755</b><span>lines of code make all the decisions</span></div>
+  <div class="stat good"><b>One command</b><span>tests it all &mdash; no phone needed</span></div>
+  <div class="stat"><b>Free</b><span>the weather data costs nothing and needs no sign-up</span></div>
 </div>
 <div class="layers">
-  <div><span>ml/</span><b>Train</b><p>synthetic history, forest, lookup-table export</p></div>
-  <div><span>logic/</span><b>Decide &amp; detect</b><p>scheduler, baselines, leak, assets, fuel, advisory</p></div>
-  <div><span>lib/</span><b>Reach out</b><p>location, weather, the optional LLM</p></div>
-  <div><span>components/</span><b>Present</b><p>18 components, charts hand-drawn in SVG</p></div>
+  <div><span>ml/</span><b>Teaches the AI</b><p>2 years of water use &rarr; a trained model</p></div>
+  <div><span>logic/</span><b>Makes the decisions</b><p>when to run, and spotting problems</p></div>
+  <div><span>lib/</span><b>Talks to the world</b><p>weather, location, the language model</p></div>
+  <div><span>components/</span><b>Draws the screen</b><p>18 pieces, every chart hand-drawn</p></div>
 </div></div><div class="num">12 / 14</div></section>
-<section class="slide" data-i="12"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>APIs, and everything written down</h2>
+<section class="slide" data-i="12"><div class="badge"><span class="who">Gowtham</span><span class="part">Code &amp; site</span></div><div class="body"><h2>Everything is written down</h2>
 <div class="cols3">
-  <div class="det"><b>Open-Meteo Forecast</b><span>solar, temp, rain, wind &middot; <b class="ok">no key</b></span></div>
-  <div class="det"><b>Open-Meteo Geocoding</b><span>name &rarr; coords + population &middot; <b class="ok">no key</b></span></div>
-  <div class="det"><b>Groq</b><span>open-weight LLM &middot; optional</span></div>
+  <div class="stat"><b>Website</b><span>the charts are made from real data, not screenshots</span></div>
+  <div class="stat"><b>35<small> pages</small></b><span>a handbook explaining every file</span></div>
+  <div class="stat good"><b>All open</b><span>anyone can read it and check our numbers</span></div>
 </div>
-<p class="big">Nothing else touches the network. No maps SDK, no analytics, no backend of our own.</p>
-<div class="rule"></div>
-<div class="cols3">
-  <div class="stat"><b>Website</b><span>charts generated from the real forecast, not screenshots</span></div>
-  <div class="stat"><b>35<small> pages</small></b><span>team handbook &mdash; every file, every tuned value</span></div>
-  <div class="stat"><b>Open</b><span>github.com/sbongula/aquagrid</span></div>
-</div></div><div class="num">13 / 14</div></section>
+<p class="big">We didn&rsquo;t just say it saves fuel. <b>We ran three different ways of doing it</b>
+&mdash; ours, the night timer, and fill-when-low &mdash; on the same weather, and compared them.</p>
+<p class="links">github.com/sbongula/aquagrid</p></div><div class="num">13 / 14</div></section>
 <section class="slide" data-i="13"><div class="body"><div class="center">
   <img class="mark sm" src="../icon.png" alt="">
-  <h2 class="thin">Everything is computed, not asserted.</h2>
-  <p class="tag">Three schedulers over the same forecast and the same physics. A model tested on the
-  days that came after. A leak detector given a real injected fault. Reykjav&iacute;k sits in the
-  results at 23% next to Apia at 80% &mdash; because a smaller honest number beats a larger one we
-  cannot defend.</p>
+  <h2 class="thin">Every number here is one we measured.</h2>
+  <p class="tag">We tested the AI on days it had never seen. We gave the leak detector a real leak
+  and made it find it. And when we tried Reykjav&iacute;k &mdash; where there&rsquo;s barely any sun
+  &mdash; it only saved 23%. We left that in, because a smaller honest number is worth more than a
+  big one we can&rsquo;t back up.</p>
   <p class="links">github.com/sbongula/aquagrid<br>sbongula.github.io/aquagrid</p>
 </div></div><div class="num">14 / 14</div></section>
 </div>
