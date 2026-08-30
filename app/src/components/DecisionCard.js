@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { theme, sourceColor, sourceLabel } from '../theme';
+import { useTheme, useStyles, sourceColor, sourceLabel } from '../theme';
 
 /**
  * The single most important element on screen: what the plant is doing right
  * now, and the one-line reason the scheduler gives for it.
  */
 export default function DecisionCard({ step }) {
-  const color = step.action === 'pump' ? sourceColor(step.source) : theme.textDim;
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
+  const color = step.action === 'pump' ? sourceColor(step.source, theme) : theme.textDim;
 
   return (
     <View style={[styles.card, { borderColor: color }]}>
@@ -35,6 +37,7 @@ export default function DecisionCard({ step }) {
 }
 
 function Foot({ label, value, color }) {
+  const styles = useStyles(makeStyles);
   return (
     <View>
       <Text style={styles.footLabel}>{label}</Text>
@@ -43,7 +46,7 @@ function Foot({ label, value, color }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   card: {
     backgroundColor: theme.surface, borderWidth: 2, borderRadius: theme.radius,
     padding: theme.pad, marginHorizontal: theme.pad, marginBottom: 12,

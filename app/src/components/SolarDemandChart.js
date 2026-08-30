@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, { Path, Polyline, Line, Rect, Text as SvgText } from 'react-native-svg';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 const H = 170;
 
@@ -14,6 +14,8 @@ const yAt = (v, min, max, h) => h - ((v - min) / (max - min || 1)) * h;
  * strategy legible at a glance - solar above the line is free water.
  */
 export default function SolarDemandChart({ steps, plant }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const { width } = useWindowDimensions();
   const w = width - 2 * theme.pad - 2 * theme.pad;
   const data = steps.slice(0, 24);
@@ -79,6 +81,7 @@ export default function SolarDemandChart({ steps, plant }) {
 }
 
 function Key({ color, label }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.keyRow}>
       <View style={[styles.swatch, { backgroundColor: color }]} />
@@ -87,7 +90,7 @@ function Key({ color, label }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   legend: { flexDirection: 'row', flexWrap: 'wrap', gap: 14, marginTop: 8 },
   keyRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   swatch: { width: 10, height: 10, borderRadius: 3 },

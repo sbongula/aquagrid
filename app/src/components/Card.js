@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /** Shared card chrome. Every panel down the screen uses this. */
 export default function Card({ title, right, children, style }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={[styles.card, style]}>
       {(title || right) && (
@@ -16,7 +17,7 @@ export default function Card({ title, right, children, style }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   card: {
     backgroundColor: theme.surface,
     borderColor: theme.border,

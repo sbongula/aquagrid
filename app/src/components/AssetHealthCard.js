@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, { Polyline, Line } from 'react-native-svg';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * Two slow failures, both found the same way as the leak: compare what the
@@ -9,6 +9,8 @@ import { theme } from '../theme';
  * neither of these until they have been costing fuel for months.
  */
 export default function AssetHealthCard({ soiling, fouling, dirty, onToggleDirty }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   return (
     <Card title="ASSET HEALTH">
       <Section
@@ -58,6 +60,8 @@ export default function AssetHealthCard({ soiling, fouling, dirty, onToggleDirty
 }
 
 function Section({ title, alert, message, stats }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const color = alert ? theme.warn : theme.good;
   return (
     <View>
@@ -82,6 +86,8 @@ function Section({ title, alert, message, stats }) {
 }
 
 function FoulingChart({ fouling }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const { width } = useWindowDimensions();
   const w = width - 4 * theme.pad;
   const h = 70;
@@ -106,7 +112,7 @@ function FoulingChart({ fouling }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   dot: { width: 9, height: 9, borderRadius: 5 },
   title: { color: theme.text, fontSize: 14, fontWeight: '700', flex: 1 },

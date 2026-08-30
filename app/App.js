@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, StatusBar, StyleSheet, Platform } from 'react-native';
 
 import forecast from './assets/forecast.json';
-import { theme } from './src/theme';
+import { ThemeProvider, useTheme, useStyles, useThemeMode } from './src/theme';
 import { runSchedule, warmUpTank } from './src/logic/scheduler';
 import { fixedTimerSchedule, reactiveSchedule } from './src/logic/baselines';
 import { simulateSensor, detectLeak } from './src/logic/leak';
@@ -38,7 +38,9 @@ const NOW_INDEX = 0;
 const LEAK_START_HOUR = 14;
 const SIMULATED_CYCLONE_KMH = 118;
 
-export default function App() {
+function Dashboard() {
+  const theme = useTheme();
+  const styles = useStyles(makeStyles);
   // Demo switches. Each one flips a real input and everything downstream
   // recomputes - none of them fake an outcome.
   const [leakInjected, setLeakInjected] = useState(false);
@@ -183,7 +185,10 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="light-content" backgroundColor={theme.bg} />
+      <StatusBar
+        barStyle={theme.mode === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.bg}
+      />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Header
           island={island}
@@ -249,6 +254,8 @@ export default function App() {
 }
 
 function DemoBar({ stormMode, onToggleStorm }) {
+  const theme = useTheme();
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.demoBar}>
       <Text style={styles.demoLabel}>DEMO CONTROLS</Text>
@@ -265,7 +272,7 @@ function DemoBar({ stormMode, onToggleStorm }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.bg, paddingTop: Platform.OS === 'android' ? 28 : 0 },
   scroll: { paddingBottom: 40 },
   foot: { paddingHorizontal: theme.pad, paddingTop: 12 },
@@ -282,3 +289,15 @@ const styles = StyleSheet.create({
     marginTop: 12, fontSize: 13, fontWeight: '700', overflow: 'hidden',
   },
 });
+
+/**
+ * The provider sits above everything that reads the palette, so App itself
+ * cannot consume it - hence the split into Dashboard.
+ */
+export default function App() {
+  return (
+    <ThemeProvider initialPref="auto">
+      <Dashboard />
+    </ThemeProvider>
+  );
+}

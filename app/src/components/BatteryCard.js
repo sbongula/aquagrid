@@ -1,13 +1,15 @@
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, { Polyline, Line } from 'react-native-svg';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * State of charge across the horizon. The battery is what lets midday surplus
  * run the pump into the 18:00-20:00 demand peak instead of being curtailed.
  */
 export default function BatteryCard({ steps, plant, totals }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const { width } = useWindowDimensions();
   const w = width - 4 * theme.pad;
   const h = 90;
@@ -57,6 +59,7 @@ export default function BatteryCard({ steps, plant, totals }) {
 }
 
 function Foot({ label, value, color }) {
+  const styles = useStyles(makeStyles);
   return (
     <View>
       <Text style={styles.footLabel}>{label}</Text>
@@ -65,7 +68,7 @@ function Foot({ label, value, color }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   big: { color: theme.water, fontSize: 30, fontWeight: '800' },
   unit: { color: theme.textDim, fontSize: 13, fontWeight: '600' },

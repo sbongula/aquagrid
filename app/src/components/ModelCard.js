@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet, useWindowDimensions, ScrollView } from 'react-native';
 import Svg, { Polyline, Text as SvgText } from 'react-native-svg';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 const PRETTY = {
   hour: 'Hour of day',
@@ -13,6 +13,8 @@ const PRETTY = {
 };
 
 export default function ModelCard({ model, curve }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const max = Math.max(...model.feature_importances.map((f) => f.importance));
 
@@ -76,6 +78,7 @@ export default function ModelCard({ model, curve }) {
 }
 
 function ValidationChart({ curve }) {
+  const theme = useTheme();
   const { width } = useWindowDimensions();
   const w = width - 2 * theme.pad - 2 * theme.pad;
   const h = 190;
@@ -96,6 +99,8 @@ function ValidationChart({ curve }) {
 }
 
 function Metric({ value, unit, label, hero }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
       <Text style={[styles.mValue, hero && { color: theme.good }]}>
@@ -107,6 +112,7 @@ function Metric({ value, unit, label, hero }) {
 }
 
 function Key({ color, label }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.keyRow}>
       <View style={[styles.swatch, { backgroundColor: color }]} />
@@ -115,7 +121,7 @@ function Key({ color, label }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   metrics: { flexDirection: 'row', marginBottom: 12 },
   mValue: { color: theme.text, fontSize: 24, fontWeight: '800' },
   mUnit: { fontSize: 12, fontWeight: '600', color: theme.textDim },

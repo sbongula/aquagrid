@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * Tank level as a large fill bar, with tick marks at the reserve floor and the
  * top-up target. No SVG needed - nested Views are enough and cannot break.
  */
 export default function TankGauge({ step, plant, hoursOfSupply }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const pct = step.tankPct;
   const floorPct = plant.reserve_floor_pct;
   const targetPct = plant.tank_target_pct;
@@ -41,7 +43,7 @@ export default function TankGauge({ step, plant, hoursOfSupply }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 12 },
   pct: { fontSize: 44, fontWeight: '800', letterSpacing: -1 },
   litres: { color: theme.text, fontSize: 14, fontWeight: '600' },

@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * AquaGrid against the two naive strategies, computed live from all three
  * schedules. Nothing here is hardcoded - a judge can check the arithmetic.
  */
 export default function SavingsCard({ smart, timer, reactive }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const savedPct = timer.totals.dieselL > 0
     ? 100 * (1 - smart.totals.dieselL / timer.totals.dieselL)
     : 0;
@@ -49,7 +51,7 @@ export default function SavingsCard({ smart, timer, reactive }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   hero: { color: theme.good, fontSize: 52, fontWeight: '800', letterSpacing: -2 },
   heroSub: { color: theme.textDim, fontSize: 12, marginBottom: 16, lineHeight: 17 },
   headRow: { flexDirection: 'row', paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: theme.border },

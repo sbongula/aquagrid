@@ -1,8 +1,10 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 export default function LeakPanel({ leak, injected, onToggle }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   return (
     <Card title="LEAK DETECTION">
       {leak.alert ? (
@@ -43,6 +45,7 @@ export default function LeakPanel({ leak, injected, onToggle }) {
 }
 
 function Stat({ label, value }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.stat}>
       <Text style={styles.statLabel}>{label}</Text>
@@ -51,7 +54,7 @@ function Stat({ label, value }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   box: { borderWidth: 1, borderRadius: 12, padding: 14 },
   alertHead: { color: theme.bad, fontSize: 13, fontWeight: '800', letterSpacing: 0.8 },
   alertMsg: { color: theme.text, fontSize: 14, lineHeight: 20, marginTop: 8 },

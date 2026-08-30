@@ -1,9 +1,11 @@
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 import { MODEL_LABEL } from '../lib/ai';
 
 export default function BriefingCard({ text, loading, live }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   return (
     <Card
       title="OPERATOR BRIEFING"
@@ -24,7 +26,7 @@ export default function BriefingCard({ text, loading, live }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   badge: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
   body: { color: theme.text, fontSize: 14, lineHeight: 22 },
   loadRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },

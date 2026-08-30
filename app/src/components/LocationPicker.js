@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, Pressable, Modal, ActivityIndicator, ScrollView,
   StyleSheet, Keyboard, TouchableWithoutFeedback,
 } from 'react-native';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 import { listCached, describeAge } from '../lib/store';
 
 /**
@@ -15,6 +15,8 @@ import { listCached, describeAge } from '../lib/store';
  * at build time and says so.
  */
 export default function LocationPicker({ island, onSelect, onReset, isCustom, search, onUseGps, freshness }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
@@ -200,7 +202,7 @@ export default function LocationPicker({ island, onSelect, onReset, isCustom, se
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   bar: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1,

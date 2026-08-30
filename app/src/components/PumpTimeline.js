@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme, sourceColor } from '../theme';
+import { useTheme, useStyles, sourceColor } from '../theme';
 
 /** 24 bars, one per hour. Tap a bar to read that hour's reason. */
 export default function PumpTimeline({ steps }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const data = steps.slice(0, 24);
   const [sel, setSel] = useState(null);
   const shown = sel === null ? null : data[sel];
@@ -17,7 +19,7 @@ export default function PumpTimeline({ steps }) {
             <View
               style={[
                 styles.bar,
-                { backgroundColor: s.action === 'pump' ? sourceColor(s.source) : theme.border },
+                { backgroundColor: s.action === 'pump' ? sourceColor(s.source, theme) : theme.border },
                 sel === i && styles.barSel,
               ]}
             />
@@ -56,6 +58,7 @@ export default function PumpTimeline({ steps }) {
 }
 
 function Key({ color, label }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.keyRow}>
       <View style={[styles.swatch, { backgroundColor: color }]} />
@@ -64,7 +67,7 @@ function Key({ color, label }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   bars: { flexDirection: 'row', gap: 2 },
   barSlot: { flex: 1 },
   bar: { height: 46, borderRadius: 3 },

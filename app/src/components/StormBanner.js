@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * A cyclone changes the objective from "spend the least fuel" to "have the most
  * water when the power goes out". Loud enough that it cannot be missed.
  */
 export default function StormBanner({ step, windKmh }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.wrap}>
       <Text style={styles.head}>⛈  STORM PREPARATION ACTIVE</Text>
@@ -21,7 +22,7 @@ export default function StormBanner({ step, windKmh }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   wrap: {
     backgroundColor: 'rgba(248,113,113,0.12)',
     borderColor: theme.bad, borderWidth: 1.5, borderRadius: theme.radius,

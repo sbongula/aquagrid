@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * Preset questions rather than a text input: a judge can interrogate the
@@ -14,6 +14,8 @@ const PRESETS = [
 ];
 
 export default function AskPanel({ ctx, ask, live }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const [busy, setBusy] = useState(false);
   const [asked, setAsked] = useState(null);
   const [answer, setAnswer] = useState(null);
@@ -67,7 +69,7 @@ export default function AskPanel({ ctx, ask, live }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   badge: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {

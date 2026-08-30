@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * The only part of the system that talks to the village rather than the plant.
@@ -8,6 +8,8 @@ import { theme } from '../theme';
  * nobody needed because the laundry ran at noon.
  */
 export default function AdvisoryCard({ text, live, windows, rationing }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   return (
     <Card
       title="PUBLIC WATER NOTICE"
@@ -50,7 +52,7 @@ export default function AdvisoryCard({ text, live, windows, rationing }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   badge: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
   body: { color: theme.text, fontSize: 14, lineHeight: 21 },
   windows: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },

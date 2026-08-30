@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * Where the island's water actually comes from over the horizon. On Tuvalu this
@@ -8,6 +8,8 @@ import { theme } from '../theme';
  * which is the opposite of how the plant is usually described.
  */
 export default function WaterSourcesCard({ totals, steps, plant }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   const rain = totals.harvestedL;
   const desal = totals.waterDeliveredL;
   const total = rain + desal || 1;
@@ -47,6 +49,7 @@ export default function WaterSourcesCard({ totals, steps, plant }) {
 }
 
 function Row({ color, label, value, pct }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.row}>
       <View style={[styles.dot, { backgroundColor: color }]} />
@@ -57,7 +60,7 @@ function Row({ color, label, value, pct }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   bar: { flexDirection: 'row', height: 14, borderRadius: 7, overflow: 'hidden', gap: 2 },
   seg: { height: 14 },
   rows: { marginTop: 14 },

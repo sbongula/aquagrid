@@ -10,7 +10,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "AquaGrid uses your location to point the desalination plant at the island you are standing on."
-      }
+      },
+      "bundleIdentifier": "com.sbongula.aquagrid"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +19,8 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.sbongula.aquagrid"
     },
     "web": {
       "favicon": "./assets/favicon.png"

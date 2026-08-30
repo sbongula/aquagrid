@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Card from './Card';
-import { theme } from '../theme';
+import { useTheme, useStyles } from '../theme';
 
 /**
  * Burning too much diesel and running out of diesel are different failures.
@@ -8,6 +8,8 @@ import { theme } from '../theme';
  * the one that actually stops the water.
  */
 export default function FuelCard({ outlook, baselines }) {
+  const styles = useStyles(makeStyles);
+  const theme = useTheme();
   if (!outlook) return null;
   const bad = outlook.willRunDry;
   const color = bad ? theme.bad : theme.good;
@@ -59,7 +61,7 @@ export default function FuelCard({ outlook, baselines }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme) => StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   big: { fontSize: 30, fontWeight: '800' },
   unit: { color: theme.textDim, fontSize: 14, fontWeight: '600' },
