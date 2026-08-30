@@ -1,0 +1,10 @@
+node_modules/
+.expo/
+dist/
+web-build/
+.venv/
+__pycache__/
+*.pyc
+ml/water_history.csv
+app/src/config.js
+.DS_Store

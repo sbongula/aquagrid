@@ -1,0 +1,594 @@
+{
+  "generated_at": "2026-08-30T15:18:56+00:00",
+  "island": {
+    "name": "Funafuti, Tuvalu",
+    "lat": -8.52,
+    "lon": 179.2,
+    "population": 1200
+  },
+  "weather_source": "open-meteo (live)",
+  "plant": {
+    "tank_capacity_l": 60000,
+    "initial_tank_l": 36000,
+    "desal_pump_kw": 42.0,
+    "desal_output_lph": 6000,
+    "diesel_l_per_kwh": 0.28,
+    "reserve_floor_pct": 25,
+    "tank_target_pct": 92
+  },
+  "model": {
+    "mae_lph": 45.3,
+    "rmse_lph": 57.0,
+    "r2": 0.987,
+    "naive_baseline_mae_lph": 409.7,
+    "improvement_over_naive_pct": 89.0,
+    "train_rows": 16080,
+    "test_rows": 1440,
+    "model": "RandomForestRegressor(n_estimators=180, max_depth=14)",
+    "features": [
+      "hour",
+      "day_of_week",
+      "is_weekend",
+      "temp_c",
+      "is_tourist_season"
+    ],
+    "feature_importances": [
+      {
+        "feature": "hour",
+        "importance": 0.8973
+      },
+      {
+        "feature": "is_tourist_season",
+        "importance": 0.0322
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.0306
+      },
+      {
+        "feature": "day_of_week",
+        "importance": 0.0282
+      },
+      {
+        "feature": "temp_c",
+        "importance": 0.0117
+      }
+    ]
+  },
+  "validation_curve": {
+    "actual": [
+      335.8,
+      120.6,
+      78.4,
+      149.4,
+      165.6,
+      470.2,
+      1435.7,
+      1667.0,
+      1520.1,
+      1041.7,
+      1094.5,
+      1063.3,
+      1280.9,
+      1199.8,
+      1029.4,
+      1056.2,
+      1170.0,
+      1459.6,
+      2013.1,
+      2159.5,
+      1444.9,
+      945.8,
+      628.4,
+      283.2,
+      181.7,
+      159.7,
+      200.9,
+      196.9,
+      241.8,
+      562.6,
+      1488.2,
+      1673.5,
+      1516.8,
+      1131.7,
+      945.9,
+      1113.8,
+      1161.8,
+      1169.8,
+      1016.4,
+      1073.9,
+      1058.7,
+      1544.8,
+      2078.9,
+      1874.4,
+      1469.6,
+      1056.5,
+      719.5,
+      408.6,
+      175.0,
+      77.4,
+      141.9,
+      86.0,
+      136.2,
+      385.8,
+      1063.9,
+      1379.9,
+      1201.5,
+      901.8,
+      781.3,
+      849.6,
+      996.5,
+      945.7,
+      804.6,
+      764.5,
+      942.2,
+      1121.8,
+      1499.4,
+      1607.6,
+      1122.8,
+      872.7,
+      426.6,
+      215.7
+    ],
+    "predicted": [
+      273.3,
+      204.1,
+      154.1,
+      161.0,
+      207.3,
+      513.5,
+      1360.7,
+      1716.9,
+      1544.0,
+      1145.2,
+      1084.7,
+      988.1,
+      1237.9,
+      1145.3,
+      1064.8,
+      1038.9,
+      1141.1,
+      1521.7,
+      1994.3,
+      2110.5,
+      1468.5,
+      1013.0,
+      654.9,
+      328.5,
+      234.8,
+      208.5,
+      164.0,
+      147.2,
+      274.8,
+      615.8,
+      1366.0,
+      1698.4,
+      1510.9,
+      1205.9,
+      1028.8,
+      1041.2,
+      1178.3,
+      1142.6,
+      1034.8,
+      998.1,
+      1099.1,
+      1501.7,
+      2043.2,
+      2068.2,
+      1558.7,
+      984.1,
+      642.5,
+      427.0,
+      214.5,
+      139.0,
+      90.3,
+      110.5,
+      158.2,
+      402.1,
+      1051.6,
+      1237.6,
+      1128.7,
+      912.7,
+      845.3,
+      814.3,
+      935.4,
+      891.4,
+      776.9,
+      787.4,
+      915.2,
+      1090.6,
+      1461.9,
+      1623.2,
+      1157.4,
+      707.4,
+      458.7,
+      283.7
+    ]
+  },
+  "hourly": [
+    {
+      "time": "2026-08-31T00:00",
+      "hour": 0,
+      "solar_kw": 0.0,
+      "temp_c": 28.3,
+      "cloud_pct": 98.0,
+      "predicted_demand_lph": 313.8
+    },
+    {
+      "time": "2026-08-31T01:00",
+      "hour": 1,
+      "solar_kw": 0.0,
+      "temp_c": 27.1,
+      "cloud_pct": 100.0,
+      "predicted_demand_lph": 229.9
+    },
+    {
+      "time": "2026-08-31T02:00",
+      "hour": 2,
+      "solar_kw": 0.0,
+      "temp_c": 27.1,
+      "cloud_pct": 90.0,
+      "predicted_demand_lph": 186.8
+    },
+    {
+      "time": "2026-08-31T03:00",
+      "hour": 3,
+      "solar_kw": 0.0,
+      "temp_c": 26.4,
+      "cloud_pct": 98.0,
+      "predicted_demand_lph": 182.4
+    },
+    {
+      "time": "2026-08-31T04:00",
+      "hour": 4,
+      "solar_kw": 0.0,
+      "temp_c": 26.9,
+      "cloud_pct": 96.0,
+      "predicted_demand_lph": 231.9
+    },
+    {
+      "time": "2026-08-31T05:00",
+      "hour": 5,
+      "solar_kw": 0.0,
+      "temp_c": 27.2,
+      "cloud_pct": 98.0,
+      "predicted_demand_lph": 595.3
+    },
+    {
+      "time": "2026-08-31T06:00",
+      "hour": 6,
+      "solar_kw": 0.0,
+      "temp_c": 26.9,
+      "cloud_pct": 97.0,
+      "predicted_demand_lph": 1462.1
+    },
+    {
+      "time": "2026-08-31T07:00",
+      "hour": 7,
+      "solar_kw": 2.37,
+      "temp_c": 26.9,
+      "cloud_pct": 71.0,
+      "predicted_demand_lph": 1773.2
+    },
+    {
+      "time": "2026-08-31T08:00",
+      "hour": 8,
+      "solar_kw": 15.02,
+      "temp_c": 27.1,
+      "cloud_pct": 66.0,
+      "predicted_demand_lph": 1526.6
+    },
+    {
+      "time": "2026-08-31T09:00",
+      "hour": 9,
+      "solar_kw": 29.55,
+      "temp_c": 27.5,
+      "cloud_pct": 98.0,
+      "predicted_demand_lph": 1140.7
+    },
+    {
+      "time": "2026-08-31T10:00",
+      "hour": 10,
+      "solar_kw": 30.58,
+      "temp_c": 26.5,
+      "cloud_pct": 100.0,
+      "predicted_demand_lph": 1035.2
+    },
+    {
+      "time": "2026-08-31T11:00",
+      "hour": 11,
+      "solar_kw": 40.98,
+      "temp_c": 26.6,
+      "cloud_pct": 100.0,
+      "predicted_demand_lph": 1017.8
+    },
+    {
+      "time": "2026-08-31T12:00",
+      "hour": 12,
+      "solar_kw": 34.96,
+      "temp_c": 25.9,
+      "cloud_pct": 98.0,
+      "predicted_demand_lph": 1071.1
+    },
+    {
+      "time": "2026-08-31T13:00",
+      "hour": 13,
+      "solar_kw": 44.02,
+      "temp_c": 26.1,
+      "cloud_pct": 96.0,
+      "predicted_demand_lph": 1055.2
+    },
+    {
+      "time": "2026-08-31T14:00",
+      "hour": 14,
+      "solar_kw": 38.91,
+      "temp_c": 26.7,
+      "cloud_pct": 44.0,
+      "predicted_demand_lph": 935.1
+    },
+    {
+      "time": "2026-08-31T15:00",
+      "hour": 15,
+      "solar_kw": 42.68,
+      "temp_c": 26.7,
+      "cloud_pct": 4.0,
+      "predicted_demand_lph": 937.1
+    },
+    {
+      "time": "2026-08-31T16:00",
+      "hour": 16,
+      "solar_kw": 32.22,
+      "temp_c": 27.3,
+      "cloud_pct": 83.0,
+      "predicted_demand_lph": 1108.1
+    },
+    {
+      "time": "2026-08-31T17:00",
+      "hour": 17,
+      "solar_kw": 14.65,
+      "temp_c": 28.1,
+      "cloud_pct": 29.0,
+      "predicted_demand_lph": 1346.1
+    },
+    {
+      "time": "2026-08-31T18:00",
+      "hour": 18,
+      "solar_kw": 4.01,
+      "temp_c": 28.5,
+      "cloud_pct": 41.0,
+      "predicted_demand_lph": 1951.0
+    },
+    {
+      "time": "2026-08-31T19:00",
+      "hour": 19,
+      "solar_kw": 0.0,
+      "temp_c": 28.5,
+      "cloud_pct": 59.0,
+      "predicted_demand_lph": 2054.5
+    },
+    {
+      "time": "2026-08-31T20:00",
+      "hour": 20,
+      "solar_kw": 0.0,
+      "temp_c": 28.3,
+      "cloud_pct": 92.0,
+      "predicted_demand_lph": 1535.6
+    },
+    {
+      "time": "2026-08-31T21:00",
+      "hour": 21,
+      "solar_kw": 0.0,
+      "temp_c": 28.6,
+      "cloud_pct": 56.0,
+      "predicted_demand_lph": 1025.8
+    },
+    {
+      "time": "2026-08-31T22:00",
+      "hour": 22,
+      "solar_kw": 0.0,
+      "temp_c": 26.9,
+      "cloud_pct": 80.0,
+      "predicted_demand_lph": 657.2
+    },
+    {
+      "time": "2026-08-31T23:00",
+      "hour": 23,
+      "solar_kw": 0.0,
+      "temp_c": 27.7,
+      "cloud_pct": 11.0,
+      "predicted_demand_lph": 391.8
+    },
+    {
+      "time": "2026-09-01T00:00",
+      "hour": 0,
+      "solar_kw": 0.0,
+      "temp_c": 28.0,
+      "cloud_pct": 30.0,
+      "predicted_demand_lph": 210.2
+    },
+    {
+      "time": "2026-09-01T01:00",
+      "hour": 1,
+      "solar_kw": 0.0,
+      "temp_c": 28.3,
+      "cloud_pct": 25.0,
+      "predicted_demand_lph": 206.4
+    },
+    {
+      "time": "2026-09-01T02:00",
+      "hour": 2,
+      "solar_kw": 0.0,
+      "temp_c": 28.5,
+      "cloud_pct": 9.0,
+      "predicted_demand_lph": 189.2
+    },
+    {
+      "time": "2026-09-01T03:00",
+      "hour": 3,
+      "solar_kw": 0.0,
+      "temp_c": 28.6,
+      "cloud_pct": 48.0,
+      "predicted_demand_lph": 194.7
+    },
+    {
+      "time": "2026-09-01T04:00",
+      "hour": 4,
+      "solar_kw": 0.0,
+      "temp_c": 28.2,
+      "cloud_pct": 41.0,
+      "predicted_demand_lph": 204.4
+    },
+    {
+      "time": "2026-09-01T05:00",
+      "hour": 5,
+      "solar_kw": 0.0,
+      "temp_c": 28.2,
+      "cloud_pct": 26.0,
+      "predicted_demand_lph": 469.6
+    },
+    {
+      "time": "2026-09-01T06:00",
+      "hour": 6,
+      "solar_kw": 0.0,
+      "temp_c": 28.5,
+      "cloud_pct": 23.0,
+      "predicted_demand_lph": 1245.6
+    },
+    {
+      "time": "2026-09-01T07:00",
+      "hour": 7,
+      "solar_kw": 3.4,
+      "temp_c": 28.6,
+      "cloud_pct": 3.0,
+      "predicted_demand_lph": 1515.5
+    },
+    {
+      "time": "2026-09-01T08:00",
+      "hour": 8,
+      "solar_kw": 16.36,
+      "temp_c": 28.6,
+      "cloud_pct": 16.0,
+      "predicted_demand_lph": 1310.0
+    },
+    {
+      "time": "2026-09-01T09:00",
+      "hour": 9,
+      "solar_kw": 29.73,
+      "temp_c": 28.5,
+      "cloud_pct": 36.0,
+      "predicted_demand_lph": 975.1
+    },
+    {
+      "time": "2026-09-01T10:00",
+      "hour": 10,
+      "solar_kw": 40.19,
+      "temp_c": 28.6,
+      "cloud_pct": 15.0,
+      "predicted_demand_lph": 881.1
+    },
+    {
+      "time": "2026-09-01T11:00",
+      "hour": 11,
+      "solar_kw": 49.37,
+      "temp_c": 28.6,
+      "cloud_pct": 25.0,
+      "predicted_demand_lph": 835.5
+    },
+    {
+      "time": "2026-09-01T12:00",
+      "hour": 12,
+      "solar_kw": 51.25,
+      "temp_c": 28.5,
+      "cloud_pct": 21.0,
+      "predicted_demand_lph": 938.9
+    },
+    {
+      "time": "2026-09-01T13:00",
+      "hour": 13,
+      "solar_kw": 52.11,
+      "temp_c": 28.4,
+      "cloud_pct": 25.0,
+      "predicted_demand_lph": 880.7
+    },
+    {
+      "time": "2026-09-01T14:00",
+      "hour": 14,
+      "solar_kw": 51.74,
+      "temp_c": 28.3,
+      "cloud_pct": 13.0,
+      "predicted_demand_lph": 773.6
+    },
+    {
+      "time": "2026-09-01T15:00",
+      "hour": 15,
+      "solar_kw": 43.65,
+      "temp_c": 28.2,
+      "cloud_pct": 16.0,
+      "predicted_demand_lph": 784.6
+    },
+    {
+      "time": "2026-09-01T16:00",
+      "hour": 16,
+      "solar_kw": 32.16,
+      "temp_c": 28.2,
+      "cloud_pct": 2.0,
+      "predicted_demand_lph": 862.4
+    },
+    {
+      "time": "2026-09-01T17:00",
+      "hour": 17,
+      "solar_kw": 18.18,
+      "temp_c": 28.3,
+      "cloud_pct": 3.0,
+      "predicted_demand_lph": 1113.0
+    },
+    {
+      "time": "2026-09-01T18:00",
+      "hour": 18,
+      "solar_kw": 4.74,
+      "temp_c": 28.2,
+      "cloud_pct": 9.0,
+      "predicted_demand_lph": 1555.4
+    },
+    {
+      "time": "2026-09-01T19:00",
+      "hour": 19,
+      "solar_kw": 0.0,
+      "temp_c": 28.1,
+      "cloud_pct": 4.0,
+      "predicted_demand_lph": 1685.3
+    },
+    {
+      "time": "2026-09-01T20:00",
+      "hour": 20,
+      "solar_kw": 0.0,
+      "temp_c": 28.2,
+      "cloud_pct": 41.0,
+      "predicted_demand_lph": 1244.7
+    },
+    {
+      "time": "2026-09-01T21:00",
+      "hour": 21,
+      "solar_kw": 0.0,
+      "temp_c": 28.6,
+      "cloud_pct": 61.0,
+      "predicted_demand_lph": 892.4
+    },
+    {
+      "time": "2026-09-01T22:00",
+      "hour": 22,
+      "solar_kw": 0.0,
+      "temp_c": 28.0,
+      "cloud_pct": 65.0,
+      "predicted_demand_lph": 588.9
+    },
+    {
+      "time": "2026-09-01T23:00",
+      "hour": 23,
+      "solar_kw": 0.0,
+      "temp_c": 27.3,
+      "cloud_pct": 88.0,
+      "predicted_demand_lph": 298.1
+    }
+  ]
+}
